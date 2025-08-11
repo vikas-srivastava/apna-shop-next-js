@@ -1,40 +1,96 @@
-// Client-side theme loader (no fs imports)
-import { ThemeConfig } from './server-theme-loader'
+import * as yaml from 'js-yaml'
+import * as fs from 'fs'
+import * as path from 'path'
+
+export interface ThemeConfig {
+    name?: string
+    colors: {
+        primary: Record<string, string>
+        secondary: Record<string, string>
+        accent: Record<string, string>
+        success: Record<string, string>
+        error: Record<string, string>
+        warning: Record<string, string>
+        // Text colors for better theme integration
+        text: {
+            primary: string
+            secondary: string
+            accent: string
+            success: string
+            error: string
+            warning: string
+        }
+    }
+    fonts: {
+        sans: string
+        serif: string
+        mono: string
+    }
+    components: {
+        button: {
+            borderRadius: string
+            fontWeight: string
+            transition: string
+        }
+        card: {
+            borderRadius: string
+            shadow: string
+            padding: string
+        }
+        input: {
+            borderRadius: string
+            borderWidth: string
+            padding: string
+            fontSize: string
+        }
+    }
+    layout: {
+        containerMaxWidth: string
+        borderRadius: {
+            sm: string
+            md: string
+            lg: string
+            xl: string
+        }
+        spacing: {
+            xs: string
+            sm: string
+            md: string
+            lg: string
+            xl: string
+            '2xl': string
+            '3xl': string
+        }
+    }
+}
 
 /**
- * Load client-specific theme from API
- * @param client Client identifier
+ * Load theme configuration from theme.yml file
+ * This function is called at build time to configure Tailwind CSS
+ * Server-side only function
  */
-export async function loadClientTheme(client: string = 'default'): Promise<ThemeConfig> {
+export function loadTheme(): ThemeConfig {
     try {
-        // In a real implementation, this would call your headless e-commerce API
-        const response = await fetch(`/api/themes?client=${client}`)
-
-        if (!response.ok) {
-            throw new Error(`Failed to load theme for client: ${client}`)
-        }
-
-        const result = await response.json()
-
-        if (!result.success) {
-            throw new Error(result.error || 'Failed to load client theme')
-        }
+        const themeFilePath = path.join(process.cwd(), 'theme.yml')
+        const themeFile = fs.readFileSync(themeFilePath, 'utf8')
+        const themeConfig = yaml.load(themeFile) as any
 
         // Merge with default theme structure
         return {
             ...getDefaultTheme(),
-            ...result.data,
+            ...themeConfig,
             colors: {
                 ...getDefaultTheme().colors,
-                ...result.data.colors,
+                ...themeConfig.colors,
                 text: {
                     ...getDefaultTheme().colors.text,
-                    ...result.data.colors?.text
+                    ...themeConfig.colors?.text
                 }
             }
         }
     } catch (error) {
-        console.warn(`Could not load client theme for ${client}, using default theme`, error)
+        console.warn('Could not load theme.yml, using default theme')
+        // Return default theme if file doesn't exist or is invalid
         return getDefaultTheme()
     }
 }

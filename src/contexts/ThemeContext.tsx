@@ -1,13 +1,18 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { loadClientTheme, ThemeConfig } from '@/lib/theme-loader'
 
-type ThemeMode = 'light' | 'dark' | 'custom'
+type ThemeMode = 'light' | 'dark'
 
 interface ThemeContextType {
     theme: ThemeMode
+    client: string
+    clientTheme: ThemeConfig | null
     setTheme: (theme: ThemeMode) => void
+    setClient: (client: string) => void
     toggleTheme: () => void
+    isLoading: boolean
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
@@ -18,10 +23,15 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setTheme] = useState<ThemeMode>('light')
+    const [client, setClient] = useState<string>('default')
+    const [clientTheme, setClientTheme] = useState<ThemeConfig | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     // Initialize theme from localStorage on mount
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme') as ThemeMode
+        const savedClient = localStorage.getItem('client') || 'default'
+
         if (savedTheme) {
             setTheme(savedTheme)
         } else {
@@ -29,29 +39,63 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
             setTheme(prefersDark ? 'dark' : 'light')
         }
+
+        setClient(savedClient)
     }, [])
+
+    // Load client-specific theme
+    useEffect(() => {
+        const loadTheme = async () => {
+            setIsLoading(true)
+            try {
+                const themeData = await loadClientTheme(client)
+                setClientTheme(themeData)
+            } catch (error) {
+                console.error('Failed to load client theme:', error)
+                setClientTheme(null)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        if (client) {
+            loadTheme()
+        }
+    }, [client])
 
     // Apply theme to document
     useEffect(() => {
+        if (isLoading) return
+
         const root = document.documentElement
 
         // Remove existing theme classes
-        root.removeAttribute('data-theme')
-        root.classList.remove('dark', 'light')
+        root.classList.remove('light', 'dark')
 
-        // Apply new theme
-        if (theme === 'dark') {
-            root.setAttribute('data-theme', 'dark')
-            root.classList.add('dark')
-        } else if (theme === 'custom') {
-            root.setAttribute('data-theme', 'custom')
-        } else {
-            root.classList.add('light')
+        // Apply theme mode class
+        root.classList.add(theme)
+
+        // Apply client theme CSS variables
+        if (clientTheme) {
+            // Set color variables
+            Object.entries(clientTheme.colors).forEach(([colorName, shades]) => {
+                if (typeof shades === 'object') {
+                    Object.entries(shades).forEach(([shade, value]) => {
+                        root.style.setProperty(`--color-${colorName}-${shade}`, value)
+                    })
+                }
+            })
+
+            // Set text color variables
+            Object.entries(clientTheme.colors.text).forEach(([name, value]) => {
+                root.style.setProperty(`--text-${name}`, value)
+            })
         }
 
         // Save to localStorage
         localStorage.setItem('theme', theme)
-    }, [theme])
+        localStorage.setItem('client', client)
+    }, [theme, client, clientTheme, isLoading])
 
     const toggleTheme = () => {
         setTheme(current => current === 'light' ? 'dark' : 'light')
@@ -59,8 +103,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     const value: ThemeContextType = {
         theme,
+        client,
+        clientTheme,
         setTheme,
+        setClient,
         toggleTheme,
+        isLoading
     }
 
     return (

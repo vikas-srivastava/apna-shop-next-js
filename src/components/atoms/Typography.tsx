@@ -1,5 +1,8 @@
+'use client'
+
 import { ReactNode, ElementType } from 'react'
 import { clsx } from 'clsx'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface TypographyProps {
     as?: ElementType
@@ -14,6 +17,7 @@ interface TypographyProps {
 /**
  * Typography component for consistent text styling
  * Supports semantic HTML elements and various text styles
+ * Uses theme-aware styling with CSS variables
  */
 export function Typography({
     as,
@@ -25,6 +29,8 @@ export function Typography({
     children,
     ...props
 }: TypographyProps) {
+    const { theme } = useTheme()
+
     // Auto-determine HTML element if not specified
     const Component = as || getDefaultElement(variant)
 
@@ -32,7 +38,7 @@ export function Typography({
         <Component
             className={clsx(
                 // Base styles
-                'font-sans',
+                'font-sans transition-colors duration-200',
 
                 // Variant styles
                 {
@@ -57,14 +63,16 @@ export function Typography({
                     'font-bold': weight === 'bold',
                 },
 
-                // Color styles
+                // Color styles with theme awareness
                 {
-                    'text-primary-600': color === 'primary',
-                    'text-secondary-600': color === 'secondary',
-                    'text-accent-600': color === 'accent',
-                    'text-success-600': color === 'success',
-                    'text-error-600': color === 'error',
-                    'text-warning-600': color === 'warning',
+                    'text-[var(--text-primary)]': color === 'primary',
+                    'text-[var(--text-secondary)]': color === 'secondary',
+                    'text-[var(--color-accent-600)]': color === 'accent',
+                    'text-[var(--color-success-600)]': color === 'success',
+                    'text-[var(--color-error-600)]': color === 'error',
+                    'text-[var(--color-warning-600)]': color === 'warning',
+                    // Theme-aware default text color
+                    'text-[color:var(--text-primary)]': color === 'inherit',
                 },
 
                 // Alignment styles

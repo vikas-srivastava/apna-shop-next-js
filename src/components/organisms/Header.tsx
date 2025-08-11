@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ShoppingCart, User, Menu, X, Heart } from 'lucide-react'
 import { Button } from '../atoms/Button'
 import { Typography } from '../atoms/Typography'
@@ -21,6 +22,7 @@ export function Header({ onSearch }: HeaderProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const { itemCount } = useCart()
     const router = useRouter()
+    const pathname = usePathname()
 
     const handleSearch = (query: string) => {
         if (onSearch) {
@@ -116,15 +118,21 @@ export function Header({ onSearch }: HeaderProps) {
 
                 {/* Navigation - Desktop */}
                 <nav className="hidden md:flex items-center space-x-8 py-4 border-t border-secondary-100">
-                    {navigation.map((item) => (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            className="text-secondary-700 hover:text-primary-600 font-medium transition-colors"
-                        >
-                            {item.name}
-                        </Link>
-                    ))}
+                    {navigation.map((item) => {
+                        const isActive = pathname === item.href
+                        return (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                className={`font-medium transition-colors ${isActive
+                                    ? 'text-primary-600 border-b-2 border-primary-600 pb-4 -mb-4'
+                                    : 'text-secondary-700 hover:text-primary-600'
+                                    }`}
+                            >
+                                {item.name}
+                            </Link>
+                        )
+                    })}
                 </nav>
 
                 {/* Search Bar - Mobile */}
@@ -138,16 +146,22 @@ export function Header({ onSearch }: HeaderProps) {
                 <div className="md:hidden bg-white border-t border-secondary-200">
                     <div className="container-theme py-4">
                         <nav className="flex flex-col space-y-4">
-                            {navigation.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    href={item.href}
-                                    className="text-secondary-700 hover:text-primary-600 font-medium transition-colors"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    {item.name}
-                                </Link>
-                            ))}
+                            {navigation.map((item) => {
+                                const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href))
+                                return (
+                                    <Link
+                                        key={item.name}
+                                        href={item.href}
+                                        className={`font-medium transition-colors ${isActive
+                                            ? 'text-primary-600'
+                                            : 'text-secondary-700 hover:text-primary-600'
+                                            }`}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        {item.name}
+                                    </Link>
+                                )
+                            })}
                         </nav>
                     </div>
                 </div>

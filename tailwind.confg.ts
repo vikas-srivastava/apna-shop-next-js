@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss'
-import { loadTheme } from './src/lib/theme-loader'
+import { loadTheme } from './src/lib/server-theme-loader'
 
 // Load theme configuration at build time
 const theme = loadTheme()

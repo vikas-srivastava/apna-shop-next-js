@@ -83,7 +83,7 @@ export function Footer() {
                         </div>
 
                         {/* Description */}
-                        <Typography variant="body" className="text-secondary-300 max-w-md">
+                        <Typography variant="body" className="text-[var(--text-secondary)] max-w-md">
                             Your one-stop shop for quality products at unbeatable prices.
                             We're committed to providing exceptional customer service and
                             fast, reliable shipping.
@@ -94,14 +94,14 @@ export function Footer() {
                             <Typography variant="subtitle" weight="semibold">
                                 Stay in the loop
                             </Typography>
-                            <Typography variant="caption" className="text-secondary-400">
+                            <Typography variant="caption" className="text-[var(--text-secondary)]">
                                 Subscribe to get special offers, updates, and more.
                             </Typography>
                             <form className="flex gap-2">
                                 <Input
                                     type="email"
                                     placeholder="Enter your email"
-                                    className="flex-1 bg-secondary-800 border-secondary-700 text-white placeholder-secondary-400"
+                                    className="flex-1 bg-secondary-800 border-secondary-700 text-[var(--text-primary)] placeholder-[var(--text-secondary)]"
                                 />
                                 <Button variant="primary" size="md">
                                     Subscribe
@@ -121,7 +121,7 @@ export function Footer() {
                                     <Link
                                         key={link.name}
                                         href={link.href}
-                                        className="block text-secondary-300 hover:text-white text-sm transition-colors"
+                                        className="block text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-sm transition-colors"
                                     >
                                         {link.name}
                                     </Link>
@@ -137,10 +137,10 @@ export function Footer() {
                         <div className="flex items-center space-x-3">
                             <Mail className="w-5 h-5 text-primary-400" />
                             <div>
-                                <Typography variant="caption" className="text-secondary-400">
+                                <Typography variant="caption" className="text-[var(--text-secondary)]">
                                     Email us
                                 </Typography>
-                                <Typography variant="body" className="text-white">
+                                <Typography variant="body" className="text-[var(--text-primary)]">
                                     support@storefront.com
                                 </Typography>
                             </div>
@@ -149,10 +149,10 @@ export function Footer() {
                         <div className="flex items-center space-x-3">
                             <Phone className="w-5 h-5 text-primary-400" />
                             <div>
-                                <Typography variant="caption" className="text-secondary-400">
+                                <Typography variant="caption" className="text-[var(--text-secondary)]">
                                     Call us
                                 </Typography>
-                                <Typography variant="body" className="text-white">
+                                <Typography variant="body" className="text-[var(--text-primary)]">
                                     1-800-STORE-01
                                 </Typography>
                             </div>
@@ -161,10 +161,10 @@ export function Footer() {
                         <div className="flex items-center space-x-3">
                             <MapPin className="w-5 h-5 text-primary-400" />
                             <div>
-                                <Typography variant="caption" className="text-secondary-400">
+                                <Typography variant="caption" className="text-[var(--text-secondary)]">
                                     Visit us
                                 </Typography>
-                                <Typography variant="body" className="text-white">
+                                <Typography variant="body" className="text-[var(--text-primary)]">
                                     123 Commerce St, City, ST 12345
                                 </Typography>
                             </div>

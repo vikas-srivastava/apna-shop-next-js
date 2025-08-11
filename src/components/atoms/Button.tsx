@@ -6,6 +6,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     size?: 'sm' | 'md' | 'lg' | 'xl'
     loading?: boolean
     fullWidth?: boolean
+    asChild?: boolean
     children: ReactNode
 }
 

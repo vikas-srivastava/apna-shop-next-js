@@ -2,7 +2,7 @@
 
 /* CSS Variables for Dynamic Theming */
 :root {
-  /* Primary Colors */
+  /* Primary Colors - will be overridden by client themes */
   --color-primary-50: 254 247 238;
   --color-primary-100: 253 237 211;
   --color-primary-200: 251 215 165;
@@ -15,7 +15,7 @@
   --color-primary-900: 121 45 15;
   --color-primary-950: 67 20 5;
 
-  /* Secondary Colors */
+  /* Secondary Colors - will be overridden by client themes */
   --color-secondary-50: 248 250 252;
   --color-secondary-100: 241 245 249;
   --color-secondary-200: 226 232 240;
@@ -27,6 +27,14 @@
   --color-secondary-800: 30 41 59;
   --color-secondary-900: 15 23 42;
   --color-secondary-950: 2 6 23;
+
+  /* Text Colors - will be overridden by client themes */
+  --text-primary: var(--color-secondary-900);
+  --text-secondary: var(--color-secondary-600);
+  --text-accent: var(--color-accent-600);
+  --text-success: var(--color-success-600);
+  --text-error: var(--color-error-600);
+  --text-warning: var(--color-warning-600);
 
   /* Component Variables */
   --button-border-radius: 8px;
@@ -44,31 +52,9 @@
 }
 
 /* Dark theme variables */
-[data-theme="dark"] {
-  --color-primary-50: 67 20 5;
-  --color-primary-100: 121 45 15;
-  --color-primary-200: 149 53 14;
-  --color-primary-300: 188 67 8;
-  --color-primary-400: 227 93 5;
-  --color-primary-500: 242 123 10;
-  --color-primary-600: 245 148 50;
-  --color-primary-700: 248 187 109;
-  --color-primary-800: 251 215 165;
-  --color-primary-900: 253 237 211;
-  --color-primary-950: 254 247 238;
-
-  /* Dark mode secondary colors */
-  --color-secondary-50: 2 6 23;
-  --color-secondary-100: 15 23 42;
-  --color-secondary-200: 30 41 59;
-  --color-secondary-300: 51 65 85;
-  --color-secondary-400: 71 85 105;
-  --color-secondary-500: 100 116 139;
-  --color-secondary-600: 148 163 184;
-  --color-secondary-700: 203 213 225;
-  --color-secondary-800: 226 232 240;
-  --color-secondary-900: 241 245 249;
-  --color-secondary-950: 248 250 252;
+.dark {
+  --text-primary: var(--color-secondary-50);
+  --text-secondary: var(--color-secondary-300);
 }
 
 /* Custom component styles */
