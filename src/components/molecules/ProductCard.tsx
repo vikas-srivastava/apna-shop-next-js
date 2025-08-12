@@ -95,15 +95,15 @@ export function ProductCard({
                         </button>
                     )}
 
-                    {/* Quick Add Button - Shows on Hover */}
+                    {/* Quick Add Button - Always visible with improved positioning */}
                     {showQuickAdd && product.inStock && (
-                        <div className="absolute bottom-2 left-2 right-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        <div className="absolute bottom-2 left-2 right-2 transition-all duration-300">
                             <Button
                                 size="sm"
                                 fullWidth
                                 loading={isLoading}
                                 onClick={handleQuickAdd}
-                                className="bg-white text-secondary-900 hover:bg-primary-500 hover:text-white shadow-lg"
+                                className="bg-white text-secondary-900 hover:bg-primary-500 hover:text-white shadow-lg transform transition-transform duration-200 active:scale-95"
                             >
                                 <ShoppingCart className="w-4 h-4 mr-2" />
                                 Quick Add

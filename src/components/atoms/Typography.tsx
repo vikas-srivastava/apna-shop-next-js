@@ -65,14 +65,12 @@ export function Typography({
 
                 // Color styles with theme awareness
                 {
-                    'text-[var(--text-primary)]': color === 'primary',
+                    'text-[var(--text-primary)]': color === 'primary' || color === 'inherit',
                     'text-[var(--text-secondary)]': color === 'secondary',
-                    'text-[var(--color-accent-600)]': color === 'accent',
-                    'text-[var(--color-success-600)]': color === 'success',
-                    'text-[var(--color-error-600)]': color === 'error',
-                    'text-[var(--color-warning-600)]': color === 'warning',
-                    // Theme-aware default text color
-                    'text-[color:var(--text-primary)]': color === 'inherit',
+                    'text-[var(--text-accent)]': color === 'accent',
+                    'text-[var(--text-success)]': color === 'success',
+                    'text-[var(--text-error)]': color === 'error',
+                    'text-[var(--text-warning)]': color === 'warning',
                 },
 
                 // Alignment styles

@@ -25,7 +25,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setTheme] = useState<ThemeMode>('light')
     const [client, setClient] = useState<string>('default')
     const [clientTheme, setClientTheme] = useState<ThemeConfig | null>(null)
-    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     // Initialize theme from localStorage on mount
     useEffect(() => {
@@ -41,6 +41,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         }
 
         setClient(savedClient)
+
+        // Add listener for system theme changes
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+        const handleChange = (e: MediaQueryListEvent) => {
+            // Only update if no theme is saved in localStorage (i.e., using system preference)
+            if (!localStorage.getItem('theme')) {
+                setTheme(e.matches ? 'dark' : 'light')
+            }
+        }
+
+        mediaQuery.addEventListener('change', handleChange)
+
+        return () => {
+            mediaQuery.removeEventListener('change', handleChange)
+        }
     }, [])
 
     // Load client-specific theme
@@ -65,8 +80,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     // Apply theme to document
     useEffect(() => {
-        if (isLoading) return
-
         const root = document.documentElement
 
         // Remove existing theme classes
@@ -75,27 +88,33 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         // Apply theme mode class
         root.classList.add(theme)
 
-        // Apply client theme CSS variables
+        // Apply client theme CSS variables if available
         if (clientTheme) {
             // Set color variables
             Object.entries(clientTheme.colors).forEach(([colorName, shades]) => {
-                if (typeof shades === 'object') {
+                if (typeof shades === 'object' && shades !== null) {
                     Object.entries(shades).forEach(([shade, value]) => {
-                        root.style.setProperty(`--color-${colorName}-${shade}`, value)
+                        root.style.setProperty(`--color-${colorName}-${shade}`, value as string)
                     })
                 }
             })
 
             // Set text color variables
             Object.entries(clientTheme.colors.text).forEach(([name, value]) => {
-                root.style.setProperty(`--text-${name}`, value)
+                root.style.setProperty(`--text-${name}`, value as string)
             })
+        } else {
+            // If no client theme, remove any existing CSS variables
+            const colorProperties = Array.from(root.style).filter(prop =>
+                prop.startsWith('--color-') || prop.startsWith('--text-')
+            );
+            colorProperties.forEach(prop => root.style.removeProperty(prop));
         }
 
         // Save to localStorage
         localStorage.setItem('theme', theme)
         localStorage.setItem('client', client)
-    }, [theme, client, clientTheme, isLoading])
+    }, [theme, client, clientTheme])
 
     const toggleTheme = () => {
         setTheme(current => current === 'light' ? 'dark' : 'light')

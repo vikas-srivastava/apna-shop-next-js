@@ -36,9 +36,9 @@ export function Button({
                 // Variant styles
                 {
                     'btn-primary bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500': variant === 'primary',
-                    'btn-secondary bg-secondary-100 text-secondary-900 hover:bg-secondary-200 focus-visible:ring-secondary-500': variant === 'secondary',
+                    'btn-secondary bg-secondary-100 text-[var(--text-primary)] hover:bg-secondary-200 focus-visible:ring-secondary-500': variant === 'secondary',
                     'border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white focus-visible:ring-primary-500': variant === 'outline',
-                    'text-secondary-700 hover:bg-secondary-100 focus-visible:ring-secondary-500': variant === 'ghost',
+                    'text-[var(--text-primary)] hover:bg-secondary-100 focus-visible:ring-secondary-500': variant === 'ghost',
                     'bg-error-500 text-white hover:bg-error-600 focus-visible:ring-error-500': variant === 'danger',
                 },
 

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { ShoppingCart, User, Menu, X, Heart } from 'lucide-react'
 import { Button } from '../atoms/Button'
 import { Typography } from '../atoms/Typography'
-import { SearchBar } from '../molecules/SearchBar'
+import { HeaderSearchBar } from '../molecules/HeaderSearchBar'
 import { CompactThemeSwitcher } from '../molecules/ThemeSwitcher'
 import { useCart } from '@/contexts/CartContext'
 import { useRouter } from 'next/navigation'
@@ -70,7 +70,7 @@ export function Header({ onSearch }: HeaderProps) {
 
                     {/* Search Bar - Desktop */}
                     <div className="hidden md:flex flex-1 max-w-lg mx-8">
-                        <SearchBar onSearch={handleSearch} />
+                        <HeaderSearchBar onSearch={handleSearch} />
                     </div>
 
                     {/* Right Side Actions */}
@@ -137,7 +137,7 @@ export function Header({ onSearch }: HeaderProps) {
 
                 {/* Search Bar - Mobile */}
                 <div className="md:hidden py-4 border-t border-secondary-100">
-                    <SearchBar onSearch={handleSearch} />
+                    <HeaderSearchBar onSearch={handleSearch} />
                 </div>
             </div>
 
@@ -147,7 +147,7 @@ export function Header({ onSearch }: HeaderProps) {
                     <div className="container-theme py-4">
                         <nav className="flex flex-col space-y-4">
                             {navigation.map((item) => {
-                                const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href))
+                                const isActive = pathname === item.href
                                 return (
                                     <Link
                                         key={item.name}

@@ -24,7 +24,7 @@ export function Card({
         <div
             className={clsx(
                 // Base styles
-                'card rounded-theme-lg transition-all duration-200',
+                'card rounded-theme-lg transition-all duration-200 text-[var(--text-primary)]',
 
                 // Variant styles
                 {

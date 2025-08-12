@@ -31,12 +31,12 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
         }
     }
 
+    const { addItem } = useCart()
+
     const handleAddToCart = async () => {
         setIsLoading(true)
         try {
-            // Add your cart logic here
-            // await addToCart({ product, selectedSize, selectedColor, quantity })
-            console.log('Adding to cart:', { product: product.id, selectedSize, selectedColor, quantity })
+            addItem(product, quantity, selectedSize, selectedColor)
         } catch (error) {
             console.error('Failed to add to cart:', error)
         } finally {
@@ -65,15 +65,88 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
 
     return (
         <div className="container-theme py-8 space-y-12">
-            {/* ... existing breadcrumb ... */}
+            {/* Breadcrumb */}
+            <nav className="text-sm text-secondary-600">
+                <Link href="/" className="hover:underline">Home</Link>
+                <span className="mx-2">/</span>
+                <Link href="/products" className="hover:underline">Products</Link>
+                <span className="mx-2">/</span>
+                <span className="text-secondary-900">{product.name}</span>
+            </nav>
 
             {/* Product Details */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                {/* ... existing image gallery ... */}
+                {/* Image Gallery */}
+                <div className="space-y-4">
+                    <div className="relative aspect-square rounded-lg overflow-hidden bg-secondary-50">
+                        <Image
+                            src={product.images[0]}
+                            alt={product.name}
+                            fill
+                            className="object-contain"
+                        />
+                    </div>
+                    {product.images.length > 1 && (
+                        <div className="grid grid-cols-4 gap-4">
+                            {product.images.slice(1).map((image, index) => (
+                                <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-secondary-50">
+                                    <Image
+                                        src={image}
+                                        alt={`${product.name} ${index + 2}`}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
                 {/* Product Info */}
                 <div className="space-y-6">
-                    {/* ... existing header, rating, price, and description ... */}
+                    {/* Header */}
+                    <div>
+                        <Typography variant="overline" color="secondary">
+                            {product.category.name}
+                        </Typography>
+                        <Typography variant="h2" weight="bold" className="mt-1">
+                            {product.name}
+                        </Typography>
+                        <div className="flex items-center gap-2 mt-2">
+                            <div className="flex items-center">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star
+                                        key={i}
+                                        className={`w-4 h-4 ${i < Math.floor(product.rating)
+                                            ? 'text-warning-400 fill-current'
+                                            : 'text-secondary-300'
+                                            }`}
+                                    />
+                                ))}
+                            </div>
+                            <Typography variant="caption" color="secondary">
+                                {product.rating} ({product.reviewCount} reviews)
+                            </Typography>
+                        </div>
+                        <div className="flex items-center gap-2 mt-4">
+                            <Typography variant="h4" weight="bold" color="primary">
+                                ${product.price.toFixed(2)}
+                            </Typography>
+                            {product.originalPrice && (
+                                <Typography variant="body" color="secondary" className="line-through">
+                                    ${product.originalPrice.toFixed(2)}
+                                </Typography>
+                            )}
+                            {product.originalPrice && (
+                                <Typography variant="caption" color="error">
+                                    {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                                </Typography>
+                            )}
+                        </div>
+                        <Typography variant="body" className="mt-4">
+                            {product.description}
+                        </Typography>
+                    </div>
 
                     {/* Options */}
                     <div className="space-y-6">
@@ -133,7 +206,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                             <div className="flex items-center border border-secondary-200 rounded-lg">
                                 <Button
                                     variant="ghost"
-                                    size="icon"
+                                    size="sm"
                                     onClick={() => handleQuantityChange(-1)}
                                     disabled={quantity <= 1}
                                     className="rounded-r-none"
@@ -143,7 +216,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                                 <span className="w-12 text-center">{quantity}</span>
                                 <Button
                                     variant="ghost"
-                                    size="icon"
+                                    size="sm"
                                     onClick={() => handleQuantityChange(1)}
                                     disabled={quantity >= product.stockCount}
                                     className="rounded-l-none"
@@ -176,7 +249,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                             </Button>
                             <Button
                                 variant={isWishlisted ? 'primary' : 'secondary'}
-                                size="icon-lg"
+                                size="lg"
                                 onClick={() => setIsWishlisted(!isWishlisted)}
                                 aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
                             >
@@ -184,7 +257,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                                     className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`}
                                 />
                             </Button>
-                            <Button variant="secondary" size="icon-lg" aria-label="Share product">
+                            <Button variant="secondary" size="lg" aria-label="Share product">
                                 <Share2 className="w-5 h-5" />
                             </Button>
                         </div>
@@ -202,7 +275,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                                         <Typography variant="subtitle" weight="bold">
                                             {benefit.title}
                                         </Typography>
-                                        <Typography variant="body-sm" color="secondary">
+                                        <Typography variant="body" color="secondary">
                                             {benefit.description}
                                         </Typography>
                                     </div>
@@ -218,7 +291,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                 <Typography variant="h3" weight="bold">
                     You May Also Like
                 </Typography>
-                <RelatedProducts category={product.category.slug} excludeId={product.id} />
+                <RelatedProducts categoryId={product.category.slug} currentProductId={product.id} />
             </section>
         </div>
     )

@@ -53,8 +53,37 @@
 
 /* Dark theme variables */
 .dark {
+  --color-primary-50: 67 20 5;
+  --color-primary-100: 121 45 15;
+  --color-primary-200: 149 53 14;
+  --color-primary-300: 188 67 8;
+  --color-primary-400: 227 93 5;
+  --color-primary-500: 242 123 10;
+  --color-primary-600: 245 148 50;
+  --color-primary-700: 248 187 109;
+  --color-primary-800: 251 215 165;
+  --color-primary-900: 253 237 211;
+  --color-primary-950: 254 247 238;
+
+  /* Dark mode secondary colors */
+  --color-secondary-50: 2 6 23;
+  --color-secondary-100: 15 23 42;
+  --color-secondary-200: 30 41 59;
+  --color-secondary-300: 51 65 85;
+  --color-secondary-400: 71 85 105;
+  --color-secondary-500: 100 116 139;
+  --color-secondary-600: 148 163 184;
+  --color-secondary-700: 203 213 225;
+  --color-secondary-800: 226 232 240;
+  --color-secondary-900: 241 245 249;
+  --color-secondary-950: 248 250 252;
+
   --text-primary: var(--color-secondary-50);
   --text-secondary: var(--color-secondary-300);
+  --text-accent: var(--color-accent-300);
+  --text-success: var(--color-success-300);
+  --text-error: var(--color-error-300);
+  --text-warning: var(--color-warning-300);
 }
 
 /* Custom component styles */
@@ -80,7 +109,7 @@
 
   .btn-secondary {
     background-color: rgb(var(--color-secondary-100));
-    color: rgb(var(--color-secondary-900));
+    color: rgb(var(--text-primary));
     &:hover {
       background-color: rgb(var(--color-secondary-200));
     }
@@ -96,6 +125,7 @@
     padding: var(--card-padding);
     background-color: rgb(var(--color-secondary-50));
     border: 1px solid rgb(var(--color-secondary-200));
+    color: rgb(var(--text-primary));
     @apply bg-white;
   }
 
@@ -105,6 +135,8 @@
     padding: var(--input-padding);
     font-size: var(--input-font-size);
     border-color: rgb(var(--color-secondary-300));
+    color: rgb(var(--text-primary));
+    background-color: rgb(var(--color-secondary-50));
     @apply w-full;
     &:focus {
       border-color: rgb(var(--color-primary-500));
@@ -121,7 +153,7 @@
 body {
   @apply font-sans antialiased;
   background-color: rgb(var(--color-secondary-50));
-  color: rgb(var(--color-secondary-900));
+  color: rgb(var(--text-primary));
 }
 
 /* Smooth transitions for theme switching */

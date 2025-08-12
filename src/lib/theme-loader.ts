@@ -1,5 +1,5 @@
 // Client-side theme loader (no fs imports)
-import { ThemeConfig } from './server-theme-loader'
+export type { ThemeConfig } from './server-theme-loader'
 
 /**
  * Load client-specific theme from API
