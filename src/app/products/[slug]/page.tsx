@@ -27,23 +27,32 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     return {
         title: `${product.name} | StoreFront`,
         description: product.description,
-        keywords: product.tags.join(', '),
+        keywords: (product.tags && product.tags.length > 0) ? product.tags.join(', ') : 'product',
         openGraph: {
             title: product.name,
             description: product.description,
-            images: product.images.map(image => ({
-                url: image,
-                width: 600,
-                height: 600,
-                alt: product.name,
-            })),
+            images: (product.images && product.images.length > 0)
+                ? product.images.map(image => ({
+                    url: image,
+                    width: 600,
+                    height: 600,
+                    alt: product.name,
+                }))
+                : [{
+                    url: 'https://via.placeholder.com/600x600/cccccc/969696?text=Product+Image',
+                    width: 600,
+                    height: 600,
+                    alt: product.name,
+                }],
             type: 'website',
         },
         twitter: {
             card: 'summary_large_image',
             title: product.name,
             description: product.description,
-            images: product.images[0],
+            images: (product.images && product.images.length > 0)
+                ? product.images[0]
+                : 'https://via.placeholder.com/600x600/cccccc/969696?text=Product+Image',
         },
     }
 }

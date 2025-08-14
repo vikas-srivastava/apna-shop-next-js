@@ -57,7 +57,7 @@ export function Button({
 
                 className
             )}
-            disabled={disabled || loading}
+            disabled={loading}
             {...buttonProps}  // Spread remaining props without asChild
         >
             {loading && (

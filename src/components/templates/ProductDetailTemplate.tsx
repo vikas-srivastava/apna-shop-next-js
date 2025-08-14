@@ -36,7 +36,14 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
     const handleAddToCart = async () => {
         setIsLoading(true)
         try {
-            addItem(product, quantity, selectedSize, selectedColor)
+            const result = await addItem(product, quantity, selectedSize, selectedColor)
+            if (!result.success) {
+                // Silence warnings during auth-required flow. CartContext will redirect to /login.
+                if (result.error !== 'AUTH_REQUIRED') {
+                    console.error('Failed to add to cart:', result.error)
+                }
+                return
+            }
         } catch (error) {
             console.error('Failed to add to cart:', error)
         } finally {
@@ -80,13 +87,13 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                 <div className="space-y-4">
                     <div className="relative aspect-square rounded-lg overflow-hidden bg-secondary-50">
                         <Image
-                            src={product.images[0]}
+                            src={(product.images && product.images[0]) || '/globe.svg'}
                             alt={product.name}
                             fill
                             className="object-contain"
                         />
                     </div>
-                    {product.images.length > 1 && (
+                    {product.images && product.images.length > 1 && (
                         <div className="grid grid-cols-4 gap-4">
                             {product.images.slice(1).map((image, index) => (
                                 <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-secondary-50">
@@ -107,7 +114,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                     {/* Header */}
                     <div>
                         <Typography variant="overline" color="secondary">
-                            {product.category.name}
+                            {(product.category && product.category.name) || 'Uncategorized'}
                         </Typography>
                         <Typography variant="h2" weight="bold" className="mt-1">
                             {product.name}
@@ -130,14 +137,14 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                         </div>
                         <div className="flex items-center gap-2 mt-4">
                             <Typography variant="h4" weight="bold" color="primary">
-                                ${product.price.toFixed(2)}
+                                ${(typeof product.price === 'number' ? product.price : 0).toFixed(2)}
                             </Typography>
                             {product.originalPrice && (
                                 <Typography variant="body" color="secondary" className="line-through">
-                                    ${product.originalPrice.toFixed(2)}
+                                    ${(typeof product.originalPrice === 'number' ? product.originalPrice : 0).toFixed(2)}
                                 </Typography>
                             )}
-                            {product.originalPrice && (
+                            {product.originalPrice && typeof product.originalPrice === 'number' && product.originalPrice > 0 && (
                                 <Typography variant="caption" color="error">
                                     {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
                                 </Typography>
@@ -218,7 +225,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => handleQuantityChange(1)}
-                                    disabled={quantity >= product.stockCount}
+                                    disabled={product.stockCount > 0 && quantity >= product.stockCount}
                                     className="rounded-l-none"
                                 >
                                     <Plus className="w-4 h-4" />
@@ -235,7 +242,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                                 variant="primary"
                                 size="lg"
                                 onClick={handleAddToCart}
-                                disabled={!product.inStock || isLoading}
+                                disabled={(product.inStock === false) || isLoading}
                                 className="flex-1 min-w-[200px]"
                             >
                                 {isLoading ? (
@@ -291,7 +298,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                 <Typography variant="h3" weight="bold">
                     You May Also Like
                 </Typography>
-                <RelatedProducts categoryId={product.category.slug} currentProductId={product.id} />
+                <RelatedProducts categoryId={(product.category && product.category.slug) || 'uncategorized'} currentProductId={product.id} />
             </section>
         </div>
     )

@@ -1,67 +1,101 @@
-import { ReactNode } from 'react'
-import { clsx } from 'clsx'
+'use client'
 
-interface CardProps {
+import { ReactNode, useEffect } from 'react'
+import { clsx } from 'clsx'
+import { X } from 'lucide-react'
+
+interface ModalProps {
     children: ReactNode
-    variant?: 'default' | 'outlined' | 'elevated' | 'filled'
-    padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
+    isOpen: boolean
+    onClose: () => void
+    title?: string
     className?: string
-    hover?: boolean
 }
 
 /**
- * Card component for content containers
+ * Modal component for displaying content in an overlay
  * Uses theme-aware styling with CSS variables
  */
-export function Card({
+export function Modal({
     children,
-    variant = 'default',
-    padding = 'md',
+    isOpen,
+    onClose,
+    title,
     className,
-    hover = false,
-}: CardProps) {
+}: ModalProps) {
+    // Close modal on Escape key press
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onClose()
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleEscape)
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden'
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscape)
+            // Restore body scroll when modal is closed
+            document.body.style.overflow = 'auto'
+        }
+    }, [isOpen, onClose])
+
+    if (!isOpen) {
+        return null
+    }
+
     return (
         <div
-            className={clsx(
-                // Base styles
-                'card rounded-theme-lg transition-all duration-200',
-
-                // Variant styles
-                {
-                    'bg-white border border-secondary-200 shadow-sm': variant === 'default',
-                    'bg-white border-2 border-secondary-300': variant === 'outlined',
-                    'bg-white shadow-lg border-0': variant === 'elevated',
-                    'bg-secondary-50 border-0': variant === 'filled',
-                },
-
-                // Padding styles
-                {
-                    'p-0': padding === 'none',
-                    'p-3': padding === 'sm',
-                    'p-4': padding === 'md',
-                    'p-6': padding === 'lg',
-                    'p-8': padding === 'xl',
-                },
-
-                // Hover effects
-                {
-                    'hover:shadow-md hover:scale-[1.02] cursor-pointer': hover,
-                },
-
-                className
-            )}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
+            onClick={onClose}
         >
-            {children}
+            <div
+                className={clsx(
+                    'bg-white rounded-theme-lg shadow-xl w-full max-w-md',
+                    'transform transition-all duration-300 ease-in-out',
+                    className
+                )}
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Header */}
+                {(title || onClose !== undefined) && (
+                    <div className="flex items-center justify-between p-4 border-b border-secondary-200">
+                        {title && (
+                            <h3 className="text-lg font-semibold text-secondary-900">
+                                {title}
+                            </h3>
+                        )}
+                        {onClose && (
+                            <button
+                                onClick={onClose}
+                                className="p-1 text-secondary-500 hover:text-secondary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded"
+                                aria-label="Close"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        )}
+                    </div>
+                )}
+
+                {/* Content */}
+                <div className="p-4">
+                    {children}
+                </div>
+            </div>
         </div>
     )
 }
 
-interface CardHeaderProps {
+interface ModalHeaderProps {
     children: ReactNode
     className?: string
 }
 
-export function CardHeader({ children, className }: CardHeaderProps) {
+export function ModalHeader({ children, className }: ModalHeaderProps) {
     return (
         <div className={clsx('mb-4', className)}>
             {children}
@@ -69,12 +103,12 @@ export function CardHeader({ children, className }: CardHeaderProps) {
     )
 }
 
-interface CardContentProps {
+interface ModalContentProps {
     children: ReactNode
     className?: string
 }
 
-export function CardContent({ children, className }: CardContentProps) {
+export function ModalContent({ children, className }: ModalContentProps) {
     return (
         <div className={clsx('flex-1', className)}>
             {children}
@@ -82,12 +116,12 @@ export function CardContent({ children, className }: CardContentProps) {
     )
 }
 
-interface CardFooterProps {
+interface ModalFooterProps {
     children: ReactNode
     className?: string
 }
 
-export function CardFooter({ children, className }: CardFooterProps) {
+export function ModalFooter({ children, className }: ModalFooterProps) {
     return (
         <div className={clsx('mt-4 pt-4 border-t border-secondary-200', className)}>
             {children}

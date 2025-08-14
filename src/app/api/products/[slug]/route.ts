@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getProduct } from '@/lib/api'
+import { getProduct } from '@/lib/third-party-api'
 
 interface RouteParams {
     params: {
@@ -25,7 +25,7 @@ export async function GET(
             )
         }
 
-        // Fetch product
+        // Fetch product from third-party API
         const response = await getProduct(slug)
 
         if (!response.success) {

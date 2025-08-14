@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react'
 import { Product } from '@/lib/types'
+import * as thirdPartyApi from '@/lib/third-party-api'
+import { useRouter } from 'next/navigation'
 
 export interface CartItem {
     id: string
@@ -25,8 +27,8 @@ type CartAction =
     | { type: 'LOAD_CART'; payload: CartState }
 
 interface CartContextType extends CartState {
-    addItem: (product: Product, quantity?: number, size?: string, color?: string) => void
-    removeItem: (id: string) => void
+    addItem: (product: Product, quantity?: number, size?: string, color?: string) => Promise<{ success: boolean; error?: string }>
+    removeItem: (id: string) => Promise<void>
     updateQuantity: (id: string, quantity: number) => void
     clearCart: () => void
 }
@@ -140,6 +142,7 @@ const initialState: CartState = {
  */
 export function CartProvider({ children }: { children: ReactNode }) {
     const [state, dispatch] = useReducer(cartReducer, initialState)
+    const router = useRouter()
 
     // Load cart from localStorage on mount
     useEffect(() => {
@@ -159,15 +162,94 @@ export function CartProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('cart', JSON.stringify(state))
     }, [state])
 
-    const addItem = (product: Product, quantity = 1, size?: string, color?: string) => {
-        dispatch({
-            type: 'ADD_ITEM',
-            payload: { product, quantity, size, color }
-        })
+    // After successful login, resume any pending "add to cart" intent
+    useEffect(() => {
+        try {
+            const customerId = localStorage.getItem('customer_id');
+            const pending = localStorage.getItem('pending_add_to_cart');
+            if (customerId && pending) {
+                const { product, quantity, size, color } = JSON.parse(pending);
+                // fire-and-forget; addItem will update local state and call API
+                void addItem(product, quantity, size, color);
+                localStorage.removeItem('pending_add_to_cart');
+            }
+        } catch {
+            // no-op
+        }
+    }, [])
+
+    const addItem = async (product: Product, quantity = 1, size?: string, color?: string) => {
+        try {
+            // Load customer_id from localStorage
+            let customerId = localStorage.getItem('customer_id');
+
+            // If not authenticated, persist intent and redirect to login (no alerts)
+            if (!customerId) {
+                try {
+                    localStorage.setItem('pending_add_to_cart', JSON.stringify({ product, quantity, size, color }));
+                } catch { /* best effort */ }
+
+                const returnUrl = typeof window !== 'undefined'
+                    ? `${window.location.pathname}${window.location.search}`
+                    : '/';
+
+                try {
+                    localStorage.setItem('post_login_redirect', returnUrl);
+                } catch { /* best effort */ }
+
+                // Redirect to login with returnUrl
+                router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+
+                // Signal to caller that auth is required (avoid noisy logs)
+                return { success: false, error: 'AUTH_REQUIRED' };
+            }
+
+            // Call the third-party API to add the item to the cart
+            const response = await thirdPartyApi.addToCart({
+                product_id: parseInt(product.id, 10),
+                product_quantity: quantity,
+                product_variant_id: null,
+                product_variant_data: size || color ? [size || '', color || ''] : null,
+                customer_id: customerId
+            });
+
+            if (response.success) {
+                // If the API call was successful, update the local state
+                dispatch({
+                    type: 'ADD_ITEM',
+                    payload: { product, quantity, size, color }
+                });
+                return { success: true };
+            } else {
+                console.error('Failed to add item to cart:', response.error);
+                return { success: false, error: response.error || 'ADD_TO_CART_FAILED' };
+            }
+        } catch (error) {
+            console.error('Error adding item to cart:', error);
+            return { success: false, error: 'ADD_TO_CART_EXCEPTION' };
+        }
     }
 
-    const removeItem = (id: string) => {
-        dispatch({ type: 'REMOVE_ITEM', payload: id })
+    const removeItem = async (id: string) => {
+        try {
+            // Extract the product ID from the cart item ID
+            // The cart item ID is formatted as `${product.id}-${size || 'default'}-${color || 'default'}`
+            const productId = id.split('-')[0];
+
+            // Call the third-party API to remove the item from the cart
+            // Note: This is a simplified implementation. In a real application, you would need
+            // to pass the actual cart item ID to the API.
+            const response = await thirdPartyApi.removeCartItem(productId);
+
+            if (response.success) {
+                // If the API call was successful, update the local state
+                dispatch({ type: 'REMOVE_ITEM', payload: id });
+            } else {
+                console.error('Failed to remove item from cart:', response.error);
+            }
+        } catch (error) {
+            console.error('Error removing item from cart:', error);
+        }
     }
 
     const updateQuantity = (id: string, quantity: number) => {

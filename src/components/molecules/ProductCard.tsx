@@ -34,7 +34,10 @@ export function ProductCard({
         setIsLoading(true)
 
         try {
-            addItem(product)
+            const result = await addItem(product)
+            if (!result.success) {
+                console.error('Failed to add item to cart:', result.error)
+            }
             // Simulate API delay
             await new Promise(resolve => setTimeout(resolve, 500))
         } finally {
@@ -47,7 +50,7 @@ export function ProductCard({
         setIsWishlisted(!isWishlisted)
     }
 
-    const discountPercentage = product.originalPrice
+    const discountPercentage = (product.originalPrice && typeof product.originalPrice === 'number' && product.originalPrice > 0)
         ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
         : 0
 
@@ -61,7 +64,7 @@ export function ProductCard({
                 {/* Image Container */}
                 <div className="relative aspect-square overflow-hidden bg-secondary-50">
                     <Image
-                        src={product.images[0]}
+                        src={(product.images && product.images[0]) || '/globe.svg'}
                         alt={product.name}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -120,7 +123,7 @@ export function ProductCard({
                         color="secondary"
                         className="mb-1 uppercase tracking-wide"
                     >
-                        {product.category.name}
+                        {(product.category && product.category.name) || 'Uncategorized'}
                     </Typography>
 
                     {/* Product Name */}
@@ -152,7 +155,7 @@ export function ProductCard({
                     {/* Price */}
                     <div className="flex items-center gap-2">
                         <Typography variant="subtitle" weight="semibold" color="primary">
-                            ${product.price.toFixed(2)}
+                            ${(typeof product.price === 'number' ? product.price : 0).toFixed(2)}
                         </Typography>
                         {product.originalPrice && (
                             <Typography
@@ -160,7 +163,7 @@ export function ProductCard({
                                 color="secondary"
                                 className="line-through"
                             >
-                                ${product.originalPrice.toFixed(2)}
+                                ${(typeof product.originalPrice === 'number' ? product.originalPrice : 0).toFixed(2)}
                             </Typography>
                         )}
                     </div>

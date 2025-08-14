@@ -1,5 +1,5 @@
 // Client-side theme loader (no fs imports)
-export type { ThemeConfig } from './server-theme-loader'
+import type { ThemeConfig } from './server-theme-loader'
 
 /**
  * Load client-specific theme from API
@@ -29,7 +29,7 @@ export async function loadClientTheme(client: string = 'default'): Promise<Theme
                 ...result.data.colors,
                 text: {
                     ...getDefaultTheme().colors.text,
-                    ...result.data.colors?.text
+                    ...(result.data.colors?.text || {})
                 }
             }
         }
@@ -46,17 +46,17 @@ function getDefaultTheme(): ThemeConfig {
     return {
         colors: {
             primary: {
-                '50': '#fef7ee',
-                '100': '#fdedd3',
-                '200': '#fbd7a5',
-                '300': '#f8bb6d',
-                '400': '#f59432',
-                '500': '#f27b0a',
-                '600': '#e35d05',
-                '700': '#bc4308',
-                '800': '#95350e',
-                '900': '#792d0f',
-                '950': '#431405'
+                '50': '#f0f9ff',
+                '100': '#e0f2fe',
+                '200': '#bae6fd',
+                '300': '#7dd3fc',
+                '400': '#38bdf8',
+                '500': '#0ea5e9',
+                '600': '#0284c7',
+                '700': '#0369a1',
+                '800': '#075985',
+                '900': '#0c4a6e',
+                '950': '#082f49'
             },
             secondary: {
                 '50': '#f8fafc',
@@ -72,17 +72,17 @@ function getDefaultTheme(): ThemeConfig {
                 '950': '#020617'
             },
             accent: {
-                '50': '#f0f9ff',
-                '100': '#e0f2fe',
-                '200': '#bae6fd',
-                '300': '#7dd3fc',
-                '400': '#38bdf8',
-                '500': '#0ea5e9',
-                '600': '#0284c7',
-                '700': '#0369a1',
-                '800': '#075985',
-                '900': '#0c4a6e',
-                '950': '#082f49'
+                '50': '#fef2f2',
+                '100': '#fee2e2',
+                '200': '#fecaca',
+                '300': '#fca5a5',
+                '400': '#f87171',
+                '500': '#ef4444',
+                '600': '#dc2626',
+                '700': '#b91c1c',
+                '800': '#991b1b',
+                '900': '#7f1d1d',
+                '950': '#450a0a'
             },
             success: {
                 '50': '#f0fdf4',
@@ -111,16 +111,16 @@ function getDefaultTheme(): ThemeConfig {
                 '950': '#450a0a'
             },
             warning: {
-                '50': '#fefce8',
-                '100': '#fef9c3',
-                '200': '#fef08a',
-                '300': '#fde047',
-                '400': '#facc15',
-                '500': '#eab308',
-                '600': '#ca8a04',
-                '700': '#a16207',
-                '800': '#854d0e',
-                '900': '#713f12',
+                '50': '#fffbeb',
+                '100': '#fef3c7',
+                '200': '#fde68a',
+                '300': '#fcd34d',
+                '400': '#fbbf24',
+                '500': '#f59e0b',
+                '600': '#d97706',
+                '700': '#b45309',
+                '800': '#92400e',
+                '900': '#78350f',
                 '950': '#422006'
             },
             text: {

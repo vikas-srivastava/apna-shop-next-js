@@ -2,6 +2,30 @@
  * Core type definitions for the e-commerce application
  */
 
+// API Response Types (matching the actual API response structure)
+export interface ApiProduct {
+    id: number
+    name: string
+    slug: string
+    description: string
+    price: string  // API returns price as string
+    old_price: string | null  // API returns old_price as string
+    qty: number
+    images?: string[]  // API may not return images
+    brand: {
+        id: number
+        name: string
+        slug: string
+    }
+    categories: Array<{
+        id: number
+        name: string
+        slug: string
+    }>
+    // Add other fields as needed from the API response
+    [key: string]: any
+}
+
 export interface Product {
     id: string
     name: string

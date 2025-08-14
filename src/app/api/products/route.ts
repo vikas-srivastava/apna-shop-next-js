@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getProducts } from '@/lib/api'
+import { getProducts } from '@/lib/third-party-api'
 import { ProductFilter } from '@/lib/types'
 
 /**
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
             filters.tags = tags.split(',').map(t => t.trim())
         }
 
-        // Fetch products
+        // Fetch products from third-party API
         const response = await getProducts(filters, page, limit)
 
         if (!response.success) {

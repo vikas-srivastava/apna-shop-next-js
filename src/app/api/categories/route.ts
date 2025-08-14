@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getCategories } from '@/lib/api'
+import { getCategories } from '@/lib/third-party-api'
 
 /**
  * GET /api/categories - Get all categories
@@ -7,7 +7,7 @@ import { getCategories } from '@/lib/api'
  */
 export async function GET() {
     try {
-        // Fetch categories
+        // Fetch categories from third-party API
         const response = await getCategories()
 
         if (!response.success) {

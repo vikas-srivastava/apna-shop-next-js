@@ -51,7 +51,9 @@ export function ProductGrid({
                 setLoadingMore(true)
             }
 
+            console.log('Loading products with filters:', filters, 'page:', pageNum, 'limit:', limit);
             const response = await getProducts(filters, pageNum, limit)
+            console.log('Products API response:', response);
 
             if (response.success && response.data) {
                 const newProducts = response.data.data
@@ -65,9 +67,11 @@ export function ProductGrid({
                 setHasMore(response.data.pagination.page < response.data.pagination.totalPages)
                 setPage(pageNum)
             } else {
+                console.error('Failed to load products:', response.error);
                 setError(response.error || 'Failed to load products')
             }
         } catch (err) {
+            console.error('Error loading products:', err);
             setError('An error occurred while loading products')
         } finally {
             setLoading(false)
@@ -225,11 +229,13 @@ export function RelatedProducts({
     useEffect(() => {
         async function loadRelatedProducts() {
             try {
+                console.log('Loading related products for category:', categoryId);
                 const response = await getProducts(
                     { category: categoryId },
                     1,
                     limit + 1 // Get one extra to filter out current product
                 )
+                console.log('Related products API response:', response);
 
                 if (response.success && response.data) {
                     // Filter out current product
@@ -238,6 +244,8 @@ export function RelatedProducts({
                         .slice(0, limit)
                     setProducts(filtered)
                 }
+            } catch (error) {
+                console.error('Error loading related products:', error);
             } finally {
                 setLoading(false)
             }
