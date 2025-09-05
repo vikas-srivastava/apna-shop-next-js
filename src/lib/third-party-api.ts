@@ -6,8 +6,30 @@
 import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User, ApiProduct } from './types'
 
 
-// Base URL for the third-party API
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.THIRD_PARTY_API_URL || 'http://localhost/api'
+// Base URL for the third-party API with multiple fallback options
+const getApiBaseUrl = (): string => {
+    // Priority order for API base URL
+    const urls = [
+        process.env.NEXT_PUBLIC_API_BASE_URL,
+        process.env.THIRD_PARTY_API_URL,
+        process.env.API_BASE_URL,
+        'http://localhost:8000/api', // Common Laravel development port
+        'http://localhost:3001/api', // Alternative development port
+        'http://127.0.0.1:8000/api', // IPv4 localhost
+        'http://localhost/api' // Fallback
+    ]
+
+    // Return the first non-empty URL
+    for (const url of urls) {
+        if (url && url.trim()) {
+            return url.trim()
+        }
+    }
+
+    return 'http://localhost/api' // Final fallback
+}
+
+const API_BASE_URL = getApiBaseUrl()
 
 // Helper function to transform API product to frontend product
 function transformApiProduct(apiProduct: ApiProduct): Product {
@@ -84,72 +106,95 @@ function transformApiProduct(apiProduct: ApiProduct): Product {
     }
 }
 
-// Helper function to make API requests with retry logic
+// Helper function to make API requests with retry logic and fallback endpoints
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     const maxRetries = 3;
     let lastError: any = null;
 
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-        try {
-            const url = `${API_BASE_URL}${endpoint}`;
-            const response = await fetch(url, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Tenant': process.env.NEXT_PUBLIC_TENANT_ID || '',
-                    ...(process.env.NEXT_PUBLIC_TOKEN ? {
-                        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`
-                    } : {}),
-                    ...options.headers,
-                },
-                ...options,
-            });
+    // Try different base URLs if the primary one fails
+    const fallbackUrls = [
+        API_BASE_URL,
+        'http://localhost:8000/api',
+        'http://127.0.0.1:8000/api',
+        'http://localhost:3001/api',
+        'https://api.example.com' // Production fallback (should be configured)
+    ];
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                const message =
-                    (errorData && ((errorData as any).message || (errorData as any).error)) ||
-                    `HTTP error! status: ${response.status}`;
+    for (const baseUrl of fallbackUrls) {
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                const url = `${baseUrl}${endpoint}`;
+                console.log(`Attempting API request to: ${url} (attempt ${attempt + 1})`);
 
-                // Don't retry on client errors (4xx)
-                if (response.status >= 400 && response.status < 500) {
-                    return { success: false, error: message } as ApiResponse<T>;
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Tenant': process.env.NEXT_PUBLIC_TENANT_ID || '',
+                        'X-Requested-With': 'XMLHttpRequest', // For CSRF protection
+                        ...(process.env.NEXT_PUBLIC_TOKEN ? {
+                            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`
+                        } : {}),
+                        ...options.headers,
+                    },
+                    ...options,
+                    // Add timeout
+                    signal: AbortSignal.timeout(10000), // 10 second timeout
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const message =
+                        (errorData && ((errorData as any).message || (errorData as any).error)) ||
+                        `HTTP error! status: ${response.status}`;
+
+                    // Don't retry on client errors (4xx) except 429 (rate limit)
+                    if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+                        return { success: false, error: message } as ApiResponse<T>;
+                    }
+
+                    // For 5xx, network errors, and rate limits: capture and retry
+                    lastError = new Error(message);
+
+                    // If last attempt on last URL, break out and return failure
+                    if (attempt === maxRetries && baseUrl === fallbackUrls[fallbackUrls.length - 1]) {
+                        break;
+                    }
+
+                    // Exponential backoff before retrying (longer for rate limits)
+                    const delay = response.status === 429 ? 5000 : Math.pow(2, attempt) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    continue;
                 }
 
-                // For 5xx and other retryable cases: capture and retry without throwing to avoid noisy stack traces
-                lastError = new Error(message);
+                const data = await response.json().catch(() => ({}));
+                return {
+                    success: true,
+                    data: (data as any).data || (data as any),
+                };
+            } catch (error: any) {
+                lastError = error;
 
-                // If last attempt, break out and return failure below
-                if (attempt === maxRetries) {
+                // If this is a timeout or network error, try next URL
+                if (error.name === 'TimeoutError' || error.name === 'TypeError') {
+                    console.warn(`Network error for ${baseUrl}, trying next fallback URL...`);
+                    break; // Break inner loop to try next URL
+                }
+
+                // Only log on final attempt to reduce console noise
+                if (attempt === maxRetries && baseUrl === fallbackUrls[fallbackUrls.length - 1]) {
+                    console.error(`API request failed for ${endpoint} (final attempt):`, error?.message || error);
                     break;
                 }
 
-                // Exponential backoff before retrying
+                // Exponential backoff before next attempt
                 await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
-                continue;
             }
-
-            const data = await response.json().catch(() => ({}));
-            return {
-                success: true,
-                data: (data as any).data || (data as any),
-            };
-        } catch (error: any) {
-            lastError = error;
-
-            // Only log on final attempt to reduce console noise
-            if (attempt === maxRetries) {
-                console.error(`API request failed for ${endpoint} (attempt ${attempt + 1}):`, error?.message || error);
-                break;
-            }
-
-            // Exponential backoff before next attempt
-            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
         }
     }
 
     return {
         success: false,
-        error: lastError instanceof Error ? lastError.message : 'Unknown error occurred',
+        error: lastError instanceof Error ? lastError.message : 'Unable to connect to API server. Please check your connection and try again.',
     };
 }
 

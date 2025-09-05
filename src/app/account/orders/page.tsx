@@ -106,6 +106,14 @@ export default function OrdersPage() {
                                             View Details
                                         </Button>
                                         <Button variant="secondary" size="sm">
+                                            Track Order
+                                        </Button>
+                                        {order.status === 'Delivered' && (
+                                            <Button variant="outline" size="sm" className="text-error-600 border-error-300 hover:bg-error-50">
+                                                Return & Refund
+                                            </Button>
+                                        )}
+                                        <Button variant="secondary" size="sm">
                                             Reorder
                                         </Button>
                                     </div>

@@ -44,6 +44,8 @@ export async function loadClientTheme(client: string = 'default'): Promise<Theme
  */
 function getDefaultTheme(): ThemeConfig {
     return {
+        name: "Default Theme",
+        version: "1.0.0",
         colors: {
             primary: {
                 '50': '#f0f9ff',
@@ -124,12 +126,12 @@ function getDefaultTheme(): ThemeConfig {
                 '950': '#422006'
             },
             text: {
-                primary: 'var(--color-secondary-900)',
-                secondary: 'var(--color-secondary-600)',
-                accent: 'var(--color-accent-600)',
-                success: 'var(--color-success-600)',
-                error: 'var(--color-error-600)',
-                warning: 'var(--color-warning-600)'
+                primary: '#0f172a',
+                secondary: '#475569',
+                accent: '#dc2626',
+                success: '#16a34a',
+                error: '#dc2626',
+                warning: '#d97706'
             }
         },
         fonts: {

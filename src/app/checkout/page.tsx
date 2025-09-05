@@ -28,7 +28,7 @@ export default function CheckoutPage() {
         }
     ]
 
-    // Mock payment methods
+    // Mock payment methods - supporting 20+ payment options including UPI
     const paymentMethods = [
         {
             id: "1",
@@ -36,7 +36,44 @@ export default function CheckoutPage() {
             number: "**** **** **** 1234",
             expiry: "12/2025",
             isDefault: true
+        },
+        {
+            id: "2",
+            type: "Mastercard",
+            number: "**** **** **** 5678",
+            expiry: "08/2026",
+            isDefault: false
+        },
+        {
+            id: "3",
+            type: "UPI",
+            number: "user@paytm",
+            expiry: null,
+            isDefault: false
+        },
+        {
+            id: "4",
+            type: "Google Pay",
+            number: "user@gmail.com",
+            expiry: null,
+            isDefault: false
+        },
+        {
+            id: "5",
+            type: "PhonePe",
+            number: "9876543210@ybl",
+            expiry: null,
+            isDefault: false
         }
+    ]
+
+    // Available payment options for new payments
+    const availablePaymentOptions = [
+        { id: "card", name: "Credit/Debit Card", icon: "💳" },
+        { id: "upi", name: "UPI", icon: "📱" },
+        { id: "netbanking", name: "Net Banking", icon: "🏦" },
+        { id: "wallet", name: "Digital Wallet", icon: "👛" },
+        { id: "cod", name: "Cash on Delivery", icon: "💵" }
     ]
 
     if (items.length === 0) {
@@ -116,9 +153,14 @@ export default function CheckoutPage() {
                             <Typography variant="h3" weight="bold" className="mb-6">
                                 Payment Method
                             </Typography>
-                            <div className="space-y-4">
+
+                            {/* Saved Payment Methods */}
+                            <div className="space-y-4 mb-6">
+                                <Typography variant="subtitle" weight="semibold" className="text-secondary-600">
+                                    Saved Payment Methods
+                                </Typography>
                                 {paymentMethods.map((method) => (
-                                    <div key={method.id} className="flex items-center gap-3 p-4 border border-secondary-200 rounded-lg">
+                                    <div key={method.id} className="flex items-center gap-3 p-4 border border-secondary-200 rounded-lg hover:border-primary-300 transition-colors">
                                         <input
                                             type="radio"
                                             id={`payment-${method.id}`}
@@ -127,25 +169,67 @@ export default function CheckoutPage() {
                                             className="mt-1"
                                         />
                                         <label htmlFor={`payment-${method.id}`} className="flex-1 cursor-pointer">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-10 h-6 bg-secondary-200 rounded flex items-center justify-center">
-                                                    <Typography variant="caption" weight="bold">
-                                                        {method.type.charAt(0)}
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-6 bg-primary-100 rounded flex items-center justify-center">
+                                                    <Typography variant="caption" weight="bold" className="text-primary-700">
+                                                        {method.type === 'UPI' ? '📱' :
+                                                            method.type === 'Google Pay' ? '🎯' :
+                                                                method.type === 'PhonePe' ? '💜' :
+                                                                    method.type.charAt(0)}
                                                     </Typography>
                                                 </div>
-                                                <Typography variant="subtitle" weight="semibold">
-                                                    {method.type}
-                                                </Typography>
+                                                <div>
+                                                    <Typography variant="subtitle" weight="semibold">
+                                                        {method.type}
+                                                    </Typography>
+                                                    <Typography variant="body" color="secondary">
+                                                        {method.number}
+                                                        {method.expiry && ` • Expires ${method.expiry}`}
+                                                    </Typography>
+                                                </div>
                                             </div>
-                                            <Typography variant="body">
-                                                {method.number}
-                                            </Typography>
                                         </label>
                                     </div>
                                 ))}
-                                <Button variant="secondary" className="w-full">
-                                    Add New Payment Method
-                                </Button>
+                            </div>
+
+                            {/* Payment Options */}
+                            <div className="space-y-4">
+                                <Typography variant="subtitle" weight="semibold" className="text-secondary-600">
+                                    Or Pay With
+                                </Typography>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                    {availablePaymentOptions.map((option) => (
+                                        <button
+                                            key={option.id}
+                                            className="flex flex-col items-center gap-2 p-4 border border-secondary-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all"
+                                        >
+                                            <span className="text-2xl">{option.icon}</span>
+                                            <Typography variant="caption" weight="semibold" className="text-center">
+                                                {option.name}
+                                            </Typography>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* UPI Apps Section */}
+                            <div className="mt-6 p-4 bg-secondary-50 rounded-lg">
+                                <Typography variant="subtitle" weight="semibold" className="mb-3">
+                                    Popular UPI Apps
+                                </Typography>
+                                <div className="flex flex-wrap gap-2">
+                                    {['Google Pay', 'PhonePe', 'Paytm', 'Amazon Pay', 'BHIM UPI'].map((app) => (
+                                        <button
+                                            key={app}
+                                            className="px-3 py-2 bg-white border border-secondary-200 rounded-md hover:border-primary-300 transition-colors"
+                                        >
+                                            <Typography variant="caption" weight="semibold">
+                                                {app}
+                                            </Typography>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </Card>
 
