@@ -83,7 +83,7 @@ export function Footer() {
                         </div>
 
                         {/* Description */}
-                        <Typography variant="body" className="text-[var(--text-secondary)] max-w-md">
+                        <Typography variant="body" className="text-secondary-300 max-w-md">
                             Your one-stop shop for quality products at unbeatable prices.
                             We're committed to providing exceptional customer service and
                             fast, reliable shipping.
@@ -94,7 +94,7 @@ export function Footer() {
                             <Typography variant="subtitle" weight="semibold">
                                 Stay in the loop
                             </Typography>
-                            <Typography variant="caption" className="text-[var(--text-secondary)]">
+                            <Typography variant="caption" className="text-secondary-300">
                                 Subscribe to get special offers, updates, and more.
                             </Typography>
                             <form className="flex gap-2">
@@ -121,7 +121,7 @@ export function Footer() {
                                     <Link
                                         key={link.name}
                                         href={link.href}
-                                        className="block text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-sm transition-colors"
+                                        className="block text-secondary-300 hover:text-white text-sm transition-colors"
                                     >
                                         {link.name}
                                     </Link>
@@ -137,10 +137,10 @@ export function Footer() {
                         <div className="flex items-center space-x-3">
                             <Mail className="w-5 h-5 text-primary-400" />
                             <div>
-                                <Typography variant="caption" className="text-[var(--text-secondary)]">
+                                <Typography variant="caption" className="text-secondary-300">
                                     Email us
                                 </Typography>
-                                <Typography variant="body" className="text-[var(--text-primary)]">
+                                <Typography variant="body" className="text-white">
                                     support@storefront.com
                                 </Typography>
                             </div>
@@ -149,10 +149,10 @@ export function Footer() {
                         <div className="flex items-center space-x-3">
                             <Phone className="w-5 h-5 text-primary-400" />
                             <div>
-                                <Typography variant="caption" className="text-[var(--text-secondary)]">
+                                <Typography variant="caption" className="text-secondary-300">
                                     Call us
                                 </Typography>
-                                <Typography variant="body" className="text-[var(--text-primary)]">
+                                <Typography variant="body" className="text-white">
                                     1-800-STORE-01
                                 </Typography>
                             </div>
@@ -161,10 +161,10 @@ export function Footer() {
                         <div className="flex items-center space-x-3">
                             <MapPin className="w-5 h-5 text-primary-400" />
                             <div>
-                                <Typography variant="caption" className="text-[var(--text-secondary)]">
+                                <Typography variant="caption" className="text-secondary-300">
                                     Visit us
                                 </Typography>
-                                <Typography variant="body" className="text-[var(--text-primary)]">
+                                <Typography variant="body" className="text-white">
                                     123 Commerce St, City, ST 12345
                                 </Typography>
                             </div>
@@ -178,7 +178,7 @@ export function Footer() {
                 <div className="container-theme py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         {/* Copyright */}
-                        <Typography variant="caption" className="text-secondary-400">
+                        <Typography variant="caption" className="text-secondary-300">
                             © {currentYear} StoreFront. All rights reserved.
                         </Typography>
 
@@ -203,7 +203,7 @@ export function Footer() {
 
                         {/* Payment Methods */}
                         <div className="flex items-center space-x-2">
-                            <Typography variant="caption" className="text-secondary-400 mr-2">
+                            <Typography variant="caption" className="text-secondary-300 mr-2">
                                 We accept:
                             </Typography>
                             {/* Payment icons would go here */}
@@ -211,7 +211,7 @@ export function Footer() {
                                 {['Visa', 'MC', 'Amex', 'PayPal'].map((payment) => (
                                     <div
                                         key={payment}
-                                        className="bg-secondary-700 px-2 py-1 rounded text-xs text-secondary-300"
+                                        className="bg-secondary-700 px-2 py-1 rounded text-xs text-secondary-200"
                                     >
                                         {payment}
                                     </div>

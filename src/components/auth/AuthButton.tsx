@@ -1,157 +1,162 @@
 'use client';
 
-import { getSignInUrl, getSignUpUrl, signOut } from '@workos-inc/authkit-nextjs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useSupabaseAuth } from './SupabaseAuthProvider';
+import { Button } from '../atoms/Button';
+import { Typography } from '../atoms/Typography';
 
 export function AuthButton() {
-    const [origin, setOrigin] = useState('');
-    const [stateParam, setStateParam] = useState('');
-    const [isLocal, setIsLocal] = useState(false);
+    const { signIn, signUp, signOut, isAuthenticated, loading, error } = useSupabaseAuth();
+    const [isLoginMode, setIsLoginMode] = useState(true);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => {
-        // Set the origin only on the client side and precompute OAuth state
-        const o = window.location.origin;
-        setOrigin(o);
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !password) return;
 
-        // Detect local development to enable quick login fallback
+        setIsSubmitting(true);
         try {
-            const hn = window.location.hostname;
-            setIsLocal(hn === 'localhost' || hn === '127.0.0.1' || hn === '::1');
-        } catch {
-            setIsLocal(false);
-        }
-
-        try {
-            const ru = localStorage.getItem('post_login_redirect') || `${window.location.pathname}${window.location.search}`;
-            const tenant = process.env.NEXT_PUBLIC_TENANT_ID || '';
-            const st = btoa(JSON.stringify({ ru, t: tenant, ts: Date.now() }));
-            localStorage.setItem('oauth_state', st);
-            setStateParam(st);
-        } catch {
-            // best-effort
-        }
-    }, []);
-
-    const handleLogin = async () => {
-        const email = prompt('Enter your email for login / signup');
-        if (email) {
-            try {
-                // Store email in localStorage for callback processing
-                try {
-                    localStorage.setItem('pending_user_email', email);
-                } catch { }
-                const url = await getSignInUrl({
-                    loginHint: email,
-                    // @ts-ignore - SDK may accept these options
-                    state: stateParam
-                });
-                window.location.href = url;
-            } catch (e: any) {
-                const msg = e?.message || 'Unknown AuthKit error';
-                alert(`AuthKit login error: ${msg}
-- Ensure AuthKit Redirect URI exactly matches: ${origin}/auth/callback
-- Verify NEXT_PUBLIC_WORKOS_CLIENT_ID is valid
-Falling back to Dev Login (local only) if enabled.`);
-                if (isLocal || process.env.NEXT_PUBLIC_DEV_AUTH === 'true') {
-                    await handleDevLogin();
-                }
-            }
-        }
-    };
-
-    const handleRegister = async () => {
-        const email = prompt('Enter your email to register');
-        if (email) {
-            try {
-                // Store email in localStorage for callback processing
-                try {
-                    localStorage.setItem('pending_user_email', email);
-                } catch { }
-                const url = await getSignUpUrl({
-                    loginHint: email,
-                    // @ts-ignore - SDK may accept these options
-                    state: stateParam
-                });
-                window.location.href = url;
-            } catch (e: any) {
-                const msg = e?.message || 'Unknown AuthKit error';
-                alert(`AuthKit signup error: ${msg}
-- Ensure AuthKit Redirect URI exactly matches: ${origin}/auth/callback
-- Verify NEXT_PUBLIC_WORKOS_CLIENT_ID is valid
-Falling back to Dev Login (local only) if enabled.`);
-                if (isLocal || process.env.NEXT_PUBLIC_DEV_AUTH === 'true') {
-                    await handleDevLogin();
-                }
-            }
-        }
-    };
-
-    const handleDevLogin = async () => {
-        try {
-            const storedRU = typeof window !== 'undefined' ? localStorage.getItem('post_login_redirect') : null;
-            const email = prompt('Enter email for Dev Login', 'demo@local.test') || 'demo@local.test';
-            const res = await fetch('/api/auth/sync-customer', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, name: email.split('@')[0], gender: 'male' })
-            });
-            const data = await res.json();
-            if (data?.success && data?.customerId) {
-                localStorage.setItem('customer_id', data.customerId);
-                window.location.href = storedRU || '/';
+            if (isLoginMode) {
+                await signIn(email, password);
             } else {
-                alert('Dev login failed: ' + (data?.error || 'Unknown error'));
+                await signUp(email, password, { full_name: fullName });
             }
-        } catch (e: any) {
-            alert('Dev login exception: ' + (e?.message || 'Unknown'));
+        } catch (error) {
+            console.error('Auth error:', error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
+
+    const handleLogout = async () => {
+        try {
+            await signOut();
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    };
+
+    if (isAuthenticated) {
+        return (
+            <div className="text-center">
+                <Typography variant="body" className="mb-4">
+                    Welcome back! You are logged in.
+                </Typography>
+                <Button onClick={handleLogout} variant="outline">
+                    Logout
+                </Button>
+            </div>
+        );
+    }
 
     return (
-        <div className="flex flex-col gap-4">
-            {/* Magic Link Authentication */}
-            <button
-                onClick={handleLogin}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-                Magic Link Login
-            </button>
-            <button
-                onClick={handleRegister}
-                className="px-4 py-2 bg-green-500 text-white rounded"
-            >
-                Magic Link Register
-            </button>
-
-            {/* Optional: Dev quick login for local development */}
-            {(isLocal || process.env.NEXT_PUBLIC_DEV_AUTH === 'true') && (
-                <button
-                    onClick={handleDevLogin}
-                    className="px-4 py-2 bg-amber-600 text-white rounded"
-                >
-                    Dev Login (local only)
-                </button>
-            )}
-
-            {/* Logout */}
-            <button
-                onClick={() => {
-                    try {
-                        signOut();
-                    } finally {
-                        try {
-                            localStorage.removeItem('customer_id');
-                            localStorage.removeItem('pending_user_email');
-                            localStorage.removeItem('post_login_redirect');
-                            localStorage.removeItem('pending_add_to_cart');
-                            localStorage.removeItem('oauth_state');
-                        } catch { }
+        <div className="space-y-6">
+            <div className="text-center">
+                <Typography variant="h3" weight="bold" className="mb-2">
+                    {isLoginMode ? 'Sign In' : 'Create Account'}
+                </Typography>
+                <Typography variant="body" color="secondary">
+                    {isLoginMode
+                        ? 'Welcome back! Please sign in to your account.'
+                        : 'Join us today! Create your account to get started.'
                     }
-                }}
-                className="px-4 py-2 bg-red-600 text-white rounded"
-            >
-                Logout
-            </button>
+                </Typography>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLoginMode && (
+                    <div>
+                        <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                            Full Name
+                        </label>
+                        <input
+                            id="fullName"
+                            type="text"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter your full name"
+                            required={!isLoginMode}
+                        />
+                    </div>
+                )}
+
+                <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Email Address
+                    </label>
+                    <input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter your email"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                        Password
+                    </label>
+                    <input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter your password"
+                        required
+                    />
+                </div>
+
+                {error && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                        <Typography variant="caption" color="error">
+                            {error.message}
+                        </Typography>
+                    </div>
+                )}
+
+                <Button
+                    type="submit"
+                    className="w-full"
+                    loading={loading || isSubmitting}
+                    disabled={!email || !password || (isSubmitting)}
+                >
+                    {isLoginMode ? 'Sign In' : 'Create Account'}
+                </Button>
+            </form>
+
+            <div className="text-center">
+                <button
+                    type="button"
+                    onClick={() => setIsLoginMode(!isLoginMode)}
+                    className="text-blue-600 hover:text-blue-800 text-sm underline"
+                >
+                    {isLoginMode
+                        ? "Don't have an account? Sign up"
+                        : "Already have an account? Sign in"
+                    }
+                </button>
+            </div>
+
+            <div className="text-center pt-4 border-t border-gray-200">
+                <Typography variant="caption" color="secondary">
+                    By signing in, you agree to our{' '}
+                    <a href="/terms" className="text-blue-600 hover:underline">
+                        Terms of Service
+                    </a>{' '}
+                    and{' '}
+                    <a href="/privacy" className="text-blue-600 hover:underline">
+                        Privacy Policy
+                    </a>
+                </Typography>
+            </div>
         </div>
     );
 }

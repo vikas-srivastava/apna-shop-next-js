@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuthContext } from '@/components/auth/AuthProvider';
+import { useSupabaseAuth } from '@/components/auth/SupabaseAuthProvider';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -14,7 +14,7 @@ interface ProtectedRouteProps {
  */
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const router = useRouter();
-    const { isAuthenticated, loading } = useAuthContext();
+    const { isAuthenticated, loading } = useSupabaseAuth();
 
     useEffect(() => {
         // Check if user is authenticated

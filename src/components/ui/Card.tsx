@@ -20,19 +20,49 @@ export function Card({
     className,
     hover = false,
 }: CardProps) {
+    const getVariantStyles = () => {
+        switch (variant) {
+            case 'default':
+                return {
+                    backgroundColor: 'white',
+                    border: '1px solid rgb(var(--color-secondary-200))',
+                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    color: 'rgb(var(--text-primary))'
+                }
+            case 'outlined':
+                return {
+                    backgroundColor: 'white',
+                    border: '2px solid rgb(var(--color-secondary-300))',
+                    color: 'rgb(var(--text-primary))'
+                }
+            case 'elevated':
+                return {
+                    backgroundColor: 'white',
+                    border: 'none',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    color: 'rgb(var(--text-primary))'
+                }
+            case 'filled':
+                return {
+                    backgroundColor: 'rgb(var(--color-secondary-50))',
+                    border: 'none',
+                    color: 'rgb(var(--text-primary))'
+                }
+            default:
+                return {
+                    backgroundColor: 'white',
+                    border: '1px solid rgb(var(--color-secondary-200))',
+                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    color: 'rgb(var(--text-primary))'
+                }
+        }
+    }
+
     return (
         <div
             className={clsx(
                 // Base styles
-                'card rounded-theme-lg transition-all duration-200 text-[var(--text-primary)]',
-
-                // Variant styles
-                {
-                    'bg-white border border-secondary-200 shadow-sm': variant === 'default',
-                    'bg-white border-2 border-secondary-300': variant === 'outlined',
-                    'bg-white shadow-lg border-0': variant === 'elevated',
-                    'bg-secondary-50 border-0': variant === 'filled',
-                },
+                'rounded-lg transition-all duration-200',
 
                 // Padding styles
                 {
@@ -50,6 +80,7 @@ export function Card({
 
                 className
             )}
+            style={getVariantStyles()}
         >
             {children}
         </div>
@@ -89,7 +120,10 @@ interface CardFooterProps {
 
 export function CardFooter({ children, className }: CardFooterProps) {
     return (
-        <div className={clsx('mt-4 pt-4 border-t border-secondary-200', className)}>
+        <div
+            className={clsx('mt-4 pt-4', className)}
+            style={{ borderTop: '1px solid rgb(var(--color-secondary-200))' }}
+        >
             {children}
         </div>
     )

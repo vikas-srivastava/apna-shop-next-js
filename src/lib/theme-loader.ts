@@ -1,42 +1,166 @@
-// Client-side theme loader (no fs imports)
+import * as yaml from 'js-yaml'
 import type { ThemeConfig } from './server-theme-loader'
 
 /**
- * Load client-specific theme from API
- * @param client Client identifier
+ * Load theme configuration from YAML file
  */
-export async function loadClientTheme(client: string = 'default'): Promise<ThemeConfig> {
+export async function loadThemeConfig(): Promise<ThemeConfig> {
     try {
-        // In a real implementation, this would call your headless e-commerce API
-        const response = await fetch(`/api/themes?client=${client}`)
+        const response = await fetch('/theme.yml')
 
         if (!response.ok) {
-            throw new Error(`Failed to load theme for client: ${client}`)
+            throw new Error('Failed to load theme.yml')
         }
 
-        const result = await response.json()
+        const yamlContent = await response.text()
+        const themeConfig = yaml.load(yamlContent) as any
 
-        if (!result.success) {
-            throw new Error(result.error || 'Failed to load client theme')
-        }
-
-        // Merge with default theme structure
+        // Validate and structure the theme config
         return {
-            ...getDefaultTheme(),
-            ...result.data,
-            colors: {
-                ...getDefaultTheme().colors,
-                ...result.data.colors,
-                text: {
-                    ...getDefaultTheme().colors.text,
-                    ...(result.data.colors?.text || {})
-                }
-            }
+            version: themeConfig.version || '1.0.0',
+            description: themeConfig.description || '',
+            themes: themeConfig.themes || {},
+            layout: themeConfig.layout || {},
+            components: themeConfig.components || {},
+            animation: themeConfig.animation || {}
         }
     } catch (error) {
-        console.warn(`Could not load client theme for ${client}, using default theme`, error)
+        console.warn('Could not load theme.yml, using default theme', error)
         return getDefaultTheme()
     }
+}
+
+/**
+ * Generate theme variations with color and font changes
+ */
+export function generateThemeVariations(baseTheme: any): ThemeVariation[] {
+    const variations: ThemeVariation[] = []
+
+    // Generate lighter variation
+    variations.push({
+        name: 'Light',
+        colors: lightenColors(baseTheme.colors, 0.1),
+        fonts: baseTheme.typography?.fontFamily || {}
+    })
+
+    // Generate darker variation
+    variations.push({
+        name: 'Dark',
+        colors: darkenColors(baseTheme.colors, 0.1),
+        fonts: baseTheme.typography?.fontFamily || {}
+    })
+
+    // Generate complementary color variation
+    variations.push({
+        name: 'Complementary',
+        colors: generateComplementaryColors(baseTheme.colors),
+        fonts: baseTheme.typography?.fontFamily || {}
+    })
+
+    return variations
+}
+
+/**
+ * Lighten colors by a percentage
+ */
+function lightenColors(colors: any, amount: number): any {
+    const lightened: any = {}
+
+    Object.entries(colors).forEach(([colorName, shades]) => {
+        if (typeof shades === 'object' && shades !== null) {
+            lightened[colorName] = {}
+            Object.entries(shades).forEach(([shade, value]) => {
+                lightened[colorName][shade] = lightenColor(value as string, amount)
+            })
+        }
+    })
+
+    return lightened
+}
+
+/**
+ * Darken colors by a percentage
+ */
+function darkenColors(colors: any, amount: number): any {
+    const darkened: any = {}
+
+    Object.entries(colors).forEach(([colorName, shades]) => {
+        if (typeof shades === 'object' && shades !== null) {
+            darkened[colorName] = {}
+            Object.entries(shades).forEach(([shade, value]) => {
+                darkened[colorName][shade] = darkenColor(value as string, amount)
+            })
+        }
+    })
+
+    return darkened
+}
+
+/**
+ * Generate complementary colors
+ */
+function generateComplementaryColors(colors: any): any {
+    const complementary: any = {}
+
+    Object.entries(colors).forEach(([colorName, shades]) => {
+        if (typeof shades === 'object' && shades !== null) {
+            complementary[colorName] = {}
+            Object.entries(shades).forEach(([shade, value]) => {
+                complementary[colorName][shade] = getComplementaryColor(value as string)
+            })
+        }
+    })
+
+    return complementary
+}
+
+/**
+ * Lighten a color by a percentage
+ */
+function lightenColor(color: string, amount: number): string {
+    // Simple color manipulation - in a real implementation you'd use a proper color library
+    if (color.startsWith('#')) {
+        const num = parseInt(color.replace("#", ""), 16)
+        const amt = Math.round(2.55 * amount * 100)
+        const R = (num >> 16) + amt
+        const G = (num >> 8 & 0x00FF) + amt
+        const B = (num & 0x0000FF) + amt
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1)
+    }
+    return color
+}
+
+/**
+ * Darken a color by a percentage
+ */
+function darkenColor(color: string, amount: number): string {
+    return lightenColor(color, -amount)
+}
+
+/**
+ * Get complementary color
+ */
+function getComplementaryColor(color: string): string {
+    if (color.startsWith('#')) {
+        const num = parseInt(color.replace("#", ""), 16)
+        const R = (num >> 16)
+        const G = (num >> 8 & 0x00FF)
+        const B = (num & 0x0000FF)
+        // Simple complementary calculation
+        return "#" + ((0xFFFFFF ^ num) & 0xFFFFFF).toString(16).padStart(6, '0')
+    }
+    return color
+}
+
+/**
+ * Theme variation interface
+ */
+export interface ThemeVariation {
+    name: string
+    colors: any
+    fonts: any
 }
 
 /**

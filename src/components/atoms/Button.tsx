@@ -27,20 +27,28 @@ export function Button({
     // Extract asChild from props to prevent it from reaching the DOM
     const { asChild, ...buttonProps } = props
 
-    return (
+    const getVariantClasses = () => {
+        switch (variant) {
+            case 'primary':
+                return 'btn-primary'
+            case 'secondary':
+                return 'btn-secondary'
+            case 'outline':
+                return 'btn-outline'
+            case 'ghost':
+                return 'btn-ghost'
+            case 'danger':
+                return 'btn-danger'
+            default:
+                return 'btn-primary'
+        }
+    }
+
+    const buttonElement = (
         <button
             className={clsx(
                 // Base styles
-                'btn inline-flex items-center justify-center font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
-
-                // Variant styles
-                {
-                    'btn-primary bg-primary-500 text-white hover:bg-primary-600 focus-visible:ring-primary-500': variant === 'primary',
-                    'btn-secondary bg-secondary-100 text-[var(--text-primary)] hover:bg-secondary-200 focus-visible:ring-secondary-500': variant === 'secondary',
-                    'border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white focus-visible:ring-primary-500': variant === 'outline',
-                    'text-[var(--text-primary)] hover:bg-secondary-100 focus-visible:ring-secondary-500': variant === 'ghost',
-                    'bg-error-500 text-white hover:bg-error-600 focus-visible:ring-error-500': variant === 'danger',
-                },
+                'inline-flex items-center justify-center font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 rounded-md',
 
                 // Size styles
                 {
@@ -55,9 +63,12 @@ export function Button({
                     'w-full': fullWidth,
                 },
 
+                // Variant styles
+                getVariantClasses(),
+
                 className
             )}
-            disabled={loading}
+            disabled={loading || disabled}
             {...buttonProps}  // Spread remaining props without asChild
         >
             {loading && (
@@ -84,4 +95,14 @@ export function Button({
             {children}
         </button>
     )
+
+    // If asChild is true, we need to handle the case where this button is used as a child of another component
+    // This is typically used with Radix UI or similar libraries
+    if (asChild) {
+        // For now, just return the button element as is
+        // In a full implementation, you'd use a library like @radix-ui/react-slot
+        return buttonElement
+    }
+
+    return buttonElement
 }

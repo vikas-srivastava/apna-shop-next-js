@@ -3,12 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ShoppingCart, User, Menu, X, Heart } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Heart, LogOut, ChevronDown } from 'lucide-react'
 import { Button } from '../atoms/Button'
 import { Typography } from '../atoms/Typography'
 import { HeaderSearchBar } from '../molecules/HeaderSearchBar'
 import { CompactThemeSwitcher } from '../molecules/ThemeSwitcher'
 import { useCart } from '@/contexts/CartContext'
+import { useSupabaseAuth } from '../auth/SupabaseAuthProvider'
+import { LogoutButton } from '../auth/LogoutButton'
 import { useRouter } from 'next/navigation'
 
 interface HeaderProps {
@@ -21,6 +23,7 @@ interface HeaderProps {
 export function Header({ onSearch }: HeaderProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const { itemCount } = useCart()
+    const { isAuthenticated, user } = useSupabaseAuth()
     const router = useRouter()
     const pathname = usePathname()
 
@@ -85,12 +88,23 @@ export function Header({ onSearch }: HeaderProps) {
                             </Link>
                         </Button>
 
-                        {/* User Account */}
-                        <Button variant="ghost" size="sm" className="p-2" asChild>
-                            <Link href="/account">
-                                <User className="w-5 h-5" />
-                            </Link>
-                        </Button>
+                        {/* User Account / Auth */}
+                        {isAuthenticated ? (
+                            <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="sm" className="p-2" asChild>
+                                    <Link href="/account">
+                                        <User className="w-5 h-5" />
+                                    </Link>
+                                </Button>
+                                <LogoutButton />
+                            </div>
+                        ) : (
+                            <Button variant="ghost" size="sm" className="p-2" asChild>
+                                <Link href="/login">
+                                    <User className="w-5 h-5" />
+                                </Link>
+                            </Button>
+                        )}
 
                         {/* Shopping Cart */}
                         <Button variant="ghost" size="sm" className="p-2 relative" asChild>

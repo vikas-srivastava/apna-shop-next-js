@@ -57,7 +57,12 @@ export default async function HomePage() {
 
       <div className="space-y-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 to-accent-50">
+        <section
+          className="relative overflow-hidden"
+          style={{
+            background: `linear-gradient(to bottom right, rgb(var(--color-primary-50)), rgb(var(--color-accent-50)))`
+          }}
+        >
           <div className="container-theme py-20 lg:py-32">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Hero Content */}
@@ -68,13 +73,14 @@ export default async function HomePage() {
                     className="text-4xl lg:text-6xl font-bold leading-tight"
                   >
                     Discover Your
-                    <span className="text-primary-600"> Perfect</span>
+                    <span style={{ color: 'rgb(var(--color-primary-600))' }}> Perfect</span>
                     <br />
                     Shopping Experience
                   </Typography>
                   <Typography
                     variant="body"
-                    className="text-xl text-secondary-600 max-w-lg"
+                    className="text-xl max-w-lg"
+                    style={{ color: 'rgb(var(--text-secondary))' }}
                   >
                     From the latest electronics to timeless fashion, find everything
                     you need with unbeatable prices and lightning-fast delivery.
@@ -98,26 +104,26 @@ export default async function HomePage() {
                 {/* Stats */}
                 <div className="flex gap-8 pt-8">
                   <div>
-                    <Typography variant="h4" weight="bold" color="primary">
+                    <Typography variant="h4" weight="bold" style={{ color: 'rgb(var(--color-primary-600))' }}>
                       50K+
                     </Typography>
-                    <Typography variant="caption" color="secondary">
+                    <Typography variant="caption" style={{ color: 'rgb(var(--text-secondary))' }}>
                       Happy Customers
                     </Typography>
                   </div>
                   <div>
-                    <Typography variant="h4" weight="bold" color="primary">
+                    <Typography variant="h4" weight="bold" style={{ color: 'rgb(var(--color-primary-600))' }}>
                       10K+
                     </Typography>
-                    <Typography variant="caption" color="secondary">
+                    <Typography variant="caption" style={{ color: 'rgb(var(--text-secondary))' }}>
                       Products
                     </Typography>
                   </div>
                   <div>
-                    <Typography variant="h4" weight="bold" color="primary">
+                    <Typography variant="h4" weight="bold" style={{ color: 'rgb(var(--color-primary-600))' }}>
                       4.9★
                     </Typography>
-                    <Typography variant="caption" color="secondary">
+                    <Typography variant="caption" style={{ color: 'rgb(var(--text-secondary))' }}>
                       Average Rating
                     </Typography>
                   </div>
@@ -136,16 +142,22 @@ export default async function HomePage() {
                   />
 
                   {/* Floating Cards */}
-                  <div className="absolute -top-4 -left-4 bg-white p-4 rounded-xl shadow-lg animate-bounce-subtle">
+                  <div
+                    className="absolute -top-4 -left-4 p-4 rounded-xl shadow-lg animate-bounce-subtle"
+                    style={{ backgroundColor: 'white' }}
+                  >
                     <div className="flex items-center gap-2">
-                      <Star className="w-5 h-5 text-warning-400 fill-current" />
+                      <Star className="w-5 h-5" style={{ color: 'rgb(var(--color-warning-400))', fill: 'currentColor' }} />
                       <Typography variant="caption" weight="semibold">
                         4.9 Rating
                       </Typography>
                     </div>
                   </div>
 
-                  <div className="absolute -bottom-4 -right-4 bg-primary-500 text-white p-4 rounded-xl shadow-lg animate-bounce-subtle" style={{ animationDelay: '0.5s' }}>
+                  <div
+                    className="absolute -bottom-4 -right-4 p-4 rounded-xl shadow-lg animate-bounce-subtle"
+                    style={{ backgroundColor: 'rgb(var(--color-primary-500))', color: 'white' }}
+                  >
                     <Typography variant="caption" weight="semibold">
                       Free Shipping!
                     </Typography>
@@ -158,19 +170,41 @@ export default async function HomePage() {
 
         {/* Shiny Banner Section 1 - After Hero */}
         <section className="relative overflow-hidden">
-          <div className="bg-gradient-to-r from-warning-400 via-warning-300 to-warning-400 py-8">
+          <div
+            className="py-8"
+            style={{
+              background: `linear-gradient(to right, rgb(var(--color-warning-400)), rgb(var(--color-warning-300)), rgb(var(--color-warning-400)))`
+            }}
+          >
             <div className="container-theme">
               <div className="flex items-center justify-center gap-6 text-center">
-                <Zap className="w-8 h-8 text-warning-800 animate-pulse" />
+                <Zap
+                  className="w-8 h-8 animate-pulse"
+                  style={{ color: 'rgb(var(--color-warning-800))' }}
+                />
                 <div>
-                  <Typography variant="h3" weight="bold" className="text-warning-900 mb-2">
+                  <Typography
+                    variant="h3"
+                    weight="bold"
+                    style={{ color: 'rgb(var(--color-warning-900))' }}
+                    className="mb-2"
+                  >
                     ⚡ MEGA FLASH SALE ⚡
                   </Typography>
-                  <Typography variant="body" className="text-warning-800">
+                  <Typography
+                    variant="body"
+                    style={{ color: 'rgb(var(--color-warning-800))' }}
+                  >
                     Up to 70% OFF on Electronics | Limited Time Only!
                   </Typography>
                 </div>
-                <Button className="bg-warning-700 hover:bg-warning-800 text-white">
+                <Button
+                  style={{
+                    backgroundColor: 'rgb(var(--color-warning-700))',
+                    color: 'white',
+                    '&:hover': { backgroundColor: 'rgb(var(--color-warning-800))' }
+                  }}
+                >
                   Shop Sale
                 </Button>
               </div>
@@ -258,29 +292,41 @@ export default async function HomePage() {
 
         {/* Shiny Banner Section 2 - Mid Page */}
         <section className="relative overflow-hidden">
-          <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 py-12">
+          <div
+            className="py-12"
+            style={{
+              background: `linear-gradient(to right, rgb(var(--color-primary-600)), rgb(var(--color-primary-500)), rgb(var(--color-primary-600)))`
+            }}
+          >
             <div className="container-theme">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center md:text-left">
-                <div className="text-white">
+                <div style={{ color: 'white' }}>
                   <Gift className="w-12 h-12 mx-auto md:mx-0 mb-4 animate-bounce" />
-                  <Typography variant="h4" weight="bold" className="mb-2">
+                  <Typography variant="h4" weight="bold" className="mb-2" style={{ color: 'white' }}>
                     Exclusive Deals
                   </Typography>
-                  <Typography variant="body" className="opacity-90">
+                  <Typography variant="body" className="opacity-90" style={{ color: 'white' }}>
                     Member-only special offers
                   </Typography>
                 </div>
-                <div className="text-white">
+                <div style={{ color: 'white' }}>
                   <Trophy className="w-12 h-12 mx-auto md:mx-0 mb-4 animate-bounce" style={{ animationDelay: '0.2s' }} />
-                  <Typography variant="h4" weight="bold" className="mb-2">
+                  <Typography variant="h4" weight="bold" className="mb-2" style={{ color: 'white' }}>
                     Premium Quality
                   </Typography>
-                  <Typography variant="body" className="opacity-90">
+                  <Typography variant="body" className="opacity-90" style={{ color: 'white' }}>
                     Award-winning products
                   </Typography>
                 </div>
                 <div className="text-center">
-                  <Button className="bg-white text-primary-600 hover:bg-gray-100 font-bold px-8 py-3">
+                  <Button
+                    className="font-bold px-8 py-3"
+                    style={{
+                      backgroundColor: 'white',
+                      color: 'rgb(var(--color-primary-600))',
+                      '&:hover': { backgroundColor: 'rgb(var(--color-secondary-100))' }
+                    }}
+                  >
                     Join VIP Club
                   </Button>
                 </div>
@@ -304,13 +350,13 @@ export default async function HomePage() {
         </section>
 
         {/* Newsletter Section */}
-        <section className="bg-primary-500">
+        <section style={{ backgroundColor: 'rgb(var(--color-primary-500))' }}>
           <div className="container-theme py-16">
             <div className="max-w-2xl mx-auto text-center space-y-6">
-              <Typography variant="h3" weight="bold" className="text-white">
+              <Typography variant="h3" weight="bold" style={{ color: 'white' }}>
                 Stay Updated with Our Latest Offers
               </Typography>
-              <Typography variant="body" className="text-primary-100">
+              <Typography variant="body" style={{ color: 'rgb(var(--color-primary-100))' }}>
                 Subscribe to our newsletter and be the first to know about
                 exclusive deals, new arrivals, and special promotions.
               </Typography>
@@ -319,7 +365,12 @@ export default async function HomePage() {
                 <input
                   type="email"
                   placeholder="Enter your email address"
-                  className="input flex-1 bg-white border-0 text-gray-900"
+                  className="input flex-1"
+                  style={{
+                    backgroundColor: 'white',
+                    color: 'rgb(var(--text-primary))',
+                    border: '1px solid rgb(var(--color-secondary-300))'
+                  }}
                   required
                 />
                 <Button variant="secondary" size="md" type="submit">
@@ -327,7 +378,7 @@ export default async function HomePage() {
                 </Button>
               </form>
 
-              <Typography variant="caption" className="text-primary-200">
+              <Typography variant="caption" style={{ color: 'rgb(var(--color-primary-200))' }}>
                 No spam, unsubscribe anytime. Read our privacy policy.
               </Typography>
             </div>
@@ -336,20 +387,32 @@ export default async function HomePage() {
 
         {/* Shiny Banner Section 3 - Before Footer */}
         <section className="relative overflow-hidden">
-          <div className="bg-gradient-to-r from-success-500 via-success-400 to-success-500 py-10">
+          <div
+            className="py-10"
+            style={{
+              background: `linear-gradient(to right, rgb(var(--color-success-500)), rgb(var(--color-success-400)), rgb(var(--color-success-500)))`
+            }}
+          >
             <div className="container-theme text-center">
               <div className="space-y-4">
-                <Typography variant="h2" weight="bold" className="text-white">
+                <Typography variant="h2" weight="bold" style={{ color: 'white' }}>
                   🌟 Don't Miss Out! 🌟
                 </Typography>
-                <Typography variant="h4" className="text-success-100">
+                <Typography variant="h4" style={{ color: 'rgb(var(--color-success-100))' }}>
                   Last chance to grab amazing deals before they're gone!
                 </Typography>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Button className="bg-white text-success-600 hover:bg-gray-100 font-bold px-8 py-3">
+                  <Button
+                    className="font-bold px-8 py-3"
+                    style={{
+                      backgroundColor: 'white',
+                      color: 'rgb(var(--color-success-600))',
+                      '&:hover': { backgroundColor: 'rgb(var(--color-secondary-100))' }
+                    }}
+                  >
                     Shop Final Sale
                   </Button>
-                  <Typography variant="body" className="text-success-100 font-semibold">
+                  <Typography variant="body" className="font-semibold" style={{ color: 'rgb(var(--color-success-100))' }}>
                     ⏰ Ends in 24 hours!
                   </Typography>
                 </div>

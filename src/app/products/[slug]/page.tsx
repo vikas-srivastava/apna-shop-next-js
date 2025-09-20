@@ -4,16 +4,17 @@ import { ProductDetailTemplate } from '@/components/templates/ProductDetailTempl
 import { getProduct } from '@/lib/api'
 
 interface ProductPageProps {
-    params: {
+    params: Promise<{
         slug: string
-    }
+    }>
 }
 
 /**
  * Generate metadata for SEO
  */
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-    const response = await getProduct(params.slug)
+    const { slug } = await params
+    const response = await getProduct(slug)
 
     if (!response.success || !response.data) {
         return {
@@ -61,7 +62,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
  * Product detail page component
  */
 export default async function ProductPage({ params }: ProductPageProps) {
-    const response = await getProduct(params.slug)
+    const { slug } = await params
+    const response = await getProduct(slug)
 
     if (!response.success || !response.data) {
         notFound()

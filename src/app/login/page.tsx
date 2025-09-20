@@ -4,7 +4,7 @@ import { Typography } from '@/components/atoms/Typography'
 import { Card } from '@/components/ui/Card'
 import { AuthButton } from '@/components/auth/AuthButton'
 import Link from 'next/link'
-import { useAuthContext } from '@/components/auth/AuthProvider'
+import { useSupabaseAuth } from '@/components/auth/SupabaseAuthProvider'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 
@@ -12,7 +12,7 @@ import { useEffect } from 'react'
  * Login page
  */
 export default function LoginPage() {
-    const { isAuthenticated, loading } = useAuthContext()
+    const { isAuthenticated, loading } = useSupabaseAuth()
     const router = useRouter()
     const searchParams = useSearchParams()
 

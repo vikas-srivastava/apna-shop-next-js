@@ -5,7 +5,9 @@ import * as path from 'path'
 export interface ThemeConfig {
     name?: string
     version?: string
-    colors: {
+    description?: string
+    themes?: Record<string, any>
+    colors?: {
         primary: Record<string, string>
         secondary: Record<string, string>
         accent: Record<string, string>
@@ -22,12 +24,12 @@ export interface ThemeConfig {
             warning: string
         }
     }
-    fonts: {
+    fonts?: {
         sans: string
         serif: string
         mono: string
     }
-    components: {
+    components?: {
         button: {
             borderRadius: string
             fontWeight: string
@@ -45,7 +47,7 @@ export interface ThemeConfig {
             fontSize: string
         }
     }
-    layout: {
+    layout?: {
         containerMaxWidth: string
         borderRadius: {
             sm: string
@@ -63,6 +65,7 @@ export interface ThemeConfig {
             '3xl': string
         }
     }
+    animation?: any
 }
 
 /**
@@ -84,7 +87,7 @@ export function loadTheme(): ThemeConfig {
                 ...getDefaultTheme().colors,
                 ...themeConfig.colors,
                 text: {
-                    ...getDefaultTheme().colors.text,
+                    ...getDefaultTheme().colors?.text,
                     ...themeConfig.colors?.text
                 }
             }
@@ -105,17 +108,17 @@ function getDefaultTheme(): ThemeConfig {
         version: "1.0.0",
         colors: {
             primary: {
-                '50': '#f0f9ff',
-                '100': '#e0f2fe',
-                '200': '#bae6fd',
-                '300': '#7dd3fc',
-                '400': '#38bdf8',
-                '500': '#0ea5e9',
-                '600': '#0284c7',
-                '700': '#0369a1',
-                '800': '#075985',
-                '900': '#0c4a6e',
-                '950': '#082f49'
+                '50': '#f8fafc',
+                '100': '#f1f5f9',
+                '200': '#e2e8f0',
+                '300': '#cbd5e1',
+                '400': '#94a3b8',
+                '500': '#64748b',
+                '600': '#475569',
+                '700': '#334155',
+                '800': '#1e293b',
+                '900': '#0f172a',
+                '950': '#020617'
             },
             secondary: {
                 '50': '#f8fafc',
@@ -183,12 +186,12 @@ function getDefaultTheme(): ThemeConfig {
                 '950': '#422006'
             },
             text: {
-                primary: '#0f172a',
-                secondary: '#475569',
-                accent: '#dc2626',
-                success: '#16a34a',
-                error: '#dc2626',
-                warning: '#d97706'
+                primary: '#000000',
+                secondary: '#374151',
+                accent: '#1d4ed8',
+                success: '#166534',
+                error: '#991b1b',
+                warning: '#92400e'
             }
         },
         fonts: {

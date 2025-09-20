@@ -1,92 +1,30 @@
 @import "tailwindcss";
 
-/* CSS Variables for Dynamic Theming */
+/* Dynamic CSS Variables for Theme System */
+/* All theme colors are dynamically applied via ThemeContext */
+/* This file provides base structure and component styles only */
+
 :root {
-  /* Primary Colors - will be overridden by client themes */
-  --color-primary-50: 254 247 238;
-  --color-primary-100: 253 237 211;
-  --color-primary-200: 251 215 165;
-  --color-primary-300: 248 187 109;
-  --color-primary-400: 245 148 50;
-  --color-primary-500: 242 123 10;
-  --color-primary-600: 227 93 5;
-  --color-primary-700: 188 67 8;
-  --color-primary-800: 149 53 14;
-  --color-primary-900: 121 45 15;
-  --color-primary-950: 67 20 5;
-
-  /* Secondary Colors - will be overridden by client themes */
-  --color-secondary-50: 248 250 252;
-  --color-secondary-100: 241 245 249;
-  --color-secondary-200: 226 232 240;
-  --color-secondary-300: 203 213 225;
-  --color-secondary-400: 148 163 184;
-  --color-secondary-500: 100 116 139;
-  --color-secondary-600: 71 85 105;
-  --color-secondary-700: 51 65 85;
-  --color-secondary-800: 30 41 59;
-  --color-secondary-900: 15 23 42;
-  --color-secondary-950: 2 6 23;
-
-  /* Text Colors - will be overridden by client themes */
-  --text-primary: var(--color-secondary-900);
-  --text-secondary: var(--color-secondary-600);
-  --text-accent: var(--color-accent-600);
-  --text-success: var(--color-success-600);
-  --text-error: var(--color-error-600);
-  --text-warning: var(--color-warning-600);
-
-  /* Component Variables */
-  --button-border-radius: 8px;
+  /* Base component variables - shared across all themes */
+  --button-border-radius: 0.5rem;
   --button-font-weight: 600;
   --button-transition: all 0.2s ease-in-out;
 
-  --card-border-radius: 12px;
+  --card-border-radius: 0.75rem;
   --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --card-padding: 1.5rem;
 
-  --input-border-radius: 8px;
+  --input-border-radius: 0.5rem;
   --input-border-width: 1px;
   --input-padding: 0.75rem 1rem;
   --input-font-size: 1rem;
+
+  /* Layout variables */
+  --container-max-width: 1280px;
+  --container-padding: 1rem;
 }
 
-/* Dark theme variables */
-.dark {
-  --color-primary-50: 67 20 5;
-  --color-primary-100: 121 45 15;
-  --color-primary-200: 149 53 14;
-  --color-primary-300: 188 67 8;
-  --color-primary-400: 227 93 5;
-  --color-primary-500: 242 123 10;
-  --color-primary-600: 245 148 50;
-  --color-primary-700: 248 187 109;
-  --color-primary-800: 251 215 165;
-  --color-primary-900: 253 237 211;
-  --color-primary-950: 254 247 238;
-
-  /* Dark mode secondary colors */
-  --color-secondary-50: 2 6 23;
-  --color-secondary-100: 15 23 42;
-  --color-secondary-200: 30 41 59;
-  --color-secondary-300: 51 65 85;
-  --color-secondary-400: 71 85 105;
-  --color-secondary-500: 100 116 139;
-  --color-secondary-600: 148 163 184;
-  --color-secondary-700: 203 213 225;
-  --color-secondary-800: 226 232 240;
-  --color-secondary-900: 241 245 249;
-  --color-secondary-950: 248 250 252;
-
-  --text-primary: var(--color-secondary-50);
-  --text-secondary: var(--color-secondary-300);
-  --text-accent: var(--color-accent-300);
-  --text-success: var(--color-success-300);
-  --text-error: var(--color-error-300);
-  --text-warning: var(--color-warning-300);
-}
-
-/* Custom component styles */
+/* Base component styles using CSS variables */
 @layer components {
   .btn {
     border-radius: var(--button-border-radius);
@@ -98,25 +36,30 @@
   .btn-primary {
     background-color: rgb(var(--color-primary-500));
     color: white;
-    &:hover {
-      background-color: rgb(var(--color-primary-600));
-    }
-    &:focus-visible {
-      outline: 2px solid rgb(var(--color-primary-500));
-      outline-offset: 2px;
-    }
+    @apply text-white;
+  }
+
+  .btn-primary:hover {
+    background-color: rgb(var(--color-primary-600));
+  }
+
+  .btn-primary:focus-visible {
+    outline: 2px solid rgb(var(--color-primary-500));
+    outline-offset: 2px;
   }
 
   .btn-secondary {
     background-color: rgb(var(--color-secondary-100));
     color: rgb(var(--text-primary));
-    &:hover {
-      background-color: rgb(var(--color-secondary-200));
-    }
-    &:focus-visible {
-      outline: 2px solid rgb(var(--color-secondary-500));
-      outline-offset: 2px;
-    }
+  }
+
+  .btn-secondary:hover {
+    background-color: rgb(var(--color-secondary-200));
+  }
+
+  .btn-secondary:focus-visible {
+    outline: 2px solid rgb(var(--color-secondary-500));
+    outline-offset: 2px;
   }
 
   .card {
@@ -126,7 +69,6 @@
     background-color: rgb(var(--color-secondary-50));
     border: 1px solid rgb(var(--color-secondary-200));
     color: rgb(var(--text-primary));
-    @apply bg-white;
   }
 
   .input {
@@ -138,10 +80,11 @@
     color: rgb(var(--text-primary));
     background-color: rgb(var(--color-secondary-50));
     @apply w-full;
-    &:focus {
-      border-color: rgb(var(--color-primary-500));
-      box-shadow: 0 0 0 1px rgb(var(--color-primary-500));
-    }
+  }
+
+  .input:focus {
+    border-color: rgb(var(--color-primary-500));
+    box-shadow: 0 0 0 1px rgb(var(--color-primary-500));
   }
 
   .container-theme {
@@ -149,11 +92,42 @@
   }
 }
 
-/* Global styles */
+/* Global base styles */
 body {
   @apply font-sans antialiased;
   background-color: rgb(var(--color-secondary-50));
   color: rgb(var(--text-primary));
+}
+
+/* Link styles */
+a {
+  color: rgb(var(--text-primary));
+}
+
+a:hover {
+  color: rgb(var(--color-primary-600));
+}
+
+/* Button visibility across themes */
+button {
+  color: rgb(var(--text-primary));
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Prevent theme flash during loading */
+html {
+  visibility: hidden;
+  opacity: 0;
+}
+
+html.theme-loaded {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
 }
 
 /* Smooth transitions for theme switching */

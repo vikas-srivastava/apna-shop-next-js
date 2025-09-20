@@ -4,7 +4,148 @@
  */
 
 import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User, ApiProduct } from './types'
+import { mockApiGenerators, mockApiDelay } from './mock-data'
 
+// Helper function to get mock response based on endpoint
+async function getMockResponse(endpoint: string): Promise<ApiResponse<any> | null> {
+    // Parse endpoint and query parameters
+    const [path, queryString] = endpoint.split('?')
+    const params = new URLSearchParams(queryString || '')
+
+    // Map endpoints to mock generators
+    const endpointMap: Record<string, () => ApiResponse<any>> = {
+        '/shop/get-categories': mockApiGenerators.getCategories,
+        '/shop/get-products': () => {
+            const page = parseInt(params.get('page') || '1')
+            const limit = parseInt(params.get('limit') || '12')
+            return mockApiGenerators.getProducts(page, limit)
+        },
+        '/shop/products-featured': () => {
+            const limit = parseInt(params.get('limit') || '6')
+            return mockApiGenerators.getFeaturedProducts(limit)
+        },
+        '/shop/search': () => {
+            const query = params.get('q') || ''
+            return mockApiGenerators.searchProducts(query)
+        },
+        '/user/register': mockApiGenerators.registerUser,
+        '/user/login': mockApiGenerators.loginUser,
+        '/user/logout': () => ({ success: true, data: null }),
+        '/user/get-profile': mockApiGenerators.getUserProfile,
+        '/user/update-profile': () => ({ success: true, data: 'Profile updated successfully' }),
+        '/user/auth/forgot-password/send-otp': mockApiGenerators.sendForgotPasswordOtp,
+        '/user/auth/forgot-password/reset': mockApiGenerators.resetPassword,
+        '/cart/cart': mockApiGenerators.getCart,
+        '/cart/cart/total': mockApiGenerators.getCartTotal,
+        '/shop/wishlist': mockApiGenerators.getWishlist,
+        '/sitesetting/subscribe': mockApiGenerators.subscribeToNewsletter,
+        '/sitesetting/unsubscribe': () => ({ success: true, data: 'Unsubscribed successfully' }),
+        '/sitesetting/contact-queries': mockApiGenerators.submitContactQuery,
+        '/sitesetting/subscriptions': mockApiGenerators.getSubscriptions,
+        '/shop/reviews': mockApiGenerators.addProductReview,
+        '/shop/create-order': mockApiGenerators.createOrder,
+        '/shop/save-payment-detail': mockApiGenerators.savePaymentDetail,
+        '/shop/get-payments': mockApiGenerators.getPayments,
+        '/shop/create-razorpay-order': mockApiGenerators.createRazorpayOrder,
+        '/shop/verify-razorpay-payment': mockApiGenerators.verifyRazorpayPayment,
+        '/blog/get-posts': mockApiGenerators.getBlogPosts,
+        '/blog/get-categoy': mockApiGenerators.getBlogCategories,
+        '/blog/get-authors': mockApiGenerators.getBlogAuthors,
+        '/blog/comments': mockApiGenerators.addBlogComment,
+        '/cms/content-blocks': mockApiGenerators.getContentBlocks,
+        '/cms/pages': mockApiGenerators.getPages,
+        '/shipping/rates': mockApiGenerators.getShippingRates,
+        '/shipping/providers': mockApiGenerators.getShippingProviders,
+    }
+
+    // Handle dynamic endpoints
+    if (path.startsWith('/shop/product/')) {
+        const slug = path.replace('/shop/product/', '')
+        return mockApiGenerators.getProduct(slug)
+    }
+
+    if (path.startsWith('/shop/products/')) {
+        const productId = path.replace('/shop/products/', '').split('/')[0]
+        if (path.includes('/related')) {
+            const limit = parseInt(params.get('limit') || '4')
+            return mockApiGenerators.getRelatedProducts(productId, limit)
+        }
+    }
+
+    if (path.startsWith('/cart/cart/')) {
+        const itemId = path.replace('/cart/cart/', '')
+        if (path.endsWith('/cart/' + itemId)) {
+            return mockApiGenerators.updateCartItem()
+        }
+    }
+
+    if (path.startsWith('/shop/wishlist-add')) {
+        return mockApiGenerators.addToWishlist()
+    }
+
+    if (path.startsWith('/shop/wishlist-remove/')) {
+        return mockApiGenerators.removeFromWishlist()
+    }
+
+    if (path.startsWith('/products/')) {
+        const productId = path.split('/')[2]
+        if (path.includes('/reviews')) {
+            return mockApiGenerators.getProductReviews()
+        }
+        if (path.includes('/average-rating')) {
+            return { success: true, data: { average_rating: '4.5' } }
+        }
+    }
+
+    if (path.startsWith('/shop/update-status/')) {
+        return mockApiGenerators.updateOrderStatus()
+    }
+
+    if (path.startsWith('/shop/orders/')) {
+        const orderId = path.split('/')[3]
+        if (path.includes('/address')) {
+            return mockApiGenerators.getOrderAddress()
+        }
+        if (path.includes('/payments')) {
+            return mockApiGenerators.getPayments()
+        }
+    }
+
+    if (path.startsWith('/orders/')) {
+        const orderId = path.split('/')[2]
+        if (path.includes('/shipments')) {
+            return mockApiGenerators.getOrderShipments()
+        }
+    }
+
+    if (path.startsWith('/shipping/track/')) {
+        const orderNumber = path.replace('/shipping/track/', '')
+        return mockApiGenerators.trackOrder()
+    }
+
+    if (path.startsWith('/shop/')) {
+        const id = path.split('/')[2]
+        if (path.includes('/refund')) {
+            return mockApiGenerators.getRefundDetails()
+        }
+    }
+
+    if (path.startsWith('/sitesetting/subscription/')) {
+        const email = path.replace('/sitesetting/subscription/', '')
+        return mockApiGenerators.getSubscriptionByEmail()
+    }
+
+    // Check if endpoint has a direct mapping
+    const generator = endpointMap[path]
+    if (generator) {
+        // Add small delay to simulate API call
+        await mockApiDelay(100, 300)
+        return generator()
+    }
+
+    // Return null if no mock found
+    return null
+}
 
 // Base URL for the third-party API with multiple fallback options
 const getApiBaseUrl = (): string => {
@@ -108,6 +249,19 @@ function transformApiProduct(apiProduct: ApiProduct): Product {
 
 // Helper function to make API requests with retry logic and fallback endpoints
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    // Check if mock mode is enabled
+    const isMockMode = process.env.NEXT_PUBLIC_USE_MOCK === 'true'
+
+    if (isMockMode) {
+        console.log(`[MOCK MODE] Returning mock data for endpoint: ${endpoint}`)
+        const mockResponse = await getMockResponse(endpoint)
+        if (mockResponse) {
+            return mockResponse as ApiResponse<T>
+        }
+        // If no mock found, fall back to real API (for development)
+        console.warn(`[MOCK MODE] No mock data found for ${endpoint}, falling back to real API`)
+    }
+
     const maxRetries = 3;
     let lastError: any = null;
 
@@ -124,7 +278,9 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
             try {
                 const url = `${baseUrl}${endpoint}`;
-                console.log(`Attempting API request to: ${url} (attempt ${attempt + 1})`);
+                if (!isMockMode) {
+                    console.log(`Attempting API request to: ${url} (attempt ${attempt + 1})`);
+                }
 
                 const response = await fetch(url, {
                     headers: {
@@ -176,13 +332,17 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
 
                 // If this is a timeout or network error, try next URL
                 if (error.name === 'TimeoutError' || error.name === 'TypeError') {
-                    console.warn(`Network error for ${baseUrl}, trying next fallback URL...`);
+                    if (!isMockMode) {
+                        console.warn(`Network error for ${baseUrl}, trying next fallback URL...`);
+                    }
                     break; // Break inner loop to try next URL
                 }
 
                 // Only log on final attempt to reduce console noise
                 if (attempt === maxRetries && baseUrl === fallbackUrls[fallbackUrls.length - 1]) {
-                    console.error(`API request failed for ${endpoint} (final attempt):`, error?.message || error);
+                    if (!isMockMode) {
+                        console.error(`API request failed for ${endpoint} (final attempt):`, error?.message || error);
+                    }
                     break;
                 }
 

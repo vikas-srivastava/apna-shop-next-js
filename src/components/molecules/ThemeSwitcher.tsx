@@ -1,52 +1,55 @@
 'use client'
 
-import { Sun, Moon, Palette } from 'lucide-react'
+import { Palette } from 'lucide-react'
 import { Button } from '../atoms/Button'
 import { useTheme } from '@/contexts/ThemeContext'
 
 /**
- * Theme switcher component for toggling between light, dark, and custom themes
+ * Theme switcher component for selecting between available light themes
  */
 export function ThemeSwitcher() {
-    const { theme, setTheme } = useTheme()
+    const { currentTheme, availableThemes, setTheme } = useTheme()
 
-    const themes = [
+    const themeOptions = [
         {
-            key: 'light' as const,
-            label: 'Light',
-            icon: Sun,
-            description: 'Clean and bright theme'
+            key: 'classic-light',
+            label: 'Classic Light',
+            description: 'Clean, professional neutral theme'
         },
         {
-            key: 'dark' as const,
-            label: 'Dark',
-            icon: Moon,
-            description: 'Easy on the eyes'
+            key: 'ocean-breeze',
+            label: 'Ocean Breeze',
+            description: 'Refreshing blue and teal theme'
         },
         {
-            key: 'custom' as const,
-            label: 'Custom',
-            icon: Palette,
-            description: 'Your custom theme'
+            key: 'sunset-glow',
+            label: 'Sunset Glow',
+            description: 'Warm orange and pink theme'
+        },
+        {
+            key: 'vibrant-orange',
+            label: 'Vibrant Orange',
+            description: 'Bold orange theme with high contrast'
         }
     ]
 
     return (
         <div className="flex items-center gap-2">
-            {themes.map((themeOption) => {
-                const Icon = themeOption.icon
-                const isActive = theme === themeOption.key
+            {themeOptions.map((themeOption) => {
+                const isActive = currentTheme === themeOption.key
+                const isAvailable = availableThemes.includes(themeOption.key)
 
                 return (
                     <Button
                         key={themeOption.key}
                         variant={isActive ? 'primary' : 'ghost'}
                         size="sm"
-                        onClick={() => setTheme(themeOption.key)}
+                        onClick={() => isAvailable && setTheme(themeOption.key)}
+                        disabled={!isAvailable}
                         className="flex items-center gap-2 px-3 py-2"
                         title={themeOption.description}
                     >
-                        <Icon className="w-4 h-4" />
+                        <Palette className="w-4 h-4" />
                         <span className="hidden sm:inline">{themeOption.label}</span>
                     </Button>
                 )
@@ -56,33 +59,39 @@ export function ThemeSwitcher() {
 }
 
 /**
- * Compact theme switcher that cycles through themes on click
+ * Compact theme switcher that cycles through available themes
  */
 export function CompactThemeSwitcher() {
-    const { theme, toggleTheme } = useTheme()
+    const { currentTheme, availableThemes, setTheme } = useTheme()
 
-    const getIcon = () => {
-        switch (theme) {
-            case 'dark':
-                return Moon
-            case 'custom':
-                return Palette
+    const getThemeLabel = () => {
+        switch (currentTheme) {
+            case 'ocean-breeze':
+                return 'Ocean Breeze'
+            case 'sunset-glow':
+                return 'Sunset Glow'
+            case 'vibrant-orange':
+                return 'Vibrant Orange'
             default:
-                return Sun
+                return 'Classic Light'
         }
     }
 
-    const Icon = getIcon()
+    const cycleTheme = () => {
+        const currentIndex = availableThemes.indexOf(currentTheme)
+        const nextIndex = (currentIndex + 1) % availableThemes.length
+        setTheme(availableThemes[nextIndex])
+    }
 
     return (
         <Button
             variant="ghost"
             size="sm"
-            onClick={toggleTheme}
+            onClick={cycleTheme}
             className="p-2"
-            title={`Current theme: ${theme}. Click to switch.`}
+            title={`Current theme: ${getThemeLabel()}. Click to switch.`}
         >
-            <Icon className="w-5 h-5" />
+            <Palette className="w-5 h-5" />
         </Button>
     )
 }

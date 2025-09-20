@@ -1,31 +1,21 @@
-'use client';
-
 import './globals.css'
 import { ReactNode } from 'react'
-import AuthProvider from '@/components/auth/AuthProvider'
-import { ThemeProvider } from '@/contexts/ThemeContext'
-import { CartProvider } from '@/contexts/CartContext'
-import { Header } from '@/components/organisms/Header'
-import { Footer } from '@/components/organisms/Footer'
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
-import { DiscountBanner } from '@/components/molecules/DiscountOffers'
+import { Metadata } from 'next'
+import ClientLayout from './client-layout'
+
+export const metadata: Metadata = {
+  metadataBase: new URL('http://localhost:3000'),
+  title: 'StoreFront - Your Online Shopping Destination',
+  description: 'Discover amazing products at great prices. Shop electronics, clothing, books, and more.',
+}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <ErrorBoundary>
-          <ThemeProvider>
-            <CartProvider>
-              <AuthProvider>
-                <DiscountBanner />
-                <Header />
-                <main className="min-h-screen">{children}</main>
-                <Footer />
-              </AuthProvider>
-            </CartProvider>
-          </ThemeProvider>
-        </ErrorBoundary>
+      <body suppressHydrationWarning>
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   )

@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/atoms/Button'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import { LogoutButton } from '@/components/auth/LogoutButton'
 
 /**
  * Account dashboard page
@@ -94,6 +95,13 @@ export default function AccountPage() {
                                         </Link>
                                     </Button>
                                 ))}
+                            </div>
+
+                            {/* Logout Section */}
+                            <div className="mt-6 pt-6 border-t border-secondary-200">
+                                <div className="flex justify-center">
+                                    <LogoutButton />
+                                </div>
                             </div>
                         </Card>
 

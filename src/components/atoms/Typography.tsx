@@ -29,7 +29,7 @@ export function Typography({
     children,
     ...props
 }: TypographyProps) {
-    const { theme } = useTheme()
+    const { currentTheme } = useTheme()
 
     // Auto-determine HTML element if not specified
     const Component = as || getDefaultElement(variant)

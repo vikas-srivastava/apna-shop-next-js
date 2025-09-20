@@ -1,17 +1,19 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { loadClientTheme, ThemeConfig } from '@/lib/theme-loader'
+import { loadThemeConfig } from '@/lib/theme-loader'
+import type { ThemeConfig } from '@/lib/server-theme-loader'
 
-type ThemeMode = 'light' | 'dark'
+type ThemeMode = 'light'
 
 interface ThemeContextType {
     theme: ThemeMode
-    client: string
-    clientTheme: ThemeConfig | null
-    setTheme: (theme: ThemeMode) => void
-    setClient: (client: string) => void
-    toggleTheme: () => void
+    currentTheme: string
+    themeConfig: ThemeConfig | null
+    availableThemes: string[]
+    setTheme: (themeName: string) => void
+    exportTheme: () => string
+    importTheme: (themeData: string) => Promise<void>
     isLoading: boolean
 }
 
@@ -19,79 +21,59 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 /**
  * Theme Provider Component
- * Manages global theme state and applies theme to document
+ * Manages global theme state and applies theme variations to document
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setTheme] = useState<ThemeMode>('light')
-    const [client, setClient] = useState<string>('default')
-    const [clientTheme, setClientTheme] = useState<ThemeConfig | null>(null)
+    const [theme] = useState<ThemeMode>('light') // Always light theme
+    const [currentTheme, setCurrentTheme] = useState<string>('classic-light')
+    const [themeConfig, setThemeConfig] = useState<ThemeConfig | null>(null)
+    const [availableThemes, setAvailableThemes] = useState<string[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     // Initialize theme from localStorage on mount
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme') as ThemeMode
-        const savedClient = localStorage.getItem('client') || 'default'
-
-        if (savedTheme) {
-            setTheme(savedTheme)
-        } else {
-            // Check system preference
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-            setTheme(prefersDark ? 'dark' : 'light')
-        }
-
-        setClient(savedClient)
-
-        // Add listener for system theme changes
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        const handleChange = (e: MediaQueryListEvent) => {
-            // Only update if no theme is saved in localStorage (i.e., using system preference)
-            if (!localStorage.getItem('theme')) {
-                setTheme(e.matches ? 'dark' : 'light')
-            }
-        }
-
-        mediaQuery.addEventListener('change', handleChange)
-
-        return () => {
-            mediaQuery.removeEventListener('change', handleChange)
-        }
+        const savedTheme = localStorage.getItem('currentTheme') || 'classic-light'
+        setCurrentTheme(savedTheme)
     }, [])
 
-    // Load client-specific theme
+    // Load theme configuration
     useEffect(() => {
         const loadTheme = async () => {
             setIsLoading(true)
             try {
-                const themeData = await loadClientTheme(client)
-                setClientTheme(themeData)
+                const config = await loadThemeConfig()
+                setThemeConfig(config)
+                setAvailableThemes(Object.keys(config.themes || {}))
             } catch (error) {
-                console.error('Failed to load client theme:', error)
-                setClientTheme(null)
+                console.error('Failed to load theme configuration:', error)
+                setThemeConfig(null)
+                setAvailableThemes([])
             } finally {
                 setIsLoading(false)
+                // Always show the page after theme loading attempt, even if it fails
+                setTimeout(() => {
+                    document.documentElement.classList.add('theme-loaded')
+                }, 100)
             }
         }
 
-        if (client) {
-            loadTheme()
-        }
-    }, [client])
+        loadTheme()
+    }, [])
 
     // Apply theme to document
     useEffect(() => {
         const root = document.documentElement
 
-        // Remove existing theme classes
+        // Apply theme mode class (always light)
         root.classList.remove('light', 'dark')
+        root.classList.add('light')
 
-        // Apply theme mode class
-        root.classList.add(theme)
+        // Apply current theme CSS variables if available
+        if (themeConfig && themeConfig.themes && themeConfig.themes[currentTheme]) {
+            const currentThemeData = themeConfig.themes[currentTheme]
 
-        // Apply client theme CSS variables if available
-        if (clientTheme) {
             // Set color variables
-            Object.entries(clientTheme.colors).forEach(([colorName, shades]) => {
+            Object.entries(currentThemeData.colors).forEach(([colorName, shades]) => {
                 if (typeof shades === 'object' && shades !== null) {
                     Object.entries(shades).forEach(([shade, value]) => {
                         root.style.setProperty(`--color-${colorName}-${shade}`, value as string)
@@ -99,34 +81,74 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
                 }
             })
 
-            // Set text color variables
-            Object.entries(clientTheme.colors.text).forEach(([name, value]) => {
-                root.style.setProperty(`--text-${name}`, value as string)
-            })
-        } else {
-            // If no client theme, remove any existing CSS variables
-            const colorProperties = Array.from(root.style).filter(prop =>
-                prop.startsWith('--color-') || prop.startsWith('--text-')
-            );
-            colorProperties.forEach(prop => root.style.removeProperty(prop));
+            // Set typography variables
+            if (currentThemeData.typography) {
+                Object.entries(currentThemeData.typography.fontFamily).forEach(([name, value]) => {
+                    root.style.setProperty(`--font-${name}`, value as string)
+                })
+                Object.entries(currentThemeData.typography.fontSize).forEach(([name, value]) => {
+                    root.style.setProperty(`--text-${name}`, value as string)
+                })
+                Object.entries(currentThemeData.typography.fontWeight).forEach(([name, value]) => {
+                    root.style.setProperty(`--font-weight-${name}`, value as string)
+                })
+            }
+
+            // Set text color variables for Typography component
+            if (currentThemeData.colors.text) {
+                Object.entries(currentThemeData.colors.text).forEach(([name, value]) => {
+                    root.style.setProperty(`--text-${name}`, value as string)
+                })
+            }
         }
 
         // Save to localStorage
-        localStorage.setItem('theme', theme)
-        localStorage.setItem('client', client)
-    }, [theme, client, clientTheme])
+        localStorage.setItem('currentTheme', currentTheme)
 
-    const toggleTheme = () => {
-        setTheme(current => current === 'light' ? 'dark' : 'light')
+        // Mark theme as loaded to prevent flash
+        setTimeout(() => {
+            root.classList.add('theme-loaded')
+        }, 100)
+    }, [currentTheme, themeConfig])
+
+    const setTheme = (themeName: string) => {
+        if (availableThemes.includes(themeName)) {
+            setCurrentTheme(themeName)
+        }
+    }
+
+    const exportTheme = (): string => {
+        if (!themeConfig) return ''
+        return JSON.stringify(themeConfig, null, 2)
+    }
+
+    const importTheme = async (themeData: string): Promise<void> => {
+        try {
+            const parsed = JSON.parse(themeData)
+            // Validate theme structure
+            if (parsed.themes && typeof parsed.themes === 'object') {
+                setThemeConfig(parsed)
+                setAvailableThemes(Object.keys(parsed.themes))
+                // Apply first available theme
+                const firstTheme = Object.keys(parsed.themes)[0]
+                if (firstTheme) {
+                    setCurrentTheme(firstTheme)
+                }
+            }
+        } catch (error) {
+            console.error('Failed to import theme:', error)
+            throw new Error('Invalid theme data')
+        }
     }
 
     const value: ThemeContextType = {
         theme,
-        client,
-        clientTheme,
+        currentTheme,
+        themeConfig,
+        availableThemes,
         setTheme,
-        setClient,
-        toggleTheme,
+        exportTheme,
+        importTheme,
         isLoading
     }
 
