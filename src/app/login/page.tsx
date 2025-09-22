@@ -30,9 +30,20 @@ export default function LoginPage() {
     }, [searchParams])
 
     useEffect(() => {
-        // Redirect to account page if already authenticated
+        // Redirect after successful login
         if (!loading && isAuthenticated) {
-            router.push('/account')
+            try {
+                const returnUrl = localStorage.getItem('post_login_redirect')
+                if (returnUrl) {
+                    localStorage.removeItem('post_login_redirect')
+                    router.push(returnUrl)
+                } else {
+                    router.push('/account')
+                }
+            } catch (error) {
+                console.error('Failed to get return URL:', error)
+                router.push('/account')
+            }
         }
     }, [isAuthenticated, loading, router])
 

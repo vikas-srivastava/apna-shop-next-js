@@ -1,33 +1,39 @@
 'use client'
 
-import { useCallback, useMemo } from 'react'
-import { useSupabaseAuth } from '../components/auth/SupabaseAuthProvider'
+import { useCallback, useMemo, useState, useEffect } from 'react'
+import { AuthService, AuthUser } from '../lib/auth-service'
 
-// Enhanced useAuth hook with Supabase integration
+// Enhanced useAuth hook with Foundry API integration
 export function useAuth() {
-  const {
-    isAuthenticated,
-    user,
-    loading,
-    error,
-    signIn,
-    signUp,
-    signOut,
-    resetPassword,
-    updatePassword,
-    updateProfile,
-    clearError,
-  } = useSupabaseAuth()
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+
+  // Initialize auth state on mount
+  useEffect(() => {
+    const currentUser = AuthService.getCurrentUser()
+    setUser(currentUser)
+    setLoading(false)
+  }, [])
+
+  const isAuthenticated = useMemo(() => AuthService.isAuthenticated(), [user])
 
   // Enhanced login with better error handling
   const login = useCallback(async (email: string, password: string) => {
+    setLoading(true)
+    setError(null)
+
     try {
-      await signIn(email, password)
+      const { user: loggedInUser } = await AuthService.login(email, password)
+      setUser(loggedInUser)
     } catch (error) {
-      console.error('Login failed:', error)
-      throw error
+      const authError = error instanceof Error ? error : new Error('Login failed')
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
     }
-  }, [signIn])
+  }, [])
 
   // Enhanced register with metadata support
   const register = useCallback(async (userData: {
@@ -35,36 +41,88 @@ export function useAuth() {
     email: string
     password: string
     password_confirmation?: string
+    gender: 'male' | 'female'
   }) => {
+    setLoading(true)
+    setError(null)
+
     try {
-      await signUp(userData.email, userData.password, {
-        full_name: userData.name,
+      const { user: registeredUser } = await AuthService.register({
+        ...userData,
+        password_confirmation: userData.password_confirmation || userData.password
       })
+      setUser(registeredUser)
     } catch (error) {
-      console.error('Registration failed:', error)
-      throw error
+      const authError = error instanceof Error ? error : new Error('Registration failed')
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
     }
-  }, [signUp])
+  }, [])
 
   // Enhanced logout
   const logout = useCallback(async () => {
+    setLoading(true)
+
     try {
-      await signOut()
+      await AuthService.logout()
+      setUser(null)
     } catch (error) {
-      console.error('Logout failed:', error)
-      throw error
+      const authError = error instanceof Error ? error : new Error('Logout failed')
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
     }
-  }, [signOut])
+  }, [])
 
   // Password reset functionality
   const forgotPassword = useCallback(async (email: string) => {
+    setError(null)
+
     try {
-      await resetPassword(email)
+      const result = await AuthService.forgotPassword(email)
+      return result
     } catch (error) {
-      console.error('Password reset failed:', error)
-      throw error
+      const authError = error instanceof Error ? error : new Error('Password reset failed')
+      setError(authError)
+      throw authError
     }
-  }, [resetPassword])
+  }, [])
+
+  // Send password reset OTP
+  const sendPasswordResetOtp = useCallback(async (email: string) => {
+    setError(null)
+
+    try {
+      const result = await AuthService.sendPasswordResetOtp(email)
+      return result
+    } catch (error) {
+      const authError = error instanceof Error ? error : new Error('Failed to send OTP')
+      setError(authError)
+      throw authError
+    }
+  }, [])
+
+  // Reset password with OTP
+  const resetPasswordWithOtp = useCallback(async (data: {
+    email: string
+    otp: string
+    password: string
+    password_confirmation: string
+  }) => {
+    setError(null)
+
+    try {
+      const result = await AuthService.resetPasswordWithOtp(data)
+      return result
+    } catch (error) {
+      const authError = error instanceof Error ? error : new Error('Password reset failed')
+      setError(authError)
+      throw authError
+    }
+  }, [])
 
   // Profile update functionality
   const updateUserProfile = useCallback(async (updates: {
@@ -72,17 +130,25 @@ export function useAuth() {
     avatar_url?: string
     website?: string
   }) => {
+    setError(null)
+
     try {
-      await updateProfile({
-        full_name: updates.name,
-        avatar_url: updates.avatar_url,
-        website: updates.website,
-      })
+      const updatedUser = await AuthService.getProfile()
+      if (updatedUser) {
+        setUser(updatedUser)
+      }
+      return updatedUser
     } catch (error) {
-      console.error('Profile update failed:', error)
-      throw error
+      const authError = error instanceof Error ? error : new Error('Profile update failed')
+      setError(authError)
+      throw authError
     }
-  }, [updateProfile])
+  }, [])
+
+  // Clear error
+  const clearError = useCallback(() => {
+    setError(null)
+  }, [])
 
   // Computed values
   const isLoading = useMemo(() => loading, [loading])
@@ -91,12 +157,12 @@ export function useAuth() {
 
   // Session management
   const isSessionExpiring = useMemo(() => {
-    // Supabase handles session refresh automatically
+    // AuthService handles session management
     return false
   }, [])
 
   const sessionTimeRemaining = useMemo(() => {
-    // Supabase handles session management
+    // AuthService handles session management
     return 0
   }, [])
 
@@ -134,6 +200,8 @@ export function useAuth() {
     register,
     logout,
     forgotPassword,
+    sendPasswordResetOtp,
+    resetPasswordWithOtp,
     updateUserProfile,
 
     // State management

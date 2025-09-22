@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactNode } from 'react'
+
 import SupabaseAuthProvider from '@/components/auth/SupabaseAuthProvider'
-import AuthProvider from '@/components/auth/AuthProvider'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { CartProvider } from '@/contexts/CartContext'
 import { Header } from '@/components/organisms/Header'
@@ -17,16 +17,14 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
         <ErrorBoundary>
           <CartProvider>
             <SupabaseAuthProvider>
-              <AuthProvider>
-                <DiscountBanner />
-                <Header />
-                <main className="min-h-screen">{children}</main>
-                <Footer />
-              </AuthProvider>
+              <DiscountBanner />
+              <Header />
+              <main className="min-h-screen">{children}</main>
+              <Footer />
             </SupabaseAuthProvider>
           </CartProvider>
         </ErrorBoundary>
-      </ThemeProvider>
-    </ErrorBoundary>
+      </ThemeProvider >
+    </ErrorBoundary >
   )
 }

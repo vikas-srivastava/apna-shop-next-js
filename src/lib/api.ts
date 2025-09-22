@@ -5,7 +5,7 @@
 
 import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User } from './types'
 import * as thirdPartyApi from './third-party-api'
-import { mockApiProducts, mockCategories } from './mock-data'
+import { mockApiProducts, mockCategories, mockCart } from './mock-data'
 
 // Environment configuration
 const API_CONFIG = {
@@ -157,7 +157,7 @@ class ApiCache {
     }
 
     ApiLogger.info(`Cache hit for key: ${key}`)
-    return entry.data
+    return entry.data as T
   }
 
   static set<T>(key: string, data: T, ttl = API_CONFIG.cacheTTL): void {
@@ -212,7 +212,7 @@ class RequestDeduplicator {
     }
 
     ApiLogger.info(`Deduplication hit for key: ${key}`)
-    return request.promise
+    return request.promise as Promise<T>
   }
 
   static set<T>(key: string, promise: Promise<T>): void {
@@ -235,7 +235,7 @@ class RequestDeduplicator {
 RequestDeduplicator.init()
 
 // Enhanced API wrapper with interceptors
-class ApiService {
+export class ApiService {
   private static async executeWithMonitoring<T>(
     operation: () => Promise<ApiResponse<T>>,
     method: string,
@@ -297,6 +297,40 @@ class ApiService {
       return {
         success: true,
         data: fallbackData
+      }
+    }
+  }
+  private static async localApiRequest<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await fetch(endpoint, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        return {
+          success: false,
+          error: errorData.message || errorData.error || `HTTP ${response.status}: ${response.statusText}`
+        }
+      }
+
+      const data = await response.json()
+      return {
+        success: true,
+        data: data.data || data,
+      }
+    } catch (error) {
+      ApiLogger.error(`Local API request failed for ${endpoint}`, error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Network error occurred'
       }
     }
   }
@@ -467,6 +501,44 @@ class ApiService {
     )
   }
 
+  // Password reset functionality
+  static async forgotPassword(email: string): Promise<ApiResponse<{ message: string }>> {
+    return await this.executeWithMonitoring(
+      () => thirdPartyApi.forgotPassword(email),
+      'POST',
+      '/user/forgot-password'
+    )
+  }
+
+  static async sendPasswordResetOtp(email: string): Promise<ApiResponse<{ message: string }>> {
+    return await this.executeWithMonitoring(
+      () => thirdPartyApi.sendPasswordResetOtp(email),
+      'POST',
+      '/user/auth/forgot-password/send-otp'
+    )
+  }
+
+  static async resetPasswordWithOtp(data: {
+    email: string
+    otp: string
+    password: string
+    password_confirmation: string
+  }): Promise<ApiResponse<{ message: string }>> {
+    return await this.executeWithMonitoring(
+      () => thirdPartyApi.resetPasswordWithOtp(data),
+      'POST',
+      '/user/auth/forgot-password/reset'
+    )
+  }
+
+  static async logoutUser(): Promise<ApiResponse<null>> {
+    return await this.executeWithMonitoring(
+      () => thirdPartyApi.logoutUser(),
+      'POST',
+      '/user/logout'
+    )
+  }
+
   static async addToCart(productData: {
     product_id: number
     product_quantity: number
@@ -478,17 +550,26 @@ class ApiService {
     ApiCache.clear()
 
     return await this.executeWithMonitoring(
-      () => thirdPartyApi.addToCart(productData),
+      () => this.withFallback(
+        () => this.localApiRequest<string>('/api/cart', {
+          method: 'POST',
+          body: JSON.stringify(productData),
+        }),
+        'Product added to cart successfully'
+      ),
       'POST',
-      '/cart/cart'
+      '/api/cart'
     )
   }
 
   static async getCart(): Promise<ApiResponse<{ items: string; total: string }>> {
     return await this.executeWithMonitoring(
-      () => thirdPartyApi.getCart(),
+      () => this.withFallback(
+        () => this.localApiRequest<{ items: string; total: string }>('/api/cart'),
+        mockCart
+      ),
       'GET',
-      '/cart/cart'
+      '/api/cart'
     )
   }
   static async updateCartItem(
@@ -499,9 +580,15 @@ class ApiService {
     ApiCache.clear()
 
     return await this.executeWithMonitoring(
-      () => thirdPartyApi.updateCartItem(itemId, quantity),
+      () => this.withFallback(
+        () => this.localApiRequest<string>(`/api/cart/${itemId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ product_quantity: quantity }),
+        }),
+        'Cart item updated successfully'
+      ),
       'PUT',
-      `/cart/cart/${itemId}`
+      `/api/cart/${itemId}`
     )
   }
 
@@ -510,17 +597,25 @@ class ApiService {
     ApiCache.clear()
 
     return await this.executeWithMonitoring(
-      () => thirdPartyApi.removeCartItem(itemId),
+      () => this.withFallback(
+        () => this.localApiRequest<null>(`/api/cart/${itemId}`, {
+          method: 'DELETE',
+        }),
+        null
+      ),
       'DELETE',
-      `/cart/cart/${itemId}`
+      `/api/cart/${itemId}`
     )
   }
 
   static async getCartTotal(): Promise<ApiResponse<{ total: string }>> {
     return await this.executeWithMonitoring(
-      () => thirdPartyApi.getCartTotal(),
+      () => this.withFallback(
+        () => this.localApiRequest<{ total: string }>('/api/cart/total'),
+        { total: mockCart.total }
+      ),
       'GET',
-      '/cart/cart/total'
+      '/api/cart/total'
     )
   }
 

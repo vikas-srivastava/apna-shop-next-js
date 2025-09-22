@@ -24,6 +24,8 @@
 - Proper error handling and response normalization added
 - Local CORS-free deployment tested successfully
 - Fixed Class Component compatibility issues in Next.js 13+ app directory by adding 'use client' directive to ErrorBoundary
+- **In-memory storage system implemented for persistent mock data across requests**
+- **CartItem type added to TypeScript definitions**
 - All routes and pages tested successfully (home, shop, login returning 200 status codes)
 
 ## Next Steps

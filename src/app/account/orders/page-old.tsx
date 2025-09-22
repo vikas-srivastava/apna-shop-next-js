@@ -1,141 +1,55 @@
-'use client'
-
 import { Typography } from '@/components/atoms/Typography'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/atoms/Button'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
-import { useSupabaseAuth } from '@/components/auth/SupabaseAuthProvider'
-import { useEffect, useState } from 'react'
-import { mockOrders } from '@/lib/mock-data'
-
-interface Order {
-    id: string
-    orderNumber: string
-    userId: string
-    items: Array<{
-        id: string
-        productId: string
-        product: any
-        quantity: number
-        price: number
-    }>
-    shippingAddress: {
-        id: string
-        firstName: string
-        lastName: string
-        address1: string
-        city: string
-        state: string
-        zipCode: string
-        country: string
-        phone: string
-        isDefault: boolean
-    }
-    billingAddress: {
-        id: string
-        firstName: string
-        lastName: string
-        address1: string
-        city: string
-        state: string
-        zipCode: string
-        country: string
-        phone: string
-        isDefault: boolean
-    }
-    subtotal: number
-    shipping: number
-    tax: number
-    total: number
-    status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
-    createdAt: string
-    updatedAt: string
-}
 
 /**
  * Orders page
  */
 export default function OrdersPage() {
-    const { isAuthenticated, user } = useSupabaseAuth()
-    const [orders, setOrders] = useState<Order[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-
-    useEffect(() => {
-        const fetchOrders = async () => {
-            if (!isAuthenticated) return
-
-            try {
-                setLoading(true)
-                setOrders(mockOrders)
-            } catch (err) {
-                setError('Failed to fetch orders. Please try again.')
-                console.error('Error fetching orders:', err)
-            } finally {
-                setLoading(false)
-            }
+    // Mock order data
+    const orders = [
+        {
+            id: "1003",
+            date: "2024-07-15",
+            status: "Delivered",
+            total: 189.97,
+            items: 3
+        },
+        {
+            id: "1002",
+            date: "2024-06-22",
+            status: "Shipped",
+            total: 89.99,
+            items: 1
+        },
+        {
+            id: "1001",
+            date: "2024-05-30",
+            status: "Delivered",
+            total: 245.50,
+            items: 2
+        },
+        {
+            id: "1000",
+            date: "2024-05-15",
+            status: "Delivered",
+            total: 120.99,
+            items: 1
         }
-
-        fetchOrders()
-    }, [isAuthenticated])
+    ]
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'delivered':
+            case 'Delivered':
                 return 'text-success-600 bg-success-100'
-            case 'shipped':
+            case 'Shipped':
                 return 'text-warning-600 bg-warning-100'
-            case 'processing':
+            case 'Processing':
                 return 'text-primary-600 bg-primary-100'
-            case 'pending':
-                return 'text-secondary-600 bg-secondary-100'
-            case 'cancelled':
-                return 'text-error-600 bg-error-100'
             default:
                 return 'text-secondary-600 bg-secondary-100'
         }
-    }
-
-    if (loading) {
-        return (
-            <ProtectedRoute>
-                <div className="container-theme py-8">
-                    <Typography variant="h1" weight="bold" className="mb-8">
-                        My Orders
-                    </Typography>
-                    <Card className="p-6">
-                        <div className="text-center py-12">
-                            <Typography variant="body">Loading orders...</Typography>
-                        </div>
-                    </Card>
-                </div>
-            </ProtectedRoute>
-        )
-    }
-
-    if (error) {
-        return (
-            <ProtectedRoute>
-                <div className="container-theme py-8">
-                    <Typography variant="h1" weight="bold" className="mb-8">
-                        My Orders
-                    </Typography>
-                    <Card className="p-6">
-                        <div className="text-center py-12">
-                            <Typography variant="h3" weight="bold" className="mb-4 text-error-600">
-                                Error Loading Orders
-                            </Typography>
-                            <Typography variant="body" color="secondary" className="mb-6">
-                                {error}
-                            </Typography>
-                            <Button variant="primary" onClick={() => window.location.reload()}>
-                                Try Again
-                            </Button>
-                        </div>
-                    </Card>
-                </div>
-            </ProtectedRoute>
-        )
     }
 
     return (
@@ -168,18 +82,14 @@ export default function OrdersPage() {
                                         <div>
                                             <div className="flex items-center gap-4">
                                                 <Typography variant="subtitle" weight="semibold">
-                                                    Order #{order.orderNumber}
+                                                    Order #{order.id}
                                                 </Typography>
                                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                                                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                                    {order.status}
                                                 </span>
                                             </div>
                                             <Typography variant="caption" color="secondary" className="mt-1">
-                                                {new Date(order.createdAt).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric'
-                                                })}
+                                                {new Date(order.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                             </Typography>
                                         </div>
                                         <div className="text-right">
@@ -187,7 +97,7 @@ export default function OrdersPage() {
                                                 ${order.total.toFixed(2)}
                                             </Typography>
                                             <Typography variant="caption" color="secondary">
-                                                {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
+                                                {order.items} {order.items === 1 ? 'item' : 'items'}
                                             </Typography>
                                         </div>
                                     </div>
@@ -198,7 +108,7 @@ export default function OrdersPage() {
                                         <Button variant="secondary" size="sm">
                                             Track Order
                                         </Button>
-                                        {order.status === 'delivered' && (
+                                        {order.status === 'Delivered' && (
                                             <Button variant="outline" size="sm" className="text-error-600 border-error-300 hover:bg-error-50">
                                                 Return & Refund
                                             </Button>

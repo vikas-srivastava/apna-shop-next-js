@@ -627,27 +627,33 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     // Check authentication
-    const customerId = localStorage.getItem('customer_id')
+    let customerId = localStorage.getItem('customer_id')
     if (!customerId) {
-      // Store intent for after login
-      try {
-        localStorage.setItem('pending_add_to_cart', JSON.stringify({ product, quantity, size, color }))
-      } catch (error) {
-        CartLogger.error('Failed to store pending cart operation', error)
+      if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+        customerId = 'mock-customer-123'
+        localStorage.setItem('customer_id', customerId)
+        CartLogger.info('Using mock customer ID for testing')
+      } else {
+        // Store intent for after login
+        try {
+          localStorage.setItem('pending_add_to_cart', JSON.stringify({ product, quantity, size, color }))
+        } catch (error) {
+          CartLogger.error('Failed to store pending cart operation', error)
+        }
+
+        const returnUrl = typeof window !== 'undefined'
+          ? `${window.location.pathname}${window.location.search}`
+          : '/'
+
+        try {
+          localStorage.setItem('post_login_redirect', returnUrl)
+        } catch (error) {
+          CartLogger.error('Failed to store return URL', error)
+        }
+
+        router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}`)
+        return { success: false, error: 'AUTH_REQUIRED' }
       }
-
-      const returnUrl = typeof window !== 'undefined'
-        ? `${window.location.pathname}${window.location.search}`
-        : '/'
-
-      try {
-        localStorage.setItem('post_login_redirect', returnUrl)
-      } catch (error) {
-        CartLogger.error('Failed to store return URL', error)
-      }
-
-      router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}`)
-      return { success: false, error: 'AUTH_REQUIRED' }
     }
 
     const itemId = `${product.id}-${size || 'default'}-${color || 'default'}`
@@ -762,21 +768,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
       } else {
         CartLogger.error('API failed to update quantity', response.error)
         // Rollback optimistic update
-        dispatch({ type: 'UPDATE_QUANTITY_FAILURE', payload: {
-          itemId: id,
-          error: response.error || 'UPDATE_QUANTITY_FAILED',
-          previousQuantity: existingItem.quantity
-        } })
+        dispatch({
+          type: 'UPDATE_QUANTITY_FAILURE', payload: {
+            itemId: id,
+            error: response.error || 'UPDATE_QUANTITY_FAILED',
+            previousQuantity: existingItem.quantity
+          }
+        })
         return { success: false, error: response.error || 'UPDATE_QUANTITY_FAILED' }
       }
     } catch (error) {
       CartLogger.error('Exception during quantity update', error)
       // Rollback optimistic update
-      dispatch({ type: 'UPDATE_QUANTITY_FAILURE', payload: {
-        itemId: id,
-        error: 'UPDATE_QUANTITY_EXCEPTION',
-        previousQuantity: existingItem.quantity
-      } })
+      dispatch({
+        type: 'UPDATE_QUANTITY_FAILURE', payload: {
+          itemId: id,
+          error: 'UPDATE_QUANTITY_EXCEPTION',
+          previousQuantity: existingItem.quantity
+        }
+      })
       return { success: false, error: 'UPDATE_QUANTITY_EXCEPTION' }
     }
   }

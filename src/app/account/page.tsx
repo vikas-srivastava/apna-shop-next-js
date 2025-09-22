@@ -1,21 +1,33 @@
+'use client'
+
 import { Typography } from '@/components/atoms/Typography'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/atoms/Button'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { LogoutButton } from '@/components/auth/LogoutButton'
+import { useSupabaseAuth } from '@/components/auth/SupabaseAuthProvider'
+import { mockOrders } from '@/lib/mock-data'
 
 /**
  * Account dashboard page
  */
 export default function AccountPage() {
-    const user = {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        joinDate: "January 15, 2024",
-        totalOrders: 12,
-        wishlistItems: 5
-    }
+    const { user } = useSupabaseAuth()
+
+    // Calculate user stats from real data
+    const totalOrders = mockOrders.length
+    const wishlistItems = 5 // This would come from wishlist API
+    const joinDate = user?.created_at
+        ? new Date(user.created_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })
+        : 'Unknown'
+
+    // Get recent orders (last 3)
+    const recentOrders = mockOrders.slice(0, 3)
 
     const navigation = [
         { name: 'Profile', href: '/account/profile' },
@@ -40,24 +52,24 @@ export default function AccountPage() {
                             <div className="text-center">
                                 <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <Typography variant="h3" weight="bold" color="primary">
-                                        {user.name.charAt(0)}
+                                        {user?.name?.charAt(0) || 'U'}
                                     </Typography>
                                 </div>
                                 <Typography variant="h4" weight="bold">
-                                    {user.name}
+                                    {user?.name || 'User'}
                                 </Typography>
                                 <Typography variant="body" color="secondary" className="mb-4">
-                                    {user.email}
+                                    {user?.email || 'No email'}
                                 </Typography>
                                 <Typography variant="caption" color="secondary">
-                                    Member since {user.joinDate}
+                                    Member since {joinDate}
                                 </Typography>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-secondary-200">
                                 <div className="text-center">
                                     <Typography variant="h4" weight="bold" color="primary">
-                                        {user.totalOrders}
+                                        {totalOrders}
                                     </Typography>
                                     <Typography variant="caption" color="secondary">
                                         Orders
@@ -65,7 +77,7 @@ export default function AccountPage() {
                                 </div>
                                 <div className="text-center">
                                     <Typography variant="h4" weight="bold" color="primary">
-                                        {user.wishlistItems}
+                                        {wishlistItems}
                                     </Typography>
                                     <Typography variant="caption" color="secondary">
                                         Wishlist Items
@@ -118,18 +130,18 @@ export default function AccountPage() {
                                 </Button>
                             </div>
                             <div className="space-y-4">
-                                {[1, 2, 3].map((order) => (
-                                    <div key={order} className="flex items-center justify-between pb-4 border-b border-secondary-100 last:border-0 last:pb-0">
+                                {recentOrders.map((order) => (
+                                    <div key={order.id} className="flex items-center justify-between pb-4 border-b border-secondary-100 last:border-0 last:pb-0">
                                         <div>
                                             <Typography variant="subtitle" weight="semibold">
-                                                Order #{1000 + order}
+                                                Order #{order.orderNumber}
                                             </Typography>
                                             <Typography variant="caption" color="secondary">
-                                                {order === 1 ? 'Processing' : order === 2 ? 'Shipped' : 'Delivered'}
+                                                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                                             </Typography>
                                         </div>
                                         <Typography variant="body" weight="semibold">
-                                            ${(120.99 + order * 20).toFixed(2)}
+                                            ${order.total.toFixed(2)}
                                         </Typography>
                                     </div>
                                 ))}

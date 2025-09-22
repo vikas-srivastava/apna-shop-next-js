@@ -2,16 +2,16 @@
 
 import { LogOut } from 'lucide-react';
 import { Button } from '../atoms/Button';
-import { useAuthContext } from './AuthProvider';
+import { useSupabaseAuth } from './SupabaseAuthProvider';
 import { useRouter } from 'next/navigation';
 
 export function LogoutButton() {
-    const { isAuthenticated, logout } = useAuthContext();
+    const { isAuthenticated, signOut } = useSupabaseAuth();
     const router = useRouter();
 
     const handleLogout = async () => {
         try {
-            await logout();
+            await signOut();
             // Clear any additional tokens if needed
             localStorage.removeItem('auth_token');
             sessionStorage.clear();

@@ -112,6 +112,15 @@ export interface Address {
     isDefault: boolean
 }
 
+export interface CartItem {
+    id: string
+    product_id: number
+    product_quantity: number
+    product_name: string
+    product_price: string
+    product_image: string
+}
+
 export interface Order {
     id: string
     orderNumber: string

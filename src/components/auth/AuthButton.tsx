@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSupabaseAuth } from './SupabaseAuthProvider';
 import { Button } from '../atoms/Button';
 import { Typography } from '../atoms/Typography';
+import Link from 'next/link';
 
 export function AuthButton() {
     const { signIn, signUp, signOut, isAuthenticated, loading, error } = useSupabaseAuth();
@@ -132,7 +133,12 @@ export function AuthButton() {
                 </Button>
             </form>
 
-            <div className="text-center">
+            <div className="text-center space-y-2">
+                {isLoginMode && (
+                    <Link href="/forgot-password" className="text-blue-600 hover:text-blue-800 text-sm underline block">
+                        Forgot your password?
+                    </Link>
+                )}
                 <button
                     type="button"
                     onClick={() => setIsLoginMode(!isLoginMode)}

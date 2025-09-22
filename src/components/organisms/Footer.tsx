@@ -64,7 +64,7 @@ export function Footer() {
     ]
 
     return (
-        <footer className="bg-secondary-900 text-white">
+        <footer className="bg-gray-900 text-white">
             {/* Main Footer */}
             <div className="container-theme py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
@@ -72,18 +72,18 @@ export function Footer() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Logo */}
                         <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                                 <Typography variant="h6" className="text-white font-bold">
                                     S
                                 </Typography>
                             </div>
-                            <Typography variant="h6" weight="bold">
+                            <Typography variant="h6" weight="bold" className="text-white">
                                 StoreFront
                             </Typography>
                         </div>
 
                         {/* Description */}
-                        <Typography variant="body" className="text-secondary-300 max-w-md">
+                        <Typography variant="body" className="text-gray-300 max-w-md">
                             Your one-stop shop for quality products at unbeatable prices.
                             We're committed to providing exceptional customer service and
                             fast, reliable shipping.
@@ -91,19 +91,19 @@ export function Footer() {
 
                         {/* Newsletter Signup */}
                         <div className="space-y-3">
-                            <Typography variant="subtitle" weight="semibold">
+                            <Typography variant="subtitle" weight="semibold" className="text-white">
                                 Stay in the loop
                             </Typography>
-                            <Typography variant="caption" className="text-secondary-300">
+                            <Typography variant="caption" className="text-gray-300">
                                 Subscribe to get special offers, updates, and more.
                             </Typography>
                             <form className="flex gap-2">
                                 <Input
                                     type="email"
                                     placeholder="Enter your email"
-                                    className="flex-1 bg-secondary-800 border-secondary-700 text-[var(--text-primary)] placeholder-[var(--text-secondary)]"
+                                    className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
                                 />
-                                <Button variant="primary" size="md">
+                                <Button variant="primary" size="md" className="bg-blue-600 hover:bg-blue-700 text-white">
                                     Subscribe
                                 </Button>
                             </form>
@@ -113,7 +113,7 @@ export function Footer() {
                     {/* Footer Links */}
                     {footerSections.map((section, index) => (
                         <div key={section.title} className="space-y-4">
-                            <Typography variant="subtitle" weight="semibold">
+                            <Typography variant="subtitle" weight="semibold" className="text-white">
                                 {section.title}
                             </Typography>
                             <nav className="space-y-2">
@@ -121,7 +121,7 @@ export function Footer() {
                                     <Link
                                         key={link.name}
                                         href={link.href}
-                                        className="block text-secondary-300 hover:text-white text-sm transition-colors"
+                                        className="block text-gray-300 hover:text-white text-sm transition-colors"
                                     >
                                         {link.name}
                                     </Link>
@@ -132,12 +132,12 @@ export function Footer() {
                 </div>
 
                 {/* Contact Info */}
-                <div className="mt-12 pt-8 border-t border-secondary-800">
+                <div className="mt-12 pt-8 border-t border-gray-800">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="flex items-center space-x-3">
-                            <Mail className="w-5 h-5 text-primary-400" />
+                            <Mail className="w-5 h-5 text-blue-400" />
                             <div>
-                                <Typography variant="caption" className="text-secondary-300">
+                                <Typography variant="caption" className="text-gray-300">
                                     Email us
                                 </Typography>
                                 <Typography variant="body" className="text-white">
@@ -147,9 +147,9 @@ export function Footer() {
                         </div>
 
                         <div className="flex items-center space-x-3">
-                            <Phone className="w-5 h-5 text-primary-400" />
+                            <Phone className="w-5 h-5 text-blue-400" />
                             <div>
-                                <Typography variant="caption" className="text-secondary-300">
+                                <Typography variant="caption" className="text-gray-300">
                                     Call us
                                 </Typography>
                                 <Typography variant="body" className="text-white">
@@ -159,9 +159,9 @@ export function Footer() {
                         </div>
 
                         <div className="flex items-center space-x-3">
-                            <MapPin className="w-5 h-5 text-primary-400" />
+                            <MapPin className="w-5 h-5 text-blue-400" />
                             <div>
-                                <Typography variant="caption" className="text-secondary-300">
+                                <Typography variant="caption" className="text-gray-300">
                                     Visit us
                                 </Typography>
                                 <Typography variant="body" className="text-white">
@@ -174,11 +174,11 @@ export function Footer() {
             </div>
 
             {/* Bottom Footer */}
-            <div className="bg-secondary-950 border-t border-secondary-800">
+            <div className="bg-gray-950 border-t border-gray-800">
                 <div className="container-theme py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         {/* Copyright */}
-                        <Typography variant="caption" className="text-secondary-300">
+                        <Typography variant="caption" className="text-gray-300">
                             © {currentYear} StoreFront. All rights reserved.
                         </Typography>
 
@@ -190,7 +190,7 @@ export function Footer() {
                                     <Link
                                         key={social.name}
                                         href={social.href}
-                                        className="text-secondary-400 hover:text-white transition-colors"
+                                        className="text-gray-400 hover:text-white transition-colors"
                                         aria-label={social.name}
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -203,7 +203,7 @@ export function Footer() {
 
                         {/* Payment Methods */}
                         <div className="flex items-center space-x-2">
-                            <Typography variant="caption" className="text-secondary-300 mr-2">
+                            <Typography variant="caption" className="text-gray-300 mr-2">
                                 We accept:
                             </Typography>
                             {/* Payment icons would go here */}
@@ -211,7 +211,7 @@ export function Footer() {
                                 {['Visa', 'MC', 'Amex', 'PayPal'].map((payment) => (
                                     <div
                                         key={payment}
-                                        className="bg-secondary-700 px-2 py-1 rounded text-xs text-secondary-200"
+                                        className="bg-gray-700 px-2 py-1 rounded text-xs text-gray-200"
                                     >
                                         {payment}
                                     </div>

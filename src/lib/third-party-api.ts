@@ -406,7 +406,9 @@ export async function getProducts(
     }
 
     // Transform API products to frontend products
-    const products = response.data.map(transformApiProduct)
+    // Handle both direct array and paginated response formats
+    const productsData = Array.isArray(response.data) ? response.data : response.data.data || []
+    const products = productsData.map(transformApiProduct)
 
     // Create paginated response structure
     // Note: Since the API doesn't return pagination info in the sample, we'll create default values
@@ -430,7 +432,22 @@ export async function getProducts(
  * Get a single product by slug
  */
 export async function getProduct(slug: string): Promise<ApiResponse<Product>> {
-    return apiRequest<Product>(`/shop/product/${slug}`)
+    const response = await apiRequest<ApiProduct>(`/shop/product/${slug}`)
+
+    if (!response.success || !response.data) {
+        return {
+            success: false,
+            error: response.error || 'Failed to fetch product'
+        }
+    }
+
+    // Transform API product to frontend product
+    const product = transformApiProduct(response.data)
+
+    return {
+        success: true,
+        data: product
+    }
 }
 
 /**
@@ -507,6 +524,41 @@ export async function updateUserProfile(profileData: {
     return apiRequest<string>('/user/update-profile', {
         method: 'PUT',
         body: JSON.stringify(profileData),
+    })
+}
+
+/**
+ * Forgot password - send reset link
+ */
+export async function forgotPassword(email: string): Promise<ApiResponse<{ message: string }>> {
+    return apiRequest<{ message: string }>('/user/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+    })
+}
+
+/**
+ * Send password reset OTP
+ */
+export async function sendPasswordResetOtp(email: string): Promise<ApiResponse<{ message: string }>> {
+    return apiRequest<{ message: string }>('/user/auth/forgot-password/send-otp', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+    })
+}
+
+/**
+ * Reset password with OTP
+ */
+export async function resetPasswordWithOtp(data: {
+    email: string
+    otp: string
+    password: string
+    password_confirmation: string
+}): Promise<ApiResponse<{ message: string }>> {
+    return apiRequest<{ message: string }>('/user/auth/forgot-password/reset', {
+        method: 'POST',
+        body: JSON.stringify(data),
     })
 }
 
