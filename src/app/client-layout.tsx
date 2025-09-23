@@ -5,6 +5,8 @@ import { ReactNode } from 'react'
 import SupabaseAuthProvider from '@/components/auth/SupabaseAuthProvider'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { CartProvider } from '@/contexts/CartContext'
+import { WishlistProvider } from '@/contexts/WishlistContext'
+import { ProductProvider } from '@/contexts/ProductContext'
 import { Header } from '@/components/organisms/Header'
 import { Footer } from '@/components/organisms/Footer'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
@@ -15,14 +17,18 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     <ErrorBoundary>
       <ThemeProvider>
         <ErrorBoundary>
-          <CartProvider>
-            <SupabaseAuthProvider>
-              <DiscountBanner />
-              <Header />
-              <main className="min-h-screen">{children}</main>
-              <Footer />
-            </SupabaseAuthProvider>
-          </CartProvider>
+          <ProductProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <SupabaseAuthProvider>
+                  <DiscountBanner />
+                  <Header />
+                  <main className="min-h-screen">{children}</main>
+                  <Footer />
+                </SupabaseAuthProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </ProductProvider>
         </ErrorBoundary>
       </ThemeProvider >
     </ErrorBoundary >

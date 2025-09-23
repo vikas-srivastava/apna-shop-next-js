@@ -7,7 +7,6 @@ import { ShoppingCart, User, Menu, X, Heart, LogOut, ChevronDown } from 'lucide-
 import { Button } from '../atoms/Button'
 import { Typography } from '../atoms/Typography'
 import { HeaderSearchBar } from '../molecules/HeaderSearchBar'
-import { CompactThemeSwitcher } from '../molecules/ThemeSwitcher'
 import { useCart } from '@/contexts/CartContext'
 import { useSupabaseAuth } from '../auth/SupabaseAuthProvider'
 import { LogoutButton } from '../auth/LogoutButton'
@@ -78,8 +77,17 @@ export function Header({ onSearch }: HeaderProps) {
 
                     {/* Right Side Actions */}
                     <div className="flex items-center space-x-2">
-                        {/* Theme Switcher */}
-                        <CompactThemeSwitcher />
+                        {/* Cart */}
+                        <Button variant="ghost" size="sm" className="p-2 relative" asChild>
+                            <Link href="/cart">
+                                <ShoppingCart className="w-5 h-5" />
+                                {itemCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                        {itemCount > 99 ? '99+' : itemCount}
+                                    </span>
+                                )}
+                            </Link>
+                        </Button>
 
                         {/* Wishlist */}
                         <Button variant="ghost" size="sm" className="p-2" asChild>
@@ -96,7 +104,6 @@ export function Header({ onSearch }: HeaderProps) {
                                         <User className="w-5 h-5" />
                                     </Link>
                                 </Button>
-                                <LogoutButton />
                             </div>
                         ) : (
                             <Button variant="ghost" size="sm" className="p-2" asChild>
@@ -106,17 +113,8 @@ export function Header({ onSearch }: HeaderProps) {
                             </Button>
                         )}
 
-                        {/* Shopping Cart */}
-                        <Button variant="ghost" size="sm" className="p-2 relative" asChild>
-                            <Link href="/cart">
-                                <ShoppingCart className="w-5 h-5" />
-                                {itemCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                        {itemCount > 99 ? '99+' : itemCount}
-                                    </span>
-                                )}
-                            </Link>
-                        </Button>
+                        {/* Logout (last) */}
+                        {isAuthenticated && <LogoutButton />}
 
                         {/* Mobile Menu Toggle */}
                         <Button

@@ -5,7 +5,7 @@ import { Typography } from '../atoms/Typography'
 import { Button } from '../atoms/Button'
 import { ProductCard } from '../molecules/ProductCard'
 import { Product, ProductFilter } from '@/lib/types'
-import { getProducts } from '@/lib/api'
+import { useProducts } from '@/contexts/ProductContext'
 
 interface ProductGridProps {
     title?: string
@@ -28,62 +28,26 @@ export function ProductGrid({
     columns = 4,
     initialProducts
 }: ProductGridProps) {
-    const [products, setProducts] = useState<Product[]>(initialProducts || [])
-    const [loading, setLoading] = useState(!initialProducts)
-    const [loadingMore, setLoadingMore] = useState(false)
-    const [page, setPage] = useState(1)
-    const [hasMore, setHasMore] = useState(true)
-    const [error, setError] = useState<string | null>(null)
+    const { state, actions } = useProducts()
+    const { products, loading, errors, hasNextPage } = state
 
-    // Load initial products
+    // Load initial products if no initialProducts provided
     useEffect(() => {
-        if (!initialProducts) {
-            loadProducts(1, true)
+        if (!initialProducts && products.length === 0) {
+            actions.fetchProducts(1, limit)
         }
-    }, [filters]) // Reload when filters change
-
-    const loadProducts = async (pageNum: number, reset = false) => {
-        try {
-            if (reset) {
-                setLoading(true)
-                setError(null)
-            } else {
-                setLoadingMore(true)
-            }
-
-            console.log('Loading products with filters:', filters, 'page:', pageNum, 'limit:', limit);
-            const response = await getProducts(filters, pageNum, limit)
-            console.log('Products API response:', response);
-
-            if (response.success && response.data) {
-                const newProducts = response.data.data
-
-                if (reset) {
-                    setProducts(newProducts)
-                } else {
-                    setProducts(prev => [...prev, ...newProducts])
-                }
-
-                setHasMore(response.data.pagination.page < response.data.pagination.totalPages)
-                setPage(pageNum)
-            } else {
-                console.error('Failed to load products:', response.error);
-                setError(response.error || 'Failed to load products')
-            }
-        } catch (err) {
-            console.error('Error loading products:', err);
-            setError('An error occurred while loading products')
-        } finally {
-            setLoading(false)
-            setLoadingMore(false)
-        }
-    }
+    }, [initialProducts, products.length, limit, actions])
 
     const handleLoadMore = () => {
-        if (!loadingMore && hasMore) {
-            loadProducts(page + 1, false)
+        if (!loading.products && hasNextPage) {
+            const nextPage = Math.floor(products.length / limit) + 1
+            actions.fetchProducts(nextPage, limit)
         }
     }
+
+    const displayProducts = initialProducts || products
+    const isLoading = loading.products && displayProducts.length === 0
+    const error = errors.products
 
     // Grid column classes based on columns prop
     const gridCols = {
@@ -92,7 +56,7 @@ export function ProductGrid({
         4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
     }
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="space-y-6">
                 {title && (
@@ -122,14 +86,14 @@ export function ProductGrid({
                 <Typography variant="h4" color="error" className="mb-4">
                     {error}
                 </Typography>
-                <Button onClick={() => loadProducts(1, true)}>
+                <Button onClick={() => actions.fetchProducts(1, limit)}>
                     Try Again
                 </Button>
             </div>
         )
     }
 
-    if (products.length === 0) {
+    if (displayProducts.length === 0) {
         return (
             <div className="text-center py-12">
                 <Typography variant="h4" color="secondary" className="mb-4">
@@ -157,7 +121,7 @@ export function ProductGrid({
 
             {/* Products Grid */}
             <div className={`grid ${gridCols[columns]} gap-6`}>
-                {products.map((product) => (
+                {displayProducts.map((product) => (
                     <div key={product.id} className="animate-fade-in">
                         <ProductCard product={product} />
                     </div>
@@ -165,12 +129,12 @@ export function ProductGrid({
             </div>
 
             {/* Load More Button */}
-            {showLoadMore && hasMore && (
+            {showLoadMore && hasNextPage && (
                 <div className="text-center pt-8">
                     <Button
                         variant="outline"
                         size="lg"
-                        loading={loadingMore}
+                        loading={loading.products}
                         onClick={handleLoadMore}
                     >
                         Load More Products
@@ -179,7 +143,7 @@ export function ProductGrid({
             )}
 
             {/* End of Results */}
-            {!hasMore && products.length > 0 && (
+            {!hasNextPage && displayProducts.length > 0 && (
                 <div className="text-center pt-8">
                     <Typography variant="body" color="secondary">
                         You've seen all products
@@ -223,36 +187,14 @@ export function RelatedProducts({
     categoryId,
     limit = 4
 }: RelatedProductsProps) {
-    const [products, setProducts] = useState<Product[]>([])
-    const [loading, setLoading] = useState(true)
+    const { state, actions } = useProducts()
+    const { relatedProducts, loading } = state
 
     useEffect(() => {
-        async function loadRelatedProducts() {
-            try {
-                console.log('Loading related products for category:', categoryId);
-                const response = await getProducts(
-                    { category: categoryId },
-                    1,
-                    limit + 1 // Get one extra to filter out current product
-                )
-                console.log('Related products API response:', response);
+        actions.fetchRelatedProducts(currentProductId, limit)
+    }, [currentProductId, categoryId, limit, actions])
 
-                if (response.success && response.data) {
-                    // Filter out current product
-                    const filtered = response.data.data
-                        .filter(p => p.id !== currentProductId)
-                        .slice(0, limit)
-                    setProducts(filtered)
-                }
-            } catch (error) {
-                console.error('Error loading related products:', error);
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        loadRelatedProducts()
-    }, [currentProductId, categoryId, limit])
+    const products = relatedProducts.filter((p: Product) => p.id !== currentProductId).slice(0, limit)
 
     if (loading) {
         return (

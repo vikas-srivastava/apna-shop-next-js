@@ -641,6 +641,13 @@ export async function getWishlist(): Promise<ApiResponse<string>> {
 }
 
 /**
+ * Get orders
+ */
+export async function getOrders(): Promise<ApiResponse<any[]>> {
+    return apiRequest<any[]>('/shop/orders')
+}
+
+/**
  * Search products
  */
 export async function searchProducts(query: string): Promise<ApiResponse<Product[]>> {

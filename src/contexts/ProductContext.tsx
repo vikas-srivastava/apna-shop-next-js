@@ -231,26 +231,28 @@ const ProductContext = createContext<{
   state: ProductState
   actions: {
     fetchProducts: (page?: number, limit?: number) => Promise<void>
-    fetchCategories: () => Promise<void>
-    fetchFeaturedProducts: (limit?: number) => Promise<void>
     fetchProduct: (slug: string) => Promise<void>
     fetchRelatedProducts: (productId: string, limit?: number) => Promise<void>
     searchProducts: (query: string) => Promise<void>
-    setFilters: (filters: Partial<ProductFilter>) => void
-    setSortBy: (sortBy: ProductFilter['sortBy']) => void
-    resetFilters: () => void
     clearCache: () => void
     prefetchProduct: (slug: string) => void
     trackProductView: (productId: string) => void
     getPerformanceMetrics: () => any
+  }
+  stableActions: {
+    fetchCategories: () => Promise<void>
+    fetchFeaturedProducts: (limit?: number) => Promise<void>
+    setFilters: (filters: Partial<ProductFilter>) => void
+    setSortBy: (sortBy: ProductFilter['sortBy']) => void
+    resetFilters: () => void
   }
 } | null>(null)
 
 // Provider component
 export function ProductProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(productReducer, initialState)
-  const searchTimeoutRef = useRef<NodeJS.Timeout>()
-  const prefetchTimeoutRef = useRef<NodeJS.Timeout>()
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const prefetchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Logger utility
   const logger = useMemo(() => ({
@@ -341,47 +343,6 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       }
     },
 
-    fetchCategories: async () => {
-      dispatch({ type: 'SET_LOADING', key: 'categories', value: true })
-
-      try {
-        logger.info('Fetching categories')
-        const response = await getCategories()
-
-        if (response.success && response.data) {
-          dispatch({ type: 'SET_CATEGORIES', payload: response.data })
-        } else {
-          dispatch({ type: 'SET_ERROR', key: 'categories', value: response.error || 'Failed to fetch categories' })
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch categories'
-        dispatch({ type: 'SET_ERROR', key: 'categories', value: errorMessage })
-        logger.error('Fetch categories error', { error: errorMessage })
-      } finally {
-        dispatch({ type: 'SET_LOADING', key: 'categories', value: false })
-      }
-    },
-
-    fetchFeaturedProducts: async (limit = 6) => {
-      dispatch({ type: 'SET_LOADING', key: 'featured', value: true })
-
-      try {
-        logger.info('Fetching featured products', { limit })
-        const response = await getFeaturedProducts(limit)
-
-        if (response.success && response.data) {
-          dispatch({ type: 'SET_FEATURED_PRODUCTS', payload: response.data })
-        } else {
-          dispatch({ type: 'SET_ERROR', key: 'featured', value: response.error || 'Failed to fetch featured products' })
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch featured products'
-        dispatch({ type: 'SET_ERROR', key: 'featured', value: errorMessage })
-        logger.error('Fetch featured products error', { limit, error: errorMessage })
-      } finally {
-        dispatch({ type: 'SET_LOADING', key: 'featured', value: false })
-      }
-    },
 
     fetchProduct: async (slug: string) => {
       dispatch({ type: 'SET_LOADING', key: 'product', value: true })
@@ -436,21 +397,6 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       debouncedSearch(query)
     },
 
-    setFilters: (filters: Partial<ProductFilter>) => {
-      dispatch({ type: 'SET_FILTERS', payload: filters })
-      logger.info('Filters updated', { filters })
-    },
-
-    setSortBy: (sortBy: ProductFilter['sortBy']) => {
-      dispatch({ type: 'SET_SORT_BY', payload: sortBy })
-      logger.info('Sort updated', { sortBy })
-    },
-
-    resetFilters: () => {
-      dispatch({ type: 'RESET_FILTERS' })
-      logger.info('Filters reset')
-    },
-
     clearCache: () => {
       dispatch({ type: 'CLEAR_CACHE' })
       logger.info('Cache cleared')
@@ -468,11 +414,71 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     },
   }), [state.filters, state.sortBy, debouncedSearch, prefetchProduct, logger])
 
+  // Separate actions that don't depend on state to avoid infinite loops
+  const stableActions = useMemo(() => ({
+    fetchCategories: async () => {
+      dispatch({ type: 'SET_LOADING', key: 'categories', value: true })
+
+      try {
+        logger.info('Fetching categories')
+        const response = await getCategories()
+
+        if (response.success && response.data) {
+          dispatch({ type: 'SET_CATEGORIES', payload: response.data })
+        } else {
+          dispatch({ type: 'SET_ERROR', key: 'categories', value: response.error || 'Failed to fetch categories' })
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch categories'
+        dispatch({ type: 'SET_ERROR', key: 'categories', value: errorMessage })
+        logger.error('Fetch categories error', { error: errorMessage })
+      } finally {
+        dispatch({ type: 'SET_LOADING', key: 'categories', value: false })
+      }
+    },
+
+    fetchFeaturedProducts: async (limit = 6) => {
+      dispatch({ type: 'SET_LOADING', key: 'featured', value: true })
+
+      try {
+        logger.info('Fetching featured products', { limit })
+        const response = await getFeaturedProducts(limit)
+
+        if (response.success && response.data) {
+          dispatch({ type: 'SET_FEATURED_PRODUCTS', payload: response.data })
+        } else {
+          dispatch({ type: 'SET_ERROR', key: 'featured', value: response.error || 'Failed to fetch featured products' })
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch featured products'
+        dispatch({ type: 'SET_ERROR', key: 'featured', value: errorMessage })
+        logger.error('Fetch featured products error', { limit, error: errorMessage })
+      } finally {
+        dispatch({ type: 'SET_LOADING', key: 'featured', value: false })
+      }
+    },
+
+    setFilters: (filters: Partial<ProductFilter>) => {
+      dispatch({ type: 'SET_FILTERS', payload: filters })
+      logger.info('Filters updated', { filters })
+    },
+
+    setSortBy: (sortBy: ProductFilter['sortBy']) => {
+      dispatch({ type: 'SET_SORT_BY', payload: sortBy })
+      logger.info('Sort updated', { sortBy })
+    },
+
+    resetFilters: () => {
+      dispatch({ type: 'RESET_FILTERS' })
+      logger.info('Filters reset')
+    }
+  }), [logger])
+
   // Load initial data
   useEffect(() => {
-    actions.fetchCategories()
-    actions.fetchFeaturedProducts()
-  }, [actions])
+    stableActions.fetchCategories()
+    stableActions.fetchFeaturedProducts()
+  }, [stableActions])
 
   // Cleanup timeouts
   useEffect(() => {
@@ -516,7 +522,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state.lastViewedProduct, logger])
 
-  const value = useMemo(() => ({ state, actions }), [state, actions])
+  const value = useMemo(() => ({ state, actions, stableActions }), [state, actions, stableActions])
 
   return (
     <ProductContext.Provider value={value}>
@@ -564,14 +570,14 @@ export function useProductSearch() {
 }
 
 export function useProductFilters() {
-  const { state, actions } = useProducts()
+  const { state, stableActions } = useProducts()
 
   return {
     filters: state.filters,
     sortBy: state.sortBy,
-    setFilters: actions.setFilters,
-    setSortBy: actions.setSortBy,
-    resetFilters: actions.resetFilters,
+    setFilters: stableActions.setFilters,
+    setSortBy: stableActions.setSortBy,
+    resetFilters: stableActions.resetFilters,
   }
 }
 

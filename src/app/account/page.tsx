@@ -7,17 +7,21 @@ import Link from 'next/link'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { LogoutButton } from '@/components/auth/LogoutButton'
 import { useSupabaseAuth } from '@/components/auth/SupabaseAuthProvider'
-import { mockOrders } from '@/lib/mock-data'
+import { useWishlist } from '@/contexts/WishlistContext'
+import { getOrders } from '@/lib/api'
+import { useEffect, useState } from 'react'
 
 /**
  * Account dashboard page
  */
 export default function AccountPage() {
     const { user } = useSupabaseAuth()
+    const { itemCount: wishlistItems } = useWishlist()
+    const [orders, setOrders] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
 
     // Calculate user stats from real data
-    const totalOrders = mockOrders.length
-    const wishlistItems = 5 // This would come from wishlist API
+    const totalOrders = orders.length
     const joinDate = user?.created_at
         ? new Date(user.created_at).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -27,7 +31,24 @@ export default function AccountPage() {
         : 'Unknown'
 
     // Get recent orders (last 3)
-    const recentOrders = mockOrders.slice(0, 3)
+    const recentOrders = orders.slice(0, 3)
+
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const response = await getOrders()
+                if (response.success && response.data) {
+                    setOrders(response.data)
+                }
+            } catch (error) {
+                console.error('Failed to fetch orders:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchOrders()
+    }, [])
 
     const navigation = [
         { name: 'Profile', href: '/account/profile' },

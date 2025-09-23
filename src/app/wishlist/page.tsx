@@ -6,65 +6,23 @@ import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
 import { Heart, X, ShoppingCart } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
-import { useState } from 'react'
+import { useWishlist } from '@/contexts/WishlistContext'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 /**
  * Wishlist page
  */
 export default function WishlistPage() {
-    // In a real application, this would come from a wishlist context or API
-    // For now, we'll use mock data
-    const [wishlistItems, setWishlistItems] = useState([
-        {
-            id: '1',
-            product: {
-                id: '1',
-                name: 'Wireless Bluetooth Headphones',
-                slug: 'wireless-bluetooth-headphones',
-                price: 299.99,
-                originalPrice: 399.99,
-                images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop'],
-                rating: 4.8,
-                reviewCount: 124
-            }
-        },
-        {
-            id: '2',
-            product: {
-                id: '2',
-                name: 'Organic Cotton T-Shirt',
-                slug: 'organic-cotton-t-shirt',
-                price: 34.99,
-                originalPrice: 44.99,
-                images: ['https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop'],
-                rating: 4.5,
-                reviewCount: 89
-            }
-        },
-        {
-            id: '3',
-            product: {
-                id: '3',
-                name: 'Smart Home Security Camera',
-                slug: 'smart-home-security-camera',
-                price: 199.99,
-                images: ['https://images.unsplash.com/photo-1558618666-fbd5c64b29c3?w=300&h=300&fit=crop'],
-                rating: 4.6,
-                reviewCount: 67
-            }
-        }
-    ])
-
+    const { items: wishlistItems, removeItem } = useWishlist()
     const { addItem } = useCart()
 
-    const removeFromWishlist = (id: string) => {
-        setWishlistItems(wishlistItems.filter(item => item.id !== id))
+    const removeFromWishlist = async (id: string) => {
+        await removeItem(id)
     }
 
-    const moveToCart = (item: any) => {
-        addItem(item.product, 1)
-        removeFromWishlist(item.id)
+    const moveToCart = async (item: any) => {
+        await addItem(item.product, 1)
+        await removeFromWishlist(item.id)
     }
 
     if (wishlistItems.length === 0) {

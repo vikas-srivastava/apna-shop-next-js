@@ -6,22 +6,25 @@ import { Typography } from '@/components/atoms/Typography'
 import { Button } from '@/components/atoms/Button'
 import { ProductGrid } from '@/components/organisms/ProductGrid'
 import { SearchFilters } from '@/components/molecules/SearchBar'
-import { ProductFilter, Category } from '@/lib/types'
+import { ProductFilter } from '@/lib/types'
 import { Filter, Grid, List, SlidersHorizontal } from 'lucide-react'
+import { useProducts } from '@/contexts/ProductContext'
 
 /**
  * Products page with filtering and search functionality
  */
 export default function ProductsPage() {
     const searchParams = useSearchParams()
-    const [filters, setFilters] = useState<ProductFilter>({})
     const [showFilters, setShowFilters] = useState(false)
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-    const [sortBy, setSortBy] = useState<ProductFilter['sortBy']>('newest')
-    const [categories, setCategories] = useState<Category[]>([])
+
+    const { state, actions, stableActions } = useProducts()
+    const { filters, sortBy, categories, loading, errors } = state
 
     // Initialize filters from URL params
     useEffect(() => {
+        if (!searchParams) return
+
         const initialFilters: ProductFilter = {}
 
         const category = searchParams.get('category')
@@ -43,33 +46,19 @@ export default function ProductsPage() {
             }
         }
 
-        setFilters(initialFilters)
-    }, [searchParams])
-
-    // Fetch categories for filter
-    useEffect(() => {
-        async function fetchCategories() {
-            try {
-                const response = await fetch('/api/categories')
-                if (response.ok) {
-                    const data = await response.json()
-                    setCategories(data)
-                }
-            } catch (error) {
-                console.error('Failed to fetch categories:', error)
-            }
-        }
-
-        fetchCategories()
-    }, [])
+        stableActions.setFilters(initialFilters)
+    }, [searchParams, stableActions])
 
     const handleFilterChange = (newFilters: any) => {
-        setFilters(prev => ({ ...prev, ...newFilters }))
+        stableActions.setFilters(newFilters)
+        // Trigger fetch with new filters
+        setTimeout(() => actions.fetchProducts(1, 12), 0)
     }
 
     const handleSortChange = (newSortBy: ProductFilter['sortBy']) => {
-        setSortBy(newSortBy)
-        setFilters(prev => ({ ...prev, sortBy: newSortBy }))
+        stableActions.setSortBy(newSortBy)
+        // Trigger fetch with new sort
+        setTimeout(() => actions.fetchProducts(1, 12), 0)
     }
 
     const sortOptions = [
@@ -180,7 +169,7 @@ export default function ProductsPage() {
                     {/* Products Grid */}
                     <ProductGrid
                         filters={filters}
-                        columns={viewMode === 'grid' ? 3 : 1}
+                        columns={viewMode === 'grid' ? 3 : 2}
                     />
                 </main>
             </div>

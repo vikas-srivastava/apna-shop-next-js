@@ -370,6 +370,83 @@ export class ApiService {
 
     return result
   }
+  private static applyFiltersToMockData(
+    filters: ProductFilter,
+    page: number,
+    limit: number
+  ): PaginatedResponse<Product> {
+    let filteredProducts = [...MOCK_DATA.products]
+
+    // Apply category filter
+    if (filters.category) {
+      filteredProducts = filteredProducts.filter(product =>
+        product.category?.id === filters.category
+      )
+    }
+
+    // Apply search filter
+    if (filters.search) {
+      const searchTerm = filters.search.toLowerCase()
+      filteredProducts = filteredProducts.filter(product =>
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm)
+      )
+    }
+
+    // Apply price range filter
+    if (filters.priceRange && (filters.priceRange.min !== undefined || filters.priceRange.max !== undefined)) {
+      const minPrice = filters.priceRange.min || 0
+      const maxPrice = filters.priceRange.max || Number.MAX_VALUE
+      filteredProducts = filteredProducts.filter(product => {
+        const price = product.price
+        return price >= minPrice && price <= maxPrice
+      })
+    }
+
+    // Apply rating filter
+    if (filters.rating && filters.rating > 0) {
+      filteredProducts = filteredProducts.filter(product =>
+        product.rating >= filters.rating!
+      )
+    }
+
+    // Apply in stock filter
+    if (filters.inStock === true) {
+      filteredProducts = filteredProducts.filter(product => product.inStock)
+    }
+
+    // Apply sorting
+    if (filters.sortBy) {
+      filteredProducts.sort((a, b) => {
+        switch (filters.sortBy) {
+          case 'price-asc':
+            return a.price - b.price
+          case 'price-desc':
+            return b.price - a.price
+          case 'rating':
+            return b.rating - a.rating
+          case 'newest':
+          default:
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        }
+      })
+    }
+
+    // Apply pagination
+    const startIndex = (page - 1) * limit
+    const endIndex = startIndex + limit
+    const paginatedProducts = filteredProducts.slice(startIndex, endIndex)
+
+    return {
+      data: paginatedProducts,
+      pagination: {
+        page,
+        limit,
+        total: filteredProducts.length,
+        totalPages: Math.ceil(filteredProducts.length / limit)
+      }
+    }
+  }
 
   // Public API methods
   static async getCategories(): Promise<ApiResponse<Category[]>> {
@@ -400,15 +477,7 @@ export class ApiService {
         cacheKey,
         () => this.withFallback(
           () => thirdPartyApi.getProducts(filters, page, limit),
-          {
-            data: MOCK_DATA.products,
-            pagination: {
-              page,
-              limit,
-              total: MOCK_DATA.products.length,
-              totalPages: 1
-            }
-          }
+          this.applyFiltersToMockData(filters, page, limit)
         )
       ),
       'GET',
@@ -619,6 +688,53 @@ export class ApiService {
     )
   }
 
+  // Wishlist methods
+  static async getWishlist(): Promise<ApiResponse<string>> {
+    return await this.executeWithMonitoring(
+      () => this.withFallback(
+        () => thirdPartyApi.getWishlist(),
+        '[]' // Empty wishlist as fallback
+      ),
+      'POST',
+      '/shop/wishlist'
+    )
+  }
+
+  static async addToWishlist(productId: number): Promise<ApiResponse<null>> {
+    return await this.executeWithMonitoring(
+      () => this.withFallback(
+        () => thirdPartyApi.addToWishlist(productId),
+        null
+      ),
+      'POST',
+      '/shop/wishlist-add'
+    )
+  }
+
+  static async removeFromWishlist(productId: string): Promise<ApiResponse<null>> {
+    return await this.executeWithMonitoring(
+      () => this.withFallback(
+        () => thirdPartyApi.removeFromWishlist(productId),
+        null
+      ),
+      'POST',
+      `/shop/wishlist-remove/${productId}`
+    )
+  }
+
+  // Orders methods
+  static async getOrders(): Promise<ApiResponse<any[]>> {
+    return await this.executeWithMonitoring(
+      () => this.withFallback(
+        () => thirdPartyApi.getOrders(),
+        [] // Empty orders array as fallback
+      ),
+      'GET',
+      '/shop/orders'
+    )
+  }
+
+  // Utility methods
   // Utility methods
   static clearCache(): void {
     ApiCache.clear()
@@ -637,6 +753,12 @@ export class ApiService {
   }
 }
 
+export const getWishlist = ApiService.getWishlist.bind(ApiService)
+export const addToWishlist = ApiService.addToWishlist.bind(ApiService)
+export const removeFromWishlist = ApiService.removeFromWishlist.bind(ApiService)
+export const getOrders = ApiService.getOrders.bind(ApiService)
+
+// Export utility functions
 // Export the enhanced API functions
 export const getCategories = ApiService.getCategories.bind(ApiService)
 export const getProducts = ApiService.getProducts.bind(ApiService)

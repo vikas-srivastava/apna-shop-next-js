@@ -656,7 +656,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    const itemId = `${product.id}-${size || 'default'}-${color || 'default'}`
+    const itemId = `${product.id}-${size || 'default'}-${color || 'default'}-${Date.now()}`
     dispatch({ type: 'ADD_ITEM_START', payload: { itemId } })
 
     // Optimistic update

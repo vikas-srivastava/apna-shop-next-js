@@ -10,6 +10,7 @@ import { Card } from '../ui/Card'
 import { RelatedProducts } from '../organisms/ProductGrid'
 import { Product } from '@/lib/types'
 import { useCart } from '@/contexts/CartContext'
+import { useWishlist } from '@/contexts/WishlistContext'
 
 interface ProductDetailTemplateProps {
     product: Product
@@ -20,7 +21,6 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
     const [selectedSize, setSelectedSize] = useState<string>(product.sizes?.[0] || '')
     const [selectedColor, setSelectedColor] = useState<string>(product.colors?.[0] || '')
     const [quantity, setQuantity] = useState<number>(1)
-    const [isWishlisted, setIsWishlisted] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     // Handlers
@@ -32,6 +32,8 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
     }
 
     const { addItem } = useCart()
+    const { hasItem, addItem: addToWishlist, removeItem: removeFromWishlist } = useWishlist()
+    const isWishlisted = hasItem(product.id)
 
     const handleAddToCart = async () => {
         setIsLoading(true)
@@ -257,7 +259,13 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                             <Button
                                 variant={isWishlisted ? 'primary' : 'secondary'}
                                 size="lg"
-                                onClick={() => setIsWishlisted(!isWishlisted)}
+                                onClick={async () => {
+                                    if (isWishlisted) {
+                                        await removeFromWishlist(product.id)
+                                    } else {
+                                        await addToWishlist(product)
+                                    }
+                                }}
                                 aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
                             >
                                 <Heart

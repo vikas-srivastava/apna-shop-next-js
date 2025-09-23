@@ -6,7 +6,7 @@ import { Button } from '@/components/atoms/Button'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { useSupabaseAuth } from '@/components/auth/SupabaseAuthProvider'
 import { useEffect, useState } from 'react'
-import { mockOrders } from '@/lib/mock-data'
+import { getOrders } from '@/lib/api'
 
 interface Order {
     id: string
@@ -67,7 +67,12 @@ export default function OrdersPage() {
 
             try {
                 setLoading(true)
-                setOrders(mockOrders)
+                const response = await getOrders()
+                if (response.success && response.data) {
+                    setOrders(response.data)
+                } else {
+                    setError('Failed to fetch orders. Please try again.')
+                }
             } catch (err) {
                 setError('Failed to fetch orders. Please try again.')
                 console.error('Error fetching orders:', err)
