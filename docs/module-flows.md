@@ -1,6 +1,572 @@
-# Module Flows Documentation
+# Module Flows & Architecture Documentation
 
-This document outlines the key module flows in the eCommerce application, including authentication, cart management, checkout process, payment integrations, and API interactions.
+This document serves as the **single source of truth** for the Next.js eCommerce theme architecture, providing comprehensive guidance for cloning, extending, and maintaining this application. It includes complete file structures, architectural decisions, development tradeoffs, and implementation patterns to enable LLM agents and developers to recreate or modify this theme for new eCommerce projects.
+
+## Project Overview
+
+This is a production-ready Next.js 15 eCommerce frontend application with atomic design architecture, integrated with Apna Shop APIs through a centralized service layer. The theme is designed to be easily clonable and adaptable for different eCommerce backends.
+
+### Key Features Implemented
+
+- **Authentication**: Login/register with Supabase integration
+- **Product Management**: Browse, search, filter products
+- **Shopping Cart**: Add/remove/update items with persistence
+- **Checkout Flow**: Multi-step checkout with multiple payment gateways
+- **Order Management**: View orders, track shipments
+- **Wishlist**: Save favorite products
+- **API Proxy Layer**: CORS-free third-party API integration
+- **Mock/Live Mode**: Switchable testing environments
+- **Atomic Design**: Modular, reusable component architecture
+- **TypeScript**: Full type safety throughout
+- **Responsive Design**: Mobile-first with Tailwind CSS
+
+### Architecture Principles
+
+- **Separation of Concerns**: Clear boundaries between UI, business logic, and data layers
+- **Reusability**: Atomic design for component modularity
+- **Scalability**: Context-based state management for complex state
+- **Maintainability**: Centralized services and consistent patterns
+- **Testability**: Mock/live mode switching for reliable testing
+- **Performance**: Optimized loading, caching, and error handling
+
+## Complete File Structure Index
+
+When cloning this theme into a fresh Next.js project, create the following file structure. This index ensures all necessary files are created with proper organization.
+
+### Root Directory Structure
+
+```
+/
+├── .env                          # Environment variables (copy from .env.example)
+├── .env.local                    # Local environment overrides
+├── .gitignore                    # Git ignore patterns
+├── eslint.config.mjs             # ESLint configuration
+├── jest.config.js                # Jest testing configuration
+├── jest.setup.js                 # Jest setup file
+├── next-env.d.ts                 # Next.js TypeScript declarations
+├── next.config.ts                # Next.js configuration
+├── package.json                  # Dependencies and scripts
+├── package-lock.json             # Lockfile for exact dependency versions
+├── postcss.config.mjs            # PostCSS configuration
+├── README.md                     # Project documentation
+├── SUPABASE_SETUP.md             # Supabase setup instructions
+├── supabase-schema.sql           # Database schema
+├── tailwind.confg.ts             # Tailwind CSS configuration
+├── tsconfig.json                 # TypeScript configuration
+├── tsconfig.tsbuildinfo          # TypeScript build info
+├── MOCK_MODE_README.md           # Mock mode documentation
+├── test-*.js                     # Testing scripts (4 files)
+├── .kilocode/                    # Kilo Code configuration
+│   └── rules/
+│       └── memory-bank/          # Project knowledge base
+├── docs/                         # Documentation
+│   └── module-flows.md           # This file
+├── public/                       # Static assets
+│   ├── favicon.ico
+│   ├── *.svg                     # Icons and images
+│   └── theme.yml                 # Theme configuration
+└── src/                          # Source code (detailed below)
+```
+
+### Source Code Structure (`src/`)
+
+#### App Router Pages (`src/app/`)
+
+```
+src/app/
+├── layout.tsx                    # Root layout
+├── page.tsx                      # Home page
+├── client-layout.tsx             # Client-side layout wrapper
+├── globals.css                   # Global styles
+├── favicon.ico                   # Favicon
+├── about/page.tsx                # About page
+├── accessibility/page.tsx        # Accessibility page
+├── account/
+│   ├── page.tsx                  # Account dashboard
+│   ├── addresses/page.tsx        # Address management
+│   ├── orders/
+│   │   ├── page.tsx              # Order history
+│   │   └── page-old.tsx          # Legacy order page
+│   ├── payment-methods/page.tsx  # Payment methods
+│   ├── profile/page.tsx          # Profile settings
+│   └── settings/page.tsx         # Account settings
+├── affiliates/page.tsx           # Affiliates page
+├── api/                          # API proxy routes
+│   ├── addresses/
+│   │   ├── route.ts              # Address CRUD
+│   │   └── [id]/route.ts         # Address by ID
+│   ├── cart/
+│   │   ├── route.ts              # Cart operations
+│   │   └── [item_id]/route.ts    # Cart item operations
+│   ├── categories/route.ts       # Categories API
+│   ├── orders/route.ts           # Orders API
+│   ├── payments/
+│   │   ├── route.ts              # Payment operations
+│   │   ├── create-razorpay-order/route.ts
+│   │   ├── paypal/create-order/route.ts
+│   │   ├── stripe/create-intent/route.ts
+│   │   └── verify/route.ts       # Payment verification
+│   ├── products/
+│   │   ├── route.ts              # Products API
+│   │   └── [slug]/route.ts       # Product by slug
+│   └── themes/route.ts           # Theme API
+├── careers/page.tsx              # Careers page
+├── cart/page.tsx                 # Shopping cart
+├── categories/page.tsx           # Categories page
+├── checkout/page.tsx             # Checkout page
+├── contact/page.tsx              # Contact page
+├── cookies/page.tsx              # Cookies policy
+├── forgot-password/page.tsx      # Password reset
+├── help/page.tsx                 # Help center
+├── login/page.tsx                # Login page
+├── order-confirmation/page.tsx   # Order confirmation
+├── press/page.tsx                # Press page
+├── privacy/
+│   ├── page.tsx                  # Privacy policy
+│   └── do-not-sell/page.tsx      # Do not sell data
+├── products/
+│   ├── page.tsx                  # Products listing
+│   └── [slug]/page.tsx           # Product detail
+├── reset-password/page.tsx       # Password reset confirmation
+├── returns/page.tsx              # Returns policy
+├── shipping/page.tsx             # Shipping info
+├── size-guide/page.tsx           # Size guide
+├── stores/page.tsx               # Store locator
+├── sustainability/page.tsx       # Sustainability page
+├── terms/page.tsx                # Terms of service
+├── test-supabase/page.tsx        # Supabase testing
+├── track-order/page.tsx          # Order tracking
+└── wishlist/page.tsx             # Wishlist page
+```
+
+#### Components (`src/components/`)
+
+```
+src/components/
+├── atoms/                        # Basic UI components
+│   ├── Button.tsx                # Reusable button
+│   ├── Input.tsx                 # Form input
+│   └── Typography.tsx            # Text components
+├── molecules/                    # Composite components
+│   ├── DiscountOffers.tsx        # Discount display
+│   ├── HeaderSearchBar.tsx       # Search in header
+│   ├── ProductCard.tsx           # Product card
+│   ├── SearchBar.tsx             # Search component
+│   └── ThemeSwitcher.tsx         # Theme switcher
+├── organisms/                    # Complex components
+│   ├── Footer.tsx                # Site footer
+│   ├── Header.tsx                # Site header
+│   └── ProductGrid.tsx           # Product grid
+├── templates/                    # Page templates
+│   └── ProductDetailTemplate.tsx # Product detail layout
+├── ui/                           # Shared UI components
+│   ├── Card.tsx                  # Card component
+│   ├── ErrorBoundary.tsx         # Error boundary
+│   └── Modal.tsx                 # Modal dialog
+├── auth/                         # Authentication components
+│   ├── AuthButton.tsx            # Auth action button
+│   ├── AuthProvider.tsx          # Auth context provider
+│   ├── LogoutButton.tsx          # Logout button
+│   ├── ProtectedRoute.tsx        # Route protection
+│   └── SupabaseAuthProvider.tsx  # Supabase auth
+└── checkout/                     # Checkout components
+    ├── CheckoutSidebar.tsx       # Checkout sidebar
+    ├── index.ts                  # Exports
+    ├── PaymentStep.tsx           # Payment step
+    ├── PayPalPayment.tsx         # PayPal integration
+    ├── RazorpayPayment.tsx       # Razorpay integration
+    ├── ReviewStep.tsx           # Review step
+    └── StripePayment.tsx         # Stripe integration
+```
+
+#### Contexts (`src/contexts/`)
+
+```
+src/contexts/
+├── CartContext.tsx               # Shopping cart state
+├── CheckoutContext.tsx           # Checkout flow state
+├── ProductContext.tsx            # Product data state
+├── ThemeContext.tsx              # Theme state
+└── WishlistContext.tsx           # Wishlist state
+```
+
+#### Hooks (`src/hooks/`)
+
+```
+src/hooks/
+├── useAuth.ts                    # Authentication hook
+├── useCart.ts                    # Cart operations hook
+└── useProducts.ts                # Product operations hook
+```
+
+#### Library Files (`src/lib/`)
+
+```
+src/lib/
+├── api.ts                        # Main API service
+├── api-orders.ts                 # Order-specific API calls
+├── auth-service.ts               # Authentication service
+├── mock-data.ts                  # Mock data for testing
+├── server-theme-loader.ts        # Server-side theme loading
+├── supabase.ts                   # Supabase client
+├── theme-loader.ts               # Theme loading utilities
+├── third-party-api.ts            # Third-party API utilities
+└── types.ts                      # TypeScript definitions
+```
+
+#### Legacy Pages (`src/pages/`) - Minimal Usage
+
+```
+src/pages/
+├── api/
+│   └── auth/
+│       ├── sync-customer.ts       # Customer sync
+│       ├── sync-login.ts          # Login sync
+│       └── sync-register.ts       # Register sync
+└── auth/
+    └── callback.tsx               # Auth callback
+```
+
+#### Tests (`src/__tests__/`)
+
+```
+src/__tests__/
+└── checkout-flow.test.tsx         # Checkout flow tests
+```
+
+## Architecture Decisions & Tradeoffs
+
+### 1. Next.js App Router vs Pages Router
+
+**Decision**: Use App Router exclusively for new features, maintain minimal Pages Router for legacy auth callbacks.
+
+**Rationale**:
+
+- App Router provides better performance with server components
+- Improved SEO with server-side rendering
+- Better code organization with nested layouts
+- Future-proof for Next.js evolution
+
+**Tradeoffs**:
+
+- Migration complexity for existing Pages Router code
+- Learning curve for new routing patterns
+- Some third-party libraries may not support App Router yet
+
+### 2. Atomic Design Component Architecture
+
+**Decision**: Implement strict atomic design hierarchy (Atoms → Molecules → Organisms → Templates).
+
+**Rationale**:
+
+- Promotes component reusability and consistency
+- Clear separation of concerns at component level
+- Easier testing and maintenance
+- Scalable for large applications
+
+**Tradeoffs**:
+
+- Initial overhead in component creation
+- Potential over-abstraction for simple components
+- Requires discipline to maintain hierarchy
+
+### 3. Context API for State Management
+
+**Decision**: Use React Context API with custom hooks instead of external state libraries.
+
+**Rationale**:
+
+- No additional dependencies for simple state needs
+- Built-in React solution with good performance
+- Easy integration with server components
+- TypeScript support out of the box
+
+**Tradeoffs**:
+
+- Potential re-rendering issues with large context trees
+- No built-in persistence (requires manual implementation)
+- Less powerful than Redux/Zustand for complex state logic
+
+### 4. API Proxy Layer with Next.js Routes
+
+**Decision**: Proxy all third-party API calls through local `/api/*` routes.
+
+**Rationale**:
+
+- Eliminates CORS issues in production
+- Server-side API calls for better security
+- Centralized request/response handling
+- Easy mocking for testing
+
+**Tradeoffs**:
+
+- Additional network hop for each API call
+- Server load increase
+- More complex debugging (client ↔ server ↔ external API)
+
+### 5. Mock/Live Mode Switching
+
+**Decision**: Implement environment-based switching between mock and live APIs.
+
+**Rationale**:
+
+- Reliable testing without external dependencies
+- Development independence from backend availability
+- Easy demonstration and prototyping
+- Gradual migration support
+
+**Tradeoffs**:
+
+- Duplicate API contract definitions
+- Potential drift between mock and real APIs
+- Additional complexity in service layer
+
+### 6. Centralized Service Layer
+
+**Decision**: All API calls go through centralized services (ApiService, AuthService).
+
+**Rationale**:
+
+- Consistent error handling and logging
+- Easy to modify API behavior globally
+- Better testability with dependency injection
+- Clear separation between UI and data layers
+
+**Tradeoffs**:
+
+- Higher abstraction level may hide implementation details
+- Potential performance overhead for simple calls
+- Requires discipline to avoid bypassing the service layer
+
+### 7. TypeScript Strict Mode
+
+**Decision**: Use strict TypeScript configuration with full type safety.
+
+**Rationale**:
+
+- Catch errors at compile time
+- Better IDE support and refactoring
+- Self-documenting code with types
+- Improved maintainability
+
+**Tradeoffs**:
+
+- Steeper learning curve for JavaScript developers
+- More verbose code
+- Potential build performance impact
+
+### 8. Tailwind CSS for Styling
+
+**Decision**: Use utility-first Tailwind CSS instead of component libraries.
+
+**Rationale**:
+
+- Consistent design system
+- Smaller bundle size (unused styles purged)
+- Rapid prototyping and development
+- Highly customizable
+
+**Tradeoffs**:
+
+- Inline styles can become verbose
+- Learning curve for utility classes
+- Less semantic than traditional CSS
+
+### 9. Multiple Payment Gateway Support
+
+**Decision**: Support Razorpay, Stripe, and PayPal simultaneously.
+
+**Rationale**:
+
+- Geographic coverage (different regions prefer different gateways)
+- Redundancy and failover capabilities
+- Merchant preference flexibility
+- Competitive pricing options
+
+**Tradeoffs**:
+
+- Increased complexity in checkout flow
+- Multiple integration maintenance
+- Higher testing requirements
+
+### 10. Supabase for Authentication
+
+**Decision**: Use Supabase Auth for user management alongside custom API auth.
+
+**Rationale**:
+
+- Robust authentication features (social logins, MFA)
+- Real-time capabilities for future features
+- Good developer experience
+- PostgreSQL integration for user data
+
+**Tradeoffs**:
+
+- Additional service dependency
+- Potential vendor lock-in
+- Learning curve for Supabase-specific features
+
+## Development Tradeoffs & Best Practices
+
+### Performance Optimizations
+
+- **Server Components**: Use for static content, client components only when needed
+- **Image Optimization**: Next.js Image component with proper sizing
+- **Code Splitting**: Dynamic imports for route-based splitting
+- **Caching**: Multi-layer caching (memory, localStorage, HTTP)
+
+### Error Handling Strategy
+
+- **Error Boundaries**: Component-level error containment
+- **Fallback UI**: Graceful degradation for failed features
+- **Retry Logic**: Exponential backoff for transient failures
+- **User Feedback**: Clear error messages with recovery options
+
+### Testing Approach
+
+- **Mock First**: Develop with mock data, test with live APIs
+- **Integration Testing**: End-to-end user flows
+- **Component Testing**: Isolated unit tests for components
+- **API Testing**: Contract testing for external APIs
+
+### Deployment Strategy
+
+- **Vercel Optimized**: Environment variables, build configs
+- **CORS Headers**: Proper CORS configuration for API routes
+- **Environment Separation**: Different configs for dev/staging/production
+
+### Scalability Considerations
+
+- **Modular Architecture**: Easy to add new features without affecting existing code
+- **Context Splitting**: Break large contexts into focused providers
+- **Service Extensions**: Add new API integrations through service layer
+- **Component Libraries**: Extract reusable components for other projects
+
+## LLM Instructions for Theme Cloning
+
+This section provides machine-readable instructions for LLM agents to clone and adapt this eCommerce theme.
+
+### Prerequisites for Cloning
+
+- Node.js 18+ and npm
+- Fresh Next.js 15 project with App Router
+- Target eCommerce backend API documentation
+- Payment gateway credentials (optional)
+
+### Step-by-Step Cloning Process
+
+1. **Project Initialization**
+
+   ```
+   npx create-next-app@latest my-ecommerce --typescript --tailwind --app
+   cd my-ecommerce
+   npm install axios js-cookie framer-motion lucide-react react-icons @fortawesome/react-fontawesome
+   ```
+
+2. **File Structure Creation**
+
+   - Create all directories listed in "Complete File Structure Index"
+   - Copy configuration files (.env, next.config.ts, tailwind.config.ts, etc.)
+   - Set up TypeScript configuration
+
+3. **Core Architecture Setup**
+
+   - Implement ApiService with proxy pattern
+   - Create Context providers (Auth, Cart, Product, etc.)
+   - Set up atomic design component structure
+   - Configure mock/live mode switching
+
+4. **API Integration Adaptation**
+
+   - Replace Apna Shop API endpoints with target backend
+   - Update request/response types in types.ts
+   - Modify API proxy routes to match new backend
+   - Update authentication flow if different
+
+5. **Component Implementation**
+
+   - Start with atoms (Button, Input, etc.)
+   - Build molecules (ProductCard, SearchBar, etc.)
+   - Create organisms (Header, Footer, ProductGrid, etc.)
+   - Implement page templates
+
+6. **Feature Implementation Order**
+
+   - Authentication (login/register/profile)
+   - Product browsing (list, detail, search)
+   - Shopping cart (add/remove/update)
+   - Checkout flow (shipping, payment, review)
+   - Order management (history, tracking)
+
+7. **Payment Integration**
+
+   - Choose primary payment gateway
+   - Implement payment components
+   - Set up webhook handling
+   - Test payment flows
+
+8. **Testing & Deployment**
+   - Set up mock data for development
+   - Implement error handling
+   - Configure deployment (Vercel recommended)
+   - Test all user flows
+
+### Key Adaptation Points
+
+#### Backend API Changes
+
+- Update all API endpoints in `src/lib/api.ts`
+- Modify request/response interfaces in `src/lib/types.ts`
+- Adjust authentication headers and tokens
+- Update API proxy routes in `src/app/api/`
+
+#### Payment Gateway Changes
+
+- Replace payment components in `src/components/checkout/`
+- Update payment API routes
+- Modify webhook handling
+- Adjust payment flow logic
+
+#### Styling Customization
+
+- Update Tailwind configuration
+- Modify component styles
+- Adjust responsive breakpoints
+- Customize color scheme and typography
+
+#### Feature Customization
+
+- Add/remove features based on requirements
+- Modify component composition
+- Extend context providers
+- Add new API integrations
+
+### Common Pitfalls to Avoid
+
+- Direct API calls (always use proxy routes)
+- Missing error boundaries
+- Improper TypeScript types
+- Inconsistent component naming
+- Missing loading states
+- Poor mobile responsiveness
+
+### Performance Optimization Checklist
+
+- [ ] Implement proper code splitting
+- [ ] Use Next.js Image component
+- [ ] Enable caching strategies
+- [ ] Optimize bundle size
+- [ ] Implement lazy loading
+- [ ] Add service worker for caching
+
+### Security Checklist
+
+- [ ] Validate all user inputs
+- [ ] Sanitize API responses
+- [ ] Implement proper CORS headers
+- [ ] Use HTTPS in production
+- [ ] Secure token storage
+- [ ] Rate limiting on API routes
 
 ## Authentication Flow
 
