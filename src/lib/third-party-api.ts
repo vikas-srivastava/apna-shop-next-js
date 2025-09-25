@@ -1,6 +1,6 @@
 /**
  * Third-party API service for e-commerce data
- * Connects to the Foundry eCommerce backend
+ * Connects to the Apna Shop eCommerce backend
  */
 
 import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User, ApiProduct } from './types'

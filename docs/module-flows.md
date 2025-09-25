@@ -9,7 +9,7 @@ sequenceDiagram
     participant U as User
     participant F as Frontend
     participant S as Supabase
-    participant A as Foundry API
+    participant A as Apna Shop API
 
     U->>F: Login/Register Request
     F->>S: Authenticate with Supabase
@@ -271,7 +271,7 @@ graph TD
     end
 
     subgraph "Third-party Services"
-        G[Foundry eCommerce API]
+        G[Apna Shop API]
         H[Payment Gateways]
         I[Shipping Providers]
         J[Email Services]
@@ -539,6 +539,54 @@ src/
 - **Data Encryption**: Encrypt sensitive data in local storage
 - **Privacy Compliance**: Implement GDPR and privacy regulations
 - **Audit Logging**: Log security-relevant events
+
+## Testing Guidelines
+
+### Testing Environment Setup
+
+The application supports two testing modes:
+
+- **Mock Mode** (`NEXT_PUBLIC_USE_MOCK=true`): Uses local mock data for development and testing
+- **Live Mode** (`NEXT_PUBLIC_USE_MOCK=false`): Connects to live Apna Shop APIs
+
+### Available Test Scripts
+
+#### For Live API Testing (when server is available):
+
+```bash
+# Switch to live mode
+echo "NEXT_PUBLIC_USE_MOCK=false" > .env
+
+# Run live API tests
+node test-live-api.js
+```
+
+#### For Application Component Testing:
+
+```bash
+# Run comprehensive component tests
+node test-application-components.js
+
+# Test running Next.js application
+node test-nextjs-app.js
+```
+
+### Test Coverage
+
+- **API Integration**: Tests all Apna Shop APIs endpoints
+- **Service Layer**: Validates ApiService and AuthService functionality
+- **Context Providers**: Tests CartProvider, ProductProvider, and AuthProvider
+- **Component Structure**: Verifies atomic design implementation
+- **Error Handling**: Tests fallback mechanisms and error recovery
+- **Performance**: Monitors API response times and caching effectiveness
+
+### Testing Best Practices
+
+- **Mock First**: Use mock mode for development and unit testing
+- **Integration Testing**: Test complete user flows with live data when available
+- **Error Scenarios**: Test network failures, API errors, and edge cases
+- **Performance Monitoring**: Track API performance and caching effectiveness
+- **Accessibility**: Include a11y testing in component validation
 
 ## Deployment and DevOps
 

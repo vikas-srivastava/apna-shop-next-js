@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react'
 import { AuthService, AuthUser } from '../lib/auth-service'
 
-// Enhanced useAuth hook with Foundry API integration
+// Enhanced useAuth hook with Apna Shop API integration
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)

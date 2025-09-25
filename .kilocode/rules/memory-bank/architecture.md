@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a Next.js 15 eCommerce frontend application with atomic design architecture, integrated with Foundry eCommerce API through a centralized service layer.
+This is a Next.js 15 eCommerce frontend application with atomic design architecture, integrated with Apna Shop APIs through a centralized service layer.
 
 ## Source Code Structure
 
@@ -228,6 +228,6 @@ Response ← Service ← Hook ← Component ← UI Update
 
 ### API Proxy Strategy (Planned)
 
-- Next.js API routes will proxy Foundry API calls
+- Next.js API routes will proxy Apna Shop API calls
 - Eliminates CORS issues in production
 - Server-side API calls from `/api/*` routes

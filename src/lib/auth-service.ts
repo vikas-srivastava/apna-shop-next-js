@@ -1,6 +1,6 @@
 /**
  * Unified Authentication Service
- * Provides a clean interface for authentication using Foundry API
+ * Provides a clean interface for authentication using Apna Shop API
  */
 
 import { ApiService } from './api'

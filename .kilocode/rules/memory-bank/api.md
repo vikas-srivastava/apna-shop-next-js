@@ -1,6 +1,6 @@
-# Foundry eCommerce API Documentation
+# Apna Shop APIs Documentation
 
-This document contains the complete OpenAPI specification for the Foundry eCommerce API that this Next.js application integrates with.
+This document contains the complete OpenAPI specification for the Apna Shop APIs that this Next.js application integrates with.
 
 ## API Base URL
 

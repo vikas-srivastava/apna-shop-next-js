@@ -305,7 +305,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setAuthState(prev => ({ ...prev, loading: true }));
 
         try {
-            // Note: Foundry API might not have a logout endpoint, so we'll just clear local state
+            // Note: Apna Shop API might not have a logout endpoint, so we'll just clear local state
             setAuthState({
                 isAuthenticated: false,
                 user: null,

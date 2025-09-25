@@ -60,7 +60,7 @@ Required environment variables in `.env`:
 ```env
 NEXT_PUBLIC_TENANT_ID=your_tenant_id
 NEXT_PUBLIC_TOKEN=your_api_token
-NEXT_PUBLIC_API_BASE_URL=https://foundryecom.com/api
+NEXT_PUBLIC_API_BASE_URL=https://apnashop.com/api
 ```
 
 ## Build & Deployment
@@ -155,9 +155,34 @@ npm run lint     # Run ESLint for code quality
 
 ### Testing Strategy
 
-- **Manual testing**: `test-api.js` for API endpoint verification
-- **Integration testing**: End-to-end user flows
-- **Performance testing**: Lighthouse and Web Vitals monitoring
+- **Component Structure Testing**: `test-application-components.js` for verifying code architecture
+- **API Integration Testing**: `test-live-api.js` for live Apna Shop API testing
+- **Application Testing**: `test-nextjs-app.js` for running Next.js application validation
+- **Integration Testing**: End-to-end user flows with mock/live data
+- **Performance Testing**: Lighthouse, Web Vitals, and custom performance monitoring
+- **Error Handling Testing**: Fallback mechanisms and error recovery validation
+
+### Testing Commands
+
+#### For Live API Testing (when server is available):
+
+```bash
+# Switch to live mode
+echo "NEXT_PUBLIC_USE_MOCK=false" > .env
+
+# Run live API tests
+node test-live-api.js
+```
+
+#### For Application Component Testing:
+
+```bash
+# Run comprehensive component tests
+node test-application-components.js
+
+# Test running Next.js application
+node test-nextjs-app.js
+```
 
 ## File Structure Conventions
 

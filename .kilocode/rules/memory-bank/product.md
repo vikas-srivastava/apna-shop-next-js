@@ -7,7 +7,7 @@ This is a modern, full-featured eCommerce frontend application built with Next.j
 ## Problems It Solves
 
 1. **CORS Issues in Production**: Eliminates browser CORS errors when deploying to platforms like Vercel by proxying third-party API calls through Next.js API routes
-2. **Complex eCommerce Integration**: Provides a complete, production-ready integration with Foundry eCommerce API
+2. **Complex eCommerce Integration**: Provides a complete, production-ready integration with Apna Shop APIs
 3. **Scalable Component Architecture**: Implements atomic design principles for maintainable, reusable UI components
 4. **State Management Complexity**: Centralizes API endpoints and state management using React Context
 5. **Deployment Challenges**: Includes proper configuration for Vercel deployment with environment variable management
@@ -26,7 +26,7 @@ This is a modern, full-featured eCommerce frontend application built with Next.j
 ### Technical Architecture
 
 - **Frontend**: Next.js 15 with React 19, Tailwind CSS, Framer Motion
-- **API Integration**: Centralized axios client with Foundry eCommerce API
+- **API Integration**: Centralized axios client with Apna Shop APIs
 - **State Management**: React Context providers (Auth, Cart, Product)
 - **Component Design**: Atomic design (Atoms → Molecules → Organisms)
 - **Deployment**: Vercel-ready with CORS headers and environment configuration
