@@ -9,28 +9,48 @@ This is a Next.js 15 eCommerce frontend application with atomic design architect
 ### Core Directories
 
 ```
-app/
-├── components/           # Reusable UI components (atomic design)
-│   ├── atoms/           # Basic components (Button, Input, Card)
-│   ├── molecules/       # Composite components (FormField, ProductCard)
-│   └── organisms/       # Complex components (ProductGrid, ErrorBoundary)
-├── hooks/               # Custom React hooks for API operations
-├── services/            # API service layer (axios clients)
-├── context/             # React Context providers for state management
-├── sections/            # Page sections (Hero, About, FAQ)
-└── [page]/              # Next.js app router pages
-
-context/                 # Global context providers
-public/                  # Static assets and images
+src/
+├── app/                 # Next.js app router pages and API routes
+│   ├── api/            # API proxy routes for third-party integration
+│   ├── components/     # Reusable UI components (atomic design)
+│   │   ├── atoms/     # Basic components (Button, Input, Card)
+│   │   ├── molecules/ # Composite components (FormField, ProductCard)
+│   │   ├── organisms/ # Complex components (ProductGrid, ErrorBoundary)
+│   │   ├── templates/ # Page templates
+│   │   └── ui/        # Shared UI components
+│   ├── contexts/      # React Context providers for state management
+│   ├── hooks/         # Custom React hooks for API operations
+│   ├── lib/           # Utility libraries and services
+│   └── pages/         # Legacy pages router (minimal usage)
+├── components/         # Additional component libraries
+│   ├── auth/          # Authentication components
+│   ├── checkout/      # Checkout flow components
+│   └── organisms/     # Additional organisms
+├── contexts/           # Global context providers
+├── hooks/              # Additional custom hooks
+├── lib/                # Core utilities and services
+│   ├── api.ts         # Enhanced API service with caching and monitoring
+│   ├── auth-service.ts # Authentication service
+│   ├── third-party-api.ts # Third-party API integration
+│   ├── types.ts       # TypeScript type definitions
+│   └── mock-data.ts   # Mock data for testing
+├── public/             # Static assets and images
+└── docs/               # Documentation files
 ```
 
 ### Key Files
 
-- `app/services/apiService.js` - Centralized API client with all Foundry eCommerce endpoints
-- `context/AuthContext.js` - Authentication state management
-- `context/CartContext.js` - Shopping cart state
-- `context/ProductContext.js` - Product data state
-- `next.config.mjs` - CORS configuration and build settings
+- `src/lib/api.ts` - ApiService class: Centralized API client with caching, monitoring, and error handling
+- `src/lib/auth-service.ts` - AuthService class: Authentication service with localStorage persistence
+- `src/lib/third-party-api.ts` - Third-party API integration functions
+- `src/contexts/CartContext.tsx` - CartProvider component: Shopping cart state with CartValidator, CartCalculator, CartPersistence classes
+- `src/contexts/ProductContext.tsx` - ProductProvider component: Product data state management
+- `src/contexts/CheckoutContext.tsx` - CheckoutProvider component: Checkout flow state
+- `src/contexts/ThemeContext.tsx` - ThemeProvider component: Theme management
+- `src/contexts/WishlistContext.tsx` - WishlistProvider component: Wishlist state
+- `src/components/auth/AuthProvider.tsx` - AuthProvider component: Authentication UI state
+- `src/components/auth/SupabaseAuthProvider.tsx` - SupabaseAuthProvider component: Supabase authentication
+- `next.config.ts` - Next.js configuration with CORS and build settings
 - `.env` - Environment variables for API configuration
 
 ## Technical Decisions
@@ -63,24 +83,29 @@ public/                  # Static assets and images
 
 ### Service Layer Pattern
 
-All API calls go through centralized services in `app/services/apiService.js`:
+All API calls go through centralized services in `src/lib/api.ts` and `src/lib/auth-service.ts`:
 
-```javascript
+```typescript
 // Usage
-import { productService } from "./services/apiService";
-const products = await productService.getProducts();
+import { ApiService } from "@/lib/api";
+const products = await ApiService.getProducts();
+
+import { AuthService } from "@/lib/auth-service";
+await AuthService.login(email, password);
 ```
 
 ### Context Provider Pattern
 
-State is managed through React Context providers:
+State is managed through React Context providers with enhanced functionality:
 
-```javascript
+```typescript
 // App layout
 <AuthProvider>
   <CartProvider>
     <ProductProvider>
-      <App />
+      <CheckoutProvider>
+        <App />
+      </CheckoutProvider>
     </ProductProvider>
   </CartProvider>
 </AuthProvider>
@@ -88,11 +113,38 @@ State is managed through React Context providers:
 
 ### Custom Hook Pattern
 
-Business logic is encapsulated in custom hooks:
+Business logic is encapsulated in custom hooks with TypeScript support:
 
-```javascript
+```typescript
 // Usage
 const { login, loading, error } = useAuth();
+const { addItem, removeItem } = useCart();
+const { products, fetchProducts } = useProducts();
+```
+
+### Validation and Calculation Classes
+
+Complex business logic is separated into dedicated classes:
+
+```typescript
+// Cart validation and calculations
+class CartValidator {
+  static validateProduct(product: Product): { valid: boolean; error?: string };
+  static validateQuantity(
+    quantity: number,
+    maxStock?: number
+  ): { valid: boolean; error?: string };
+}
+
+class CartCalculator {
+  static calculateTotal(items: CartItem[]): number;
+  static calculateItemCount(items: CartItem[]): number;
+}
+
+class CartPersistence {
+  static save(cartState: CartState): void;
+  static load(): CartState | null;
+}
 ```
 
 ## Component Relationships
@@ -120,30 +172,33 @@ Organisms (Complex)
 
 ### Context Dependencies
 
-- **AuthContext**: Manages user authentication state
-- **CartContext**: Manages shopping cart items and totals
-- **ProductContext**: Manages product data and search state
+- **AuthProvider**: Manages user authentication state with AuthService integration
+- **CartProvider**: Manages shopping cart items and totals with CartValidator, CartCalculator, CartPersistence classes
+- **ProductProvider**: Manages product data and search state with ApiService integration
+- **CheckoutProvider**: Manages checkout flow state
+- **ThemeProvider**: Manages theme state
+- **WishlistProvider**: Manages wishlist state
 
 ## Critical Implementation Paths
 
 ### Authentication Flow
 
 1. User submits login form
-2. `AuthContext.login()` calls `authService.login()`
-3. Success: Store user data in cookies and context
+2. `AuthProvider.login()` calls `AuthService.login()`
+3. Success: Store user data in localStorage and context
 4. Failure: Display error message
 
 ### Product Loading Flow
 
 1. Page component mounts
-2. `useProducts` hook calls `productService.getProducts()`
-3. Data stored in `ProductContext`
+2. `useProducts` hook calls `ApiService.getProducts()`
+3. Data stored in `ProductProvider`
 4. Components re-render with new data
 
 ### Cart Operations Flow
 
 1. User clicks "Add to Cart"
-2. `CartContext.addToCart()` calls `cartService.addToCart()`
+2. `CartProvider.addItem()` calls `ApiService.addToCart()`
 3. Cart state updated locally and synced with API
 4. UI reflects changes immediately
 
