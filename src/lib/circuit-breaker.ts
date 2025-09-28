@@ -37,12 +37,12 @@ export class CircuitBreaker {
         private name: string,
         private config: CircuitBreakerConfig
     ) {
-        // Clean up old failure records periodically
-        setInterval(() => {
-            this.cleanup();
-        }, this.config.monitoringPeriod);
+    constructor(
+        private name: string,
+        private config: CircuitBreakerConfig
+    ) {
+        // Cleanup is manual - call cleanup() when needed
     }
-
     /**
      * Execute a function with circuit breaker protection
      */

@@ -185,32 +185,55 @@ class ApiCache {
 // Request deduplication
 class RequestDeduplicator {
   private static pendingRequests = new Map<string, PendingRequest<unknown>>()
+  private static cleanupInterval: NodeJS.Timeout | null = null
 
-  static get<T>(key: string): Promise<T> | null {
-    const request = this.pendingRequests.get(key)
-    if (!request) return null
-
-    const now = Date.now()
-    if (now - request.timestamp > 30000) { // 30 seconds timeout
-      this.pendingRequests.delete(key)
-      return null
-    }
-
-    ApiLogger.info(`Deduplication hit for key: ${key}`)
-    return request.promise as Promise<T>
-  }
-
-  static set<T>(key: string, promise: Promise<T>): void {
-    this.pendingRequests.set(key, {
-      promise,
-      timestamp: Date.now()
-    })
-  }
-
-  static clear(): void {
-    this.pendingRequests.clear()
+  static init() {
+    // Clean up old pending requests every 30 seconds
+    if (typeof window !== 'undefined' && !this.cleanupInterval) {
+      // Manual cleanup - call cleanup() when needed
+      const now = Date.now()
+      for (const [key, request] of this.pendingRequests.entries()) {
+        if (now - request.timestamp > 30000) { // 30 seconds
+          this.pendingRequests.delete(key)
+        }
+      }
+    }, 30000)
   }
 }
+
+  static get<T>(key: string): Promise<T> | null {
+  const request = this.pendingRequests.get(key)
+  if (!request) return null
+
+  const now = Date.now()
+  if (now - request.timestamp > 30000) { // 30 seconds timeout
+    this.pendingRequests.delete(key)
+    return null
+  }
+
+  ApiLogger.info(`Deduplication hit for key: ${key}`)
+  return request.promise as Promise<T>
+}
+
+  static set<T>(key: string, promise: Promise<T>): void {
+  this.pendingRequests.set(key, {
+    promise,
+    timestamp: Date.now()
+  })
+}
+
+  static clear(): void {
+  this.pendingRequests.clear()
+    if(this.cleanupInterval) {
+  clearInterval(this.cleanupInterval)
+  this.cleanupInterval = null
+}
+  }
+}
+
+// Initialize deduplicator
+RequestDeduplicator.init()
+
 // Enhanced API wrapper with interceptors
 export class ApiService {
   private static async executeWithMonitoring<T>(

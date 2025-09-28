@@ -216,7 +216,4 @@ export class AuditUtils {
     }
 }
 
-// Clean up rate limit store periodically
-setInterval(() => {
-    RequestUtils.cleanupRateLimitStore();
-}, 60000); // Clean up every minute
+// Rate limit store cleanup is manual - call RequestUtils.cleanupRateLimitStore() when needed
