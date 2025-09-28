@@ -7,6 +7,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withRateLimit } from '@/middleware/rate-limit';
 import { withSecurity, addSecurityHeaders } from '@/middleware/security';
 
+// Use Edge runtime for better performance
+export const runtime = 'edge';
+
 export const config = {
     matcher: [
         /*

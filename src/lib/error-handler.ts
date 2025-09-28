@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { AuditUtils } from './security';
+import { AuditUtils } from './security-edge';
 
 export interface SecureError {
     message: string;

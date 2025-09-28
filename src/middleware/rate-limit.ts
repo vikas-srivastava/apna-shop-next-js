@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { RequestUtils, RATE_LIMITS, AuditUtils } from '@/lib/security';
+import { RequestUtils, RATE_LIMITS, AuditUtils } from '@/lib/security-edge';
 
 export interface RateLimitResult {
     allowed: boolean;

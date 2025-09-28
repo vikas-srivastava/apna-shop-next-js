@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { SecurityHeaders, RequestUtils, AuditUtils } from '@/lib/security';
+import { SecurityHeaders, RequestUtils, AuditUtils } from '@/lib/security-edge';
 
 export interface SecurityMiddlewareOptions {
     enableCSP?: boolean;
