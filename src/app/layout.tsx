@@ -3,6 +3,9 @@ import { ReactNode } from 'react'
 import { Metadata } from 'next'
 import ClientLayout from './client-layout'
 
+// Force dynamic rendering to avoid SSR issues
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   metadataBase: new URL('http://localhost:3000'),
   title: 'StoreFront - Your Online Shopping Destination',

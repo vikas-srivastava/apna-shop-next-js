@@ -8,8 +8,13 @@ import { CheckoutProvider, useCheckout } from '@/contexts/CheckoutContext'
 import { ShippingStep } from '@/components/checkout/ShippingStep'
 import { PaymentStep } from '@/components/checkout/PaymentStep'
 import { ReviewStep } from '@/components/checkout/ReviewStep'
-import { CheckoutSidebar } from '@/components/checkout/CheckoutSidebar'
+import dynamic from 'next/dynamic'
 import { useCart } from '@/contexts/CartContext'
+
+// Lazy load CheckoutSidebar for better code splitting
+const CheckoutSidebar = dynamic(() => import('@/components/checkout/CheckoutSidebar').then(mod => ({ default: mod.CheckoutSidebar })), {
+    loading: () => <div className="animate-pulse bg-secondary-100 rounded-lg p-4">Loading order summary...</div>
+})
 
 function CheckoutContent() {
     const { currentStep, error } = useCheckout()
@@ -80,10 +85,10 @@ function CheckoutContent() {
                             ].map((step) => (
                                 <div key={step.id} className="flex items-center">
                                     <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${step.id < currentStep
-                                            ? 'bg-primary-500 border-primary-500 text-white'
-                                            : step.id === currentStep
-                                                ? 'border-primary-500 text-primary-500'
-                                                : 'border-secondary-300 text-secondary-400'
+                                        ? 'bg-primary-500 border-primary-500 text-white'
+                                        : step.id === currentStep
+                                            ? 'border-primary-500 text-primary-500'
+                                            : 'border-secondary-300 text-secondary-400'
                                         }`}>
                                         {step.id < currentStep ? (
                                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

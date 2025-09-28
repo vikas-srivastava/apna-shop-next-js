@@ -16,12 +16,12 @@ function getUserId(): string {
 // PUT /api/addresses/[id] - Update address
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await mockDelay()
 
-        const { id } = params
+        const { id } = await params
         const body = await request.json()
         const {
             firstName,
@@ -88,12 +88,12 @@ export async function PUT(
 // DELETE /api/addresses/[id] - Delete address
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await mockDelay()
 
-        const { id } = params
+        const { id } = await params
 
         const userId = getUserId()
         const userAddresses = mockStorage.addresses.get(userId) || []

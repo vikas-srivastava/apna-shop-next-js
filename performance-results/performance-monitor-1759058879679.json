@@ -1,0 +1,964 @@
+{
+  "timestamp": "2025-09-28T11:27:29.673Z",
+  "system": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 8,
+    "totalMemory": 8589934592,
+    "hostname": "Prathams-MacBook-Air.local"
+  },
+  "samples": [
+    {
+      "timestamp": 1759058850679,
+      "uptime": 680831,
+      "memory": {
+        "total": 8589934592,
+        "used": 8505425920,
+        "free": 84508672,
+        "usagePercent": 99.01618957519531
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.774521517123308,
+        "loadAverage": [
+          2.111328125,
+          1.8525390625,
+          2.318359375
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058851679,
+      "uptime": 680832,
+      "memory": {
+        "total": 8589934592,
+        "used": 8498069504,
+        "free": 91865088,
+        "usagePercent": 98.93054962158203
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.774382681589227,
+        "loadAverage": [
+          2.111328125,
+          1.8525390625,
+          2.318359375
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058852680,
+      "uptime": 680833,
+      "memory": {
+        "total": 8589934592,
+        "used": 8470757376,
+        "free": 119177216,
+        "usagePercent": 98.61259460449219
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77425303038235,
+        "loadAverage": [
+          2.50244140625,
+          1.93798828125,
+          2.345703125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058853682,
+      "uptime": 680834,
+      "memory": {
+        "total": 8589934592,
+        "used": 8364081152,
+        "free": 225853440,
+        "usagePercent": 97.37071990966797
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77411277888328,
+        "loadAverage": [
+          2.50244140625,
+          1.93798828125,
+          2.345703125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058854682,
+      "uptime": 680835,
+      "memory": {
+        "total": 8589934592,
+        "used": 8410562560,
+        "free": 179372032,
+        "usagePercent": 97.91183471679688
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773972893411337,
+        "loadAverage": [
+          2.50244140625,
+          1.93798828125,
+          2.345703125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058855683,
+      "uptime": 680836,
+      "memory": {
+        "total": 8589934592,
+        "used": 8368095232,
+        "free": 221839360,
+        "usagePercent": 97.41744995117188
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.7739308030234,
+        "loadAverage": [
+          2.50244140625,
+          1.93798828125,
+          2.345703125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058856684,
+      "uptime": 680837,
+      "memory": {
+        "total": 8589934592,
+        "used": 8402845696,
+        "free": 187088896,
+        "usagePercent": 97.8219985961914
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773817622762873,
+        "loadAverage": [
+          2.50244140625,
+          1.93798828125,
+          2.345703125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058857685,
+      "uptime": 680838,
+      "memory": {
+        "total": 8589934592,
+        "used": 8444624896,
+        "free": 145309696,
+        "usagePercent": 98.3083724975586
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773712701377605,
+        "loadAverage": [
+          2.3818359375,
+          1.92236328125,
+          2.33740234375
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058858687,
+      "uptime": 680839,
+      "memory": {
+        "total": 8589934592,
+        "used": 8484159488,
+        "free": 105775104,
+        "usagePercent": 98.76861572265625
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77373361323438,
+        "loadAverage": [
+          2.3818359375,
+          1.92236328125,
+          2.33740234375
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058859688,
+      "uptime": 680840,
+      "memory": {
+        "total": 8589934592,
+        "used": 8500510720,
+        "free": 89423872,
+        "usagePercent": 98.95896911621094
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77363079109683,
+        "loadAverage": [
+          2.3818359375,
+          1.92236328125,
+          2.33740234375
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058860689,
+      "uptime": 680841,
+      "memory": {
+        "total": 8589934592,
+        "used": 8488091648,
+        "free": 101842944,
+        "usagePercent": 98.81439208984375
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773651885227867,
+        "loadAverage": [
+          2.3818359375,
+          1.92236328125,
+          2.33740234375
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058861690,
+      "uptime": 680842,
+      "memory": {
+        "total": 8589934592,
+        "used": 8515289088,
+        "free": 74645504,
+        "usagePercent": 99.13101196289062
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77351627009894,
+        "loadAverage": [
+          2.3818359375,
+          1.92236328125,
+          2.33740234375
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058862691,
+      "uptime": 680843,
+      "memory": {
+        "total": 8589934592,
+        "used": 8506228736,
+        "free": 83705856,
+        "usagePercent": 99.0255355834961
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773572009086255,
+        "loadAverage": [
+          2.27099609375,
+          1.90673828125,
+          2.3291015625
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058863692,
+      "uptime": 680844,
+      "memory": {
+        "total": 8589934592,
+        "used": 8414543872,
+        "free": 175390720,
+        "usagePercent": 97.95818328857422
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773465987478488,
+        "loadAverage": [
+          2.27099609375,
+          1.90673828125,
+          2.3291015625
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058864693,
+      "uptime": 680845,
+      "memory": {
+        "total": 8589934592,
+        "used": 8417525760,
+        "free": 172408832,
+        "usagePercent": 97.9928970336914
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773301710731236,
+        "loadAverage": [
+          2.27099609375,
+          1.90673828125,
+          2.3291015625
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058865694,
+      "uptime": 680846,
+      "memory": {
+        "total": 8589934592,
+        "used": 8450752512,
+        "free": 139182080,
+        "usagePercent": 98.37970733642578
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773160735963884,
+        "loadAverage": [
+          2.27099609375,
+          1.90673828125,
+          2.3291015625
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058866695,
+      "uptime": 680847,
+      "memory": {
+        "total": 8589934592,
+        "used": 8331165696,
+        "free": 258768896,
+        "usagePercent": 96.98753356933594
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.773040419744635,
+        "loadAverage": [
+          2.27099609375,
+          1.90673828125,
+          2.3291015625
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058867696,
+      "uptime": 680848,
+      "memory": {
+        "total": 8589934592,
+        "used": 8335114240,
+        "free": 254820352,
+        "usagePercent": 97.03350067138672
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77288187990179,
+        "loadAverage": [
+          2.0888671875,
+          1.875,
+          2.3154296875
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058868697,
+      "uptime": 680849,
+      "memory": {
+        "total": 8589934592,
+        "used": 8355643392,
+        "free": 234291200,
+        "usagePercent": 97.27249145507812
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77272266528783,
+        "loadAverage": [
+          2.0888671875,
+          1.875,
+          2.3154296875
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058869698,
+      "uptime": 680850,
+      "memory": {
+        "total": 8589934592,
+        "used": 8359264256,
+        "free": 230670336,
+        "usagePercent": 97.31464385986328
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.772560679003206,
+        "loadAverage": [
+          2.0888671875,
+          1.875,
+          2.3154296875
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058870700,
+      "uptime": 680851,
+      "memory": {
+        "total": 8589934592,
+        "used": 8459780096,
+        "free": 130154496,
+        "usagePercent": 98.48480224609375
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.772502505551316,
+        "loadAverage": [
+          2.0888671875,
+          1.875,
+          2.3154296875
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058871700,
+      "uptime": 680852,
+      "memory": {
+        "total": 8589934592,
+        "used": 8502935552,
+        "free": 86999040,
+        "usagePercent": 98.98719787597656
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.772356490093507,
+        "loadAverage": [
+          2.0888671875,
+          1.875,
+          2.3154296875
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058872700,
+      "uptime": 680853,
+      "memory": {
+        "total": 8589934592,
+        "used": 8523563008,
+        "free": 66371584,
+        "usagePercent": 99.22733306884766
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77221004723942,
+        "loadAverage": [
+          1.92138671875,
+          1.84375,
+          2.3017578125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058873701,
+      "uptime": 680854,
+      "memory": {
+        "total": 8589934592,
+        "used": 8522055680,
+        "free": 67878912,
+        "usagePercent": 99.20978546142578
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77208992624378,
+        "loadAverage": [
+          1.92138671875,
+          1.84375,
+          2.3017578125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058874703,
+      "uptime": 680855,
+      "memory": {
+        "total": 8589934592,
+        "used": 8519204864,
+        "free": 70729728,
+        "usagePercent": 99.17659759521484
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.771940400510573,
+        "loadAverage": [
+          1.92138671875,
+          1.84375,
+          2.3017578125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058875703,
+      "uptime": 680856,
+      "memory": {
+        "total": 8589934592,
+        "used": 8518664192,
+        "free": 71270400,
+        "usagePercent": 99.17030334472656
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77178311589784,
+        "loadAverage": [
+          1.92138671875,
+          1.84375,
+          2.3017578125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058876705,
+      "uptime": 680857,
+      "memory": {
+        "total": 8589934592,
+        "used": 8255209472,
+        "free": 334725120,
+        "usagePercent": 96.10328674316406
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.771687223048612,
+        "loadAverage": [
+          1.92138671875,
+          1.84375,
+          2.3017578125
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058877706,
+      "uptime": 680858,
+      "memory": {
+        "total": 8589934592,
+        "used": 8263598080,
+        "free": 326336512,
+        "usagePercent": 96.20094299316406
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.771523404758312,
+        "loadAverage": [
+          1.92724609375,
+          1.84619140625,
+          2.2998046875
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    },
+    {
+      "timestamp": 1759058878707,
+      "uptime": 680859,
+      "memory": {
+        "total": 8589934592,
+        "used": 8285421568,
+        "free": 304513024,
+        "usagePercent": 96.45500183105469
+      },
+      "process": null,
+      "cpu": {
+        "usage": 26.77144564350023,
+        "loadAverage": [
+          1.92724609375,
+          1.84619140625,
+          2.2998046875
+        ]
+      },
+      "network": {
+        "interfaces": [
+          "lo0",
+          "en0",
+          "awdl0",
+          "llw0",
+          "utun0",
+          "utun1",
+          "utun2",
+          "utun3"
+        ]
+      },
+      "disk": null
+    }
+  ],
+  "summary": {
+    "duration": 29000,
+    "sampleCount": 29,
+    "memory": {
+      "min": 96.10328674316406,
+      "max": 99.22733306884766,
+      "average": 98.1393945628199,
+      "median": 98.37970733642578,
+      "p95": 99.1965103149414,
+      "p99": 99.22241973876953
+    },
+    "cpu": {
+      "min": 26.77144564350023,
+      "max": 26.774521517123308,
+      "average": 26.773085566629387,
+      "median": 26.773301710731236,
+      "p95": 26.774330821106474,
+      "p99": 26.774482643173766
+    },
+    "process": {
+      "cpu": null,
+      "memory": null
+    }
+  }
+}

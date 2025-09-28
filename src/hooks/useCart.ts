@@ -217,7 +217,7 @@ export function useCart(): UseCartReturn {
 
   const getItemsByCategory = useCallback((category: string) => {
     return cartContext.items.filter(item =>
-      item.product.category?.toLowerCase() === category.toLowerCase()
+      item.product.category?.name?.toLowerCase() === category.toLowerCase()
     )
   }, [cartContext.items])
 

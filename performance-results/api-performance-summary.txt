@@ -1,0 +1,164 @@
+API PERFORMANCE TEST SUMMARY
+============================
+Generated: 2025-09-28T11:26:59.430Z
+
+TEST CONFIGURATION
+------------------
+Base URL: http://localhost:3000/api
+Concurrency: 10
+Duration: 30000ms
+Timeout: 10000ms
+
+OVERALL SUMMARY
+---------------
+Total Endpoints: 8
+Total Requests: 831
+Successful Requests: 0
+Failed Requests: 831
+Average Throughput: 332.29 req/sec
+Average Response Time: 23.98ms
+Average Error Rate: 100.00%
+
+ENDPOINT DETAILS
+----------------
+
+Get Products
+  Method: GET
+  URL: /products
+  Requests: 109
+  Success Rate: 0.00%
+  Error Rate: 100.00%
+  Avg Response Time: 24.59ms
+  Min Response Time: 8.00ms
+  Max Response Time: 60.00ms
+  Throughput: 322.49 req/sec
+  P50: 22.00ms
+  P95: 53.00ms
+  P99: 53.00ms
+
+Get Categories
+  Method: GET
+  URL: /categories
+  Requests: 105
+  Success Rate: 0.00%
+  Error Rate: 100.00%
+  Avg Response Time: 24.62ms
+  Min Response Time: 8.00ms
+  Max Response Time: 53.00ms
+  Throughput: 335.46 req/sec
+  P50: 22.00ms
+  P95: 53.00ms
+  P99: 53.00ms
+
+Get Cart
+  Method: GET
+  URL: /cart
+  Requests: 100
+  Success Rate: 0.00%
+  Error Rate: 100.00%
+  Avg Response Time: 24.76ms
+  Min Response Time: 11.00ms
+  Max Response Time: 58.00ms
+  Throughput: 321.54 req/sec
+  P50: 22.00ms
+  P95: 47.00ms
+  P99: 58.00ms
+
+User Login
+  Method: POST
+  URL: /auth/login
+  Requests: 100
+  Success Rate: 0.00%
+  Error Rate: 100.00%
+  Avg Response Time: 24.12ms
+  Min Response Time: 11.00ms
+  Max Response Time: 60.00ms
+  Throughput: 321.54 req/sec
+  P50: 19.00ms
+  P95: 58.00ms
+  P99: 60.00ms
+
+User Registration
+  Method: POST
+  URL: /auth/register
+  Requests: 105
+  Success Rate: 0.00%
+  Error Rate: 100.00%
+  Avg Response Time: 23.24ms
+  Min Response Time: 6.00ms
+  Max Response Time: 63.00ms
+  Throughput: 338.71 req/sec
+  P50: 18.00ms
+  P95: 61.00ms
+  P99: 61.00ms
+
+Product Search
+  Method: GET
+  URL: /products/search
+  Requests: 100
+  Success Rate: 0.00%
+  Error Rate: 100.00%
+  Avg Response Time: 23.98ms
+  Min Response Time: 9.00ms
+  Max Response Time: 54.00ms
+  Throughput: 324.68 req/sec
+  P50: 22.00ms
+  P95: 53.00ms
+  P99: 54.00ms
+
+Create Order
+  Method: POST
+  URL: /orders
+  Requests: 109
+  Success Rate: 0.00%
+  Error Rate: 100.00%
+  Avg Response Time: 22.61ms
+  Min Response Time: 3.00ms
+  Max Response Time: 52.00ms
+  Throughput: 356.21 req/sec
+  P50: 20.00ms
+  P95: 49.00ms
+  P99: 52.00ms
+
+Payment Creation
+  Method: POST
+  URL: /payments/create-razorpay-order
+  Requests: 103
+  Success Rate: 0.00%
+  Error Rate: 100.00%
+  Avg Response Time: 23.95ms
+  Min Response Time: 4.00ms
+  Max Response Time: 53.00ms
+  Throughput: 337.70 req/sec
+  P50: 22.00ms
+  P95: 47.00ms
+  P99: 53.00ms
+
+
+PERFORMANCE ANALYSIS
+--------------------
+✅ GOOD PERFORMANCE: Average response time < 1s
+🚨 HIGH ERROR RATE: Average error rate > 10%
+✅ GOOD THROUGHPUT: Average throughput > 50 req/sec
+🚨 Get Products: High error rate (100.00%)
+🚨 Get Categories: High error rate (100.00%)
+🚨 Get Cart: High error rate (100.00%)
+🚨 User Login: High error rate (100.00%)
+🚨 User Registration: High error rate (100.00%)
+🚨 Product Search: High error rate (100.00%)
+🚨 Create Order: High error rate (100.00%)
+🚨 Payment Creation: High error rate (100.00%)
+
+RECOMMENDATIONS
+---------------
+  • Add better error handling and logging
+  • Implement circuit breaker pattern
+  • Add request validation and sanitization
+  • Fix Get Products: High error rate (100.00%)
+  • Fix Get Categories: High error rate (100.00%)
+  • Fix Get Cart: High error rate (100.00%)
+  • Fix User Login: High error rate (100.00%)
+  • Fix User Registration: High error rate (100.00%)
+  • Fix Product Search: High error rate (100.00%)
+  • Fix Create Order: High error rate (100.00%)
+  • Fix Payment Creation: High error rate (100.00%)

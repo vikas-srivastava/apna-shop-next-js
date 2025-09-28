@@ -4,6 +4,7 @@ import { Typography } from '@/components/atoms/Typography'
 import { Button } from '@/components/atoms/Button'
 import { Card } from '@/components/ui/Card'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Heart, X, ShoppingCart } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import { useWishlist } from '@/contexts/WishlistContext'
@@ -61,10 +62,12 @@ export default function WishlistPage() {
                             <div key={item.id} className="flex items-center gap-4 pb-6 border-b border-secondary-200 last:border-0 last:pb-0">
                                 {/* Product Image */}
                                 <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-secondary-100">
-                                    <img
-                                        src={item.product.images[0]}
+                                    <Image
+                                        src={item.product.images[0] || '/globe.svg'}
                                         alt={item.product.name}
-                                        className="object-cover w-full h-full"
+                                        fill
+                                        className="object-cover"
+                                        sizes="96px"
                                     />
                                 </div>
 

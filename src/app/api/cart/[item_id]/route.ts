@@ -16,12 +16,12 @@ function getUserId(): string {
 // PUT /api/cart/[item_id] - Update cart item quantity
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { item_id: string } }
+    { params }: { params: Promise<{ item_id: string }> }
 ) {
     try {
         await mockDelay()
 
-        const { item_id } = params
+        const { item_id } = await params
         const body = await request.json()
         const { product_quantity } = body
 
@@ -68,12 +68,12 @@ export async function PUT(
 // DELETE /api/cart/[item_id] - Remove item from cart
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { item_id: string } }
+    { params }: { params: Promise<{ item_id: string }> }
 ) {
     try {
         await mockDelay()
 
-        const { item_id } = params
+        const { item_id } = await params
 
         const userId = getUserId()
         const cartItems = mockStorage.cart.get(userId) || []

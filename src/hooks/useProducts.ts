@@ -302,8 +302,8 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsReturn
       const now = Date.now()
       if (now - lastFetchTime > cacheTimeout) {
         ProductsLogger.info('Auto-fetching products on mount', undefined, enableLogging)
-        context.actions.fetchCategories()
-        context.actions.fetchFeaturedProducts()
+        context.stableActions.fetchCategories()
+        context.stableActions.fetchFeaturedProducts()
         setLastFetchTime(now)
       }
     }
@@ -491,14 +491,14 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsReturn
 
     // Actions
     fetchProducts: enhancedFetchProducts,
-    fetchCategories: context.actions.fetchCategories,
-    fetchFeaturedProducts: context.actions.fetchFeaturedProducts,
+    fetchCategories: context.stableActions.fetchCategories,
+    fetchFeaturedProducts: context.stableActions.fetchFeaturedProducts,
     fetchProduct: enhancedFetchProduct,
     fetchRelatedProducts: context.actions.fetchRelatedProducts,
     searchProducts: enhancedSearchProducts,
-    setFilters: context.actions.setFilters,
-    setSortBy: context.actions.setSortBy,
-    resetFilters: context.actions.resetFilters,
+    setFilters: context.stableActions.setFilters,
+    setSortBy: context.stableActions.setSortBy,
+    resetFilters: context.stableActions.resetFilters,
 
     // Enhanced features
     validateProduct,

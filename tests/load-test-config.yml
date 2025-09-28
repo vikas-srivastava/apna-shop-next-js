@@ -1,0 +1,110 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      name: "Baseline (1 user/sec)"
+    - duration: 120
+      arrivalRate: 10
+      name: "Light Load (10 users/sec)"
+    - duration: 180
+      arrivalRate: 50
+      name: "Medium Load (50 users/sec)"
+    - duration: 240
+      arrivalRate: 100
+      name: "Heavy Load (100 users/sec)"
+    - duration: 300
+      arrivalRate: 200
+      name: "Stress Test (200 users/sec)"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      User-Agent: "Artillery-Performance-Test"
+  processor: "./load-test-processor.js"
+
+scenarios:
+  - name: "Product Browsing Flow"
+    weight: 40
+    flow:
+      - get:
+          url: "/api/products"
+          expect:
+            - statusCode: 200
+      - get:
+          url: "/api/categories"
+          expect:
+            - statusCode: 200
+      - get:
+          url: "/api/products/featured"
+          expect:
+            - statusCode: 200
+
+  - name: "Authentication Flow"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "password123"
+          expect:
+            - statusCode: [200, 401]
+      - get:
+          url: "/api/auth/profile"
+          expect:
+            - statusCode: [200, 401]
+
+  - name: "Cart Operations"
+    weight: 25
+    flow:
+      - get:
+          url: "/api/cart"
+          expect:
+            - statusCode: 200
+      - post:
+          url: "/api/cart"
+          json:
+            productId: 1
+            quantity: 1
+          expect:
+            - statusCode: 200
+      - put:
+          url: "/api/cart/1"
+          json:
+            quantity: 2
+          expect:
+            - statusCode: 200
+
+  - name: "Product Search"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/products/search?q=laptop"
+          expect:
+            - statusCode: 200
+      - get:
+          url: "/api/products/search?q=phone&limit=20"
+          expect:
+            - statusCode: 200
+
+  - name: "Checkout Flow"
+    weight: 5
+    flow:
+      - post:
+          url: "/api/orders"
+          json:
+            items: [{ productId: 1, quantity: 1 }]
+            shippingAddress:
+              name: "Test User"
+              address: "123 Test St"
+              city: "Test City"
+              postalCode: "12345"
+          expect:
+            - statusCode: [200, 400]
+      - post:
+          url: "/api/payments/create-razorpay-order"
+          json:
+            amount: 1000
+            currency: "INR"
+          expect:
+            - statusCode: [200, 400]

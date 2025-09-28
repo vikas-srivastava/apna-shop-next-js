@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/atoms/Button'
 import { Typography } from '@/components/atoms/Typography'
+import Image from 'next/image'
 import { useCheckout } from '@/contexts/CheckoutContext'
 import { useCart } from '@/contexts/CartContext'
 
@@ -46,19 +47,43 @@ export function ReviewStep() {
 
             const { order_id, order_number } = orderData.data
 
-            // If payment method requires payment processing
-            if (data.paymentMethod !== 'cod') {
-                // Create Razorpay order
-                const paymentResponse = await fetch('/api/payments', {
+            // If payment method requires payment processing and payment wasn't already completed
+            if (data.paymentMethod !== 'cod' && !data.paymentId) {
+                // Create payment order based on selected method
+                let paymentEndpoint = '/api/payments/create-razorpay-order'
+                let paymentBody: any = {
+                    order_id,
+                    amount: Math.round((total + shipping + tax) * 100), // Amount in cents/paisa
+                    currency: data.paymentMethod === 'stripe' ? 'USD' : 'INR'
+                }
+
+                switch (data.paymentMethod) {
+                    case 'stripe':
+                        paymentEndpoint = '/api/payments/stripe/create-intent'
+                        paymentBody = {
+                            amount: Math.round((total + shipping + tax) * 100),
+                            currency: 'usd'
+                        }
+                        break
+                    case 'paypal':
+                        paymentEndpoint = '/api/payments/paypal/create-order'
+                        paymentBody = {
+                            amount: (total + shipping + tax).toFixed(2),
+                            currency: 'USD'
+                        }
+                        break
+                    case 'razorpay':
+                    default:
+                        // Razorpay is the default
+                        break
+                }
+
+                const paymentResponse = await fetch(paymentEndpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        order_id,
-                        amount: (total + (total > 99 ? 0 : 5.99) + (total * 0.08)).toFixed(2),
-                        currency: 'INR'
-                    }),
+                    body: JSON.stringify(paymentBody),
                 })
 
                 const paymentData = await paymentResponse.json()
@@ -67,26 +92,8 @@ export function ReviewStep() {
                     throw new Error(paymentData.message || 'Failed to create payment order')
                 }
 
-                // For demo purposes, simulate payment success
-                // In real implementation, this would integrate with Razorpay SDK
-                const verifyResponse = await fetch('/api/payments/verify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        razorpay_order_id: paymentData.data.id,
-                        razorpay_payment_id: `pay_${Date.now()}`,
-                        razorpay_signature: 'demo_signature',
-                        order_id
-                    }),
-                })
-
-                const verifyData = await verifyResponse.json()
-
-                if (!verifyResponse.ok || !verifyData.success) {
-                    throw new Error(verifyData.message || 'Payment verification failed')
-                }
+                // Store payment ID in checkout data for later verification
+                data.paymentId = paymentData.data?.id || paymentData.clientSecret || paymentData.orderId
             }
 
             // Clear cart on successful order
@@ -185,7 +192,15 @@ export function ReviewStep() {
                             {data.paymentMethod === 'netbanking' && 'Net Banking'}
                             {data.paymentMethod === 'wallet' && 'Digital Wallet'}
                             {data.paymentMethod === 'cod' && 'Cash on Delivery'}
+                            {data.paymentMethod === 'stripe' && 'Credit/Debit Card (Stripe)'}
+                            {data.paymentMethod === 'paypal' && 'PayPal'}
+                            {data.paymentMethod === 'razorpay' && 'Razorpay'}
                         </Typography>
+                        {data.paymentId && (
+                            <Typography variant="caption" color="secondary">
+                                Payment ID: {data.paymentId}
+                            </Typography>
+                        )}
                     </div>
                 </div>
 
@@ -198,10 +213,12 @@ export function ReviewStep() {
                         {items.map((item) => (
                             <div key={item.id} className="flex gap-4 p-3 bg-secondary-50 rounded-lg">
                                 <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-secondary-100">
-                                    <img
-                                        src={item.product.images[0]}
+                                    <Image
+                                        src={item.product.images[0] || '/globe.svg'}
                                         alt={item.product.name}
-                                        className="object-cover w-full h-full"
+                                        fill
+                                        className="object-cover"
+                                        sizes="64px"
                                     />
                                 </div>
                                 <div className="flex-1">

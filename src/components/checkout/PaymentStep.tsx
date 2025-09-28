@@ -7,9 +7,20 @@ import { Input } from '@/components/atoms/Input'
 import { Typography } from '@/components/atoms/Typography'
 import { useCheckout } from '@/contexts/CheckoutContext'
 import { useCart } from '@/contexts/CartContext'
-import { StripePayment } from './StripePayment'
-import { PayPalPayment } from './PayPalPayment'
-import { RazorpayPayment } from './RazorpayPayment'
+import dynamic from 'next/dynamic'
+
+// Lazy load payment components for better code splitting
+const StripePayment = dynamic(() => import('./StripePayment').then(mod => ({ default: mod.StripePayment })), {
+    loading: () => <div className="animate-pulse bg-secondary-100 rounded-lg p-4">Loading Stripe payment...</div>
+})
+
+const PayPalPayment = dynamic(() => import('./PayPalPayment').then(mod => ({ default: mod.PayPalPayment })), {
+    loading: () => <div className="animate-pulse bg-secondary-100 rounded-lg p-4">Loading PayPal payment...</div>
+})
+
+const RazorpayPayment = dynamic(() => import('./RazorpayPayment').then(mod => ({ default: mod.RazorpayPayment })), {
+    loading: () => <div className="animate-pulse bg-secondary-100 rounded-lg p-4">Loading Razorpay payment...</div>
+})
 
 interface PaymentFormData {
     method: string

@@ -1,7 +1,6 @@
 'use client';
 
 import { ReactNode, createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { registerUser, loginUser, getUserProfile, ApiResponse } from '../../lib/api';
 import { User } from '../../lib/types';
 
 // Enhanced Auth Context Types
@@ -213,9 +212,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setAuthState(prev => ({ ...prev, loading: true, error: null }));
 
         try {
-            const response = await retryOperation(() =>
-                loginUser({ email, password })
-            );
+            const response = await retryOperation(async () => {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+                return await res.json();
+            });
 
             if (response.success && response.data) {
                 const user: AuthUser = {
@@ -236,7 +242,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 persistAuthState({ user, isAuthenticated: true });
                 AuthLogger.info('User logged in successfully', { email });
             } else {
-                throw new Error(response.error || 'Login failed');
+                throw new Error(response.message || 'Login failed');
             }
         } catch (error) {
             const authError = getUserFriendlyError((error as Error).message);
@@ -262,9 +268,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setAuthState(prev => ({ ...prev, loading: true, error: null }));
 
         try {
-            const response = await retryOperation(() =>
-                registerUser(userData)
-            );
+            const response = await retryOperation(async () => {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+                return await res.json();
+            });
 
             if (response.success && response.data) {
                 const user: AuthUser = {
@@ -285,7 +298,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 persistAuthState({ user, isAuthenticated: true });
                 AuthLogger.info('User registered successfully', { email: userData.email });
             } else {
-                throw new Error(response.error || 'Registration failed');
+                throw new Error(response.message || 'Registration failed');
             }
         } catch (error) {
             const authError = getUserFriendlyError((error as Error).message);
@@ -305,7 +318,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setAuthState(prev => ({ ...prev, loading: true }));
 
         try {
-            // Note: Apna Shop API might not have a logout endpoint, so we'll just clear local state
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
             setAuthState({
                 isAuthenticated: false,
                 user: null,
@@ -335,7 +354,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         if (!authState.isAuthenticated || !authState.user) return;
 
         try {
-            const response = await retryOperation(() => getUserProfile());
+            const response = await retryOperation(async () => {
+                const res = await fetch('/api/auth/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                return await res.json();
+            });
 
             if (response.success && response.data) {
                 const updatedUser: AuthUser = {

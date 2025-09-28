@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getProduct } from '@/lib/third-party-api'
 
 interface RouteParams {
-    params: {
+    params: Promise<{
         slug: string
-    }
+    }>
 }
 
 /**
@@ -16,7 +16,7 @@ export async function GET(
     { params }: RouteParams
 ) {
     try {
-        const { slug } = params
+        const { slug } = await params
 
         if (!slug) {
             return NextResponse.json(

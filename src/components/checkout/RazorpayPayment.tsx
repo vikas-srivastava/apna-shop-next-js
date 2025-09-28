@@ -30,6 +30,9 @@ export function RazorpayPayment({
 }: RazorpayPaymentProps) {
     const [isProcessing, setIsProcessing] = useState(false)
     const [razorpayOrderId, setRazorpayOrderId] = useState<string | null>(null)
+    const [retryCount, setRetryCount] = useState(0)
+    const [lastError, setLastError] = useState<string | null>(null)
+    const maxRetries = 3
 
     useEffect(() => {
         // Load Razorpay script
@@ -43,7 +46,7 @@ export function RazorpayPayment({
         }
     }, [])
 
-    const createRazorpayOrder = async () => {
+    const createRazorpayOrder = async (): Promise<any> => {
         try {
             const response = await fetch('/api/payments/create-razorpay-order', {
                 method: 'POST',
@@ -64,18 +67,46 @@ export function RazorpayPayment({
             }
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to create payment order'
-            onError(errorMessage)
+            setLastError(errorMessage)
             throw error
+        }
+    }
+
+    const verifyPayment = async (paymentId: string, orderId: string, signature: string) => {
+        try {
+            const response = await fetch('/api/payments/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    gateway: 'razorpay',
+                    order_id: orderId,
+                    payment_id: paymentId,
+                    signature,
+                    amount: Math.round(amount),
+                    currency
+                })
+            })
+
+            const data = await response.json()
+            if (data.success) {
+                return data
+            } else {
+                throw new Error(data.message || 'Payment verification failed')
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Payment verification failed'
+            throw new Error(errorMessage)
         }
     }
 
     const handlePayment = async () => {
         if (!window.Razorpay) {
-            onError('Razorpay SDK not loaded')
+            onError('Razorpay SDK not loaded. Please refresh the page and try again.')
             return
         }
 
         setIsProcessing(true)
+        setLastError(null)
 
         try {
             const orderData = await createRazorpayOrder()
@@ -87,16 +118,22 @@ export function RazorpayPayment({
                 order_id: orderData.id,
                 name: 'Mock E-commerce Store',
                 description: 'Test Payment',
-                handler: function (response: any) {
-                    // Mock payment verification
-                    setTimeout(() => {
-                        const isSuccess = Math.random() > 0.25 // 75% success rate
-                        if (isSuccess) {
-                            onSuccess(response.razorpay_payment_id, response.razorpay_order_id)
-                        } else {
-                            onError('Payment verification failed')
-                        }
-                    }, 2000)
+                handler: async function (response: any) {
+                    try {
+                        // Verify payment with backend
+                        await verifyPayment(
+                            response.razorpay_payment_id,
+                            response.razorpay_order_id,
+                            response.razorpay_signature
+                        )
+
+                        onSuccess(response.razorpay_payment_id, response.razorpay_order_id)
+                        setRetryCount(0) // Reset retry count on success
+                    } catch (verifyError) {
+                        const errorMsg = verifyError instanceof Error ? verifyError.message : 'Payment verification failed'
+                        setLastError(errorMsg)
+                        onError(errorMsg)
+                    }
                 },
                 prefill: {
                     name: 'Test User',
@@ -106,10 +143,16 @@ export function RazorpayPayment({
                 theme: {
                     color: '#3B82F6'
                 },
+                retry: {
+                    enabled: true,
+                    max_count: 2
+                },
                 modal: {
                     ondismiss: function () {
                         if (onCancel) onCancel()
-                    }
+                    },
+                    confirm_close: true,
+                    escape: true
                 }
             }
 
@@ -117,9 +160,17 @@ export function RazorpayPayment({
             rzp.open()
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Payment initialization failed'
+            setLastError(errorMessage)
             onError(errorMessage)
         } finally {
             setIsProcessing(false)
+        }
+    }
+
+    const handleRetry = () => {
+        if (retryCount < maxRetries) {
+            setRetryCount(prev => prev + 1)
+            handlePayment()
         }
     }
 
@@ -137,21 +188,41 @@ export function RazorpayPayment({
                     This is a mock Razorpay integration for testing purposes. Click the button to open the payment modal.
                 </Typography>
 
-                <Button
-                    type="button"
-                    variant="primary"
-                    size="lg"
-                    onClick={handlePayment}
-                    disabled={isProcessing || !window.Razorpay}
-                    className="w-full"
-                >
-                    {isProcessing ? 'Processing...' : `Pay ₹${(amount / 100).toFixed(2)} with Razorpay`}
-                </Button>
+                <div className="flex gap-3">
+                    <Button
+                        type="button"
+                        variant="primary"
+                        size="lg"
+                        onClick={handlePayment}
+                        disabled={isProcessing || !window.Razorpay}
+                        className="flex-1"
+                    >
+                        {isProcessing ? 'Processing...' : `Pay ₹${(amount / 100).toFixed(2)} with Razorpay`}
+                    </Button>
+
+                    {lastError && retryCount < maxRetries && (
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            size="lg"
+                            onClick={handleRetry}
+                            disabled={isProcessing}
+                        >
+                            Retry ({retryCount}/{maxRetries})
+                        </Button>
+                    )}
+                </div>
 
                 {!window.Razorpay && (
                     <Typography variant="caption" color="secondary" className="mt-2 block">
                         Loading payment gateway...
                     </Typography>
+                )}
+
+                {lastError && (
+                    <div className="mt-3 p-3 bg-red-50 text-red-700 rounded">
+                        <Typography variant="caption">{lastError}</Typography>
+                    </div>
                 )}
             </div>
 
@@ -163,7 +234,7 @@ export function RazorpayPayment({
                     onClick={onCancel}
                     disabled={isProcessing}
                 >
-                    Cancel
+                    Cancel Payment
                 </Button>
             )}
         </div>

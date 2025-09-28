@@ -11,6 +11,7 @@ interface TypographyProps {
     color?: 'primary' | 'secondary' | 'accent' | 'success' | 'error' | 'warning' | 'inherit'
     align?: 'left' | 'center' | 'right' | 'justify'
     className?: string
+    style?: React.CSSProperties
     children: ReactNode
 }
 
@@ -26,6 +27,7 @@ export function Typography({
     color = 'inherit',
     align = 'left',
     className,
+    style,
     children,
     ...props
 }: TypographyProps) {
@@ -83,6 +85,7 @@ export function Typography({
 
                 className
             )}
+            style={style}
             {...props}
         >
             {children}

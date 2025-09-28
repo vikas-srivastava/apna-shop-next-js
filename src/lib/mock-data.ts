@@ -629,6 +629,87 @@ export const mockApiProducts: ApiProduct[] = [
     ]
   }
 ]
+// Database-style indexes for optimized queries
+export const productIndexes = {
+  categoryIndex: new Map<string, ApiProduct[]>(),
+  priceIndex: new Map<string, ApiProduct[]>(),
+  ratingIndex: new Map<number, ApiProduct[]>(),
+  searchIndex: new Map<string, ApiProduct[]>(),
+  brandIndex: new Map<string, ApiProduct[]>(),
+  inStockIndex: new Map<boolean, ApiProduct[]>()
+}
+
+// Initialize indexes
+function initializeIndexes() {
+  // Category index
+  mockApiProducts.forEach(product => {
+    product.categories.forEach(category => {
+      if (!productIndexes.categoryIndex.has(category.id.toString())) {
+        productIndexes.categoryIndex.set(category.id.toString(), [])
+      }
+      productIndexes.categoryIndex.get(category.id.toString())!.push(product)
+    })
+  })
+
+  // Price index (buckets: 0-50, 50-100, 100-200, 200-500, 500+)
+  const priceBuckets = ['0-50', '50-100', '100-200', '200-500', '500+']
+  mockApiProducts.forEach(product => {
+    const price = parseFloat(product.price)
+    let bucket = '500+'
+    if (price < 50) bucket = '0-50'
+    else if (price < 100) bucket = '50-100'
+    else if (price < 200) bucket = '100-200'
+    else if (price < 500) bucket = '200-500'
+
+    if (!productIndexes.priceIndex.has(bucket)) {
+      productIndexes.priceIndex.set(bucket, [])
+    }
+    productIndexes.priceIndex.get(bucket)!.push(product)
+  })
+
+  // Rating index (simulate ratings: even IDs get 4.5, odd get 3.5)
+  mockApiProducts.forEach(product => {
+    const rating = product.id % 2 === 0 ? 4.5 : 3.5
+    if (!productIndexes.ratingIndex.has(rating)) {
+      productIndexes.ratingIndex.set(rating, [])
+    }
+    productIndexes.ratingIndex.get(rating)!.push(product)
+  })
+
+  // Search index (tokenize name, description, brand)
+  mockApiProducts.forEach(product => {
+    const searchText = `${product.name} ${product.description} ${product.brand.name}`.toLowerCase()
+    const tokens = searchText.split(/\s+/).filter(token => token.length > 2)
+    tokens.forEach(token => {
+      if (!productIndexes.searchIndex.has(token)) {
+        productIndexes.searchIndex.set(token, [])
+      }
+      productIndexes.searchIndex.get(token)!.push(product)
+    })
+  })
+
+  // Brand index
+  mockApiProducts.forEach(product => {
+    const brandId = product.brand.id.toString()
+    if (!productIndexes.brandIndex.has(brandId)) {
+      productIndexes.brandIndex.set(brandId, [])
+    }
+    productIndexes.brandIndex.get(brandId)!.push(product)
+  })
+
+  // In-stock index
+  mockApiProducts.forEach(product => {
+    const inStock = product.qty > 0
+    if (!productIndexes.inStockIndex.has(inStock)) {
+      productIndexes.inStockIndex.set(inStock, [])
+    }
+    productIndexes.inStockIndex.get(inStock)!.push(product)
+  })
+}
+
+// Initialize indexes on module load
+initializeIndexes()
+
 
 // Mock User Data
 export const mockUser = {
@@ -855,5 +936,100 @@ export const mockApiGenerators = {
   getOrders: () => createMockApiResponse(mockOrders),
   createOrder: () => createMockApiResponse({ order_id: 'ORD-123', message: 'Order created successfully' }),
   createRazorpayOrder: () => createMockApiResponse({ id: 'order_123', amount: 1000, currency: 'INR' }),
-  verifyRazorpayPayment: () => createMockApiResponse({ status: 'success', payment_id: 'pay_123' })
+  verifyRazorpayPayment: () => createMockApiResponse({ status: 'success', payment_id: 'pay_123' }),
+  getShippingRates: () => createMockApiResponse([
+    {
+      id: 'rate-1',
+      provider: 'Delhivery',
+      service: 'Standard Delivery',
+      cost: 50.00,
+      estimatedDays: 3,
+      weightLimit: 5.0
+    },
+    {
+      id: 'rate-2',
+      provider: 'DTDC',
+      service: 'Express Delivery',
+      cost: 80.00,
+      estimatedDays: 2,
+      weightLimit: 5.0
+    },
+    {
+      id: 'rate-3',
+      provider: 'ShipRocket',
+      service: 'Premium Delivery',
+      cost: 120.00,
+      estimatedDays: 1,
+      weightLimit: 10.0
+    }
+  ]),
+  getShippingProviders: () => createMockApiResponse([
+    {
+      id: 'delhivery',
+      name: 'Delhivery',
+      services: ['Standard Delivery', 'Express Delivery'],
+      trackingUrl: 'https://www.delhivery.com/track',
+      logo: '/shipping/delhivery-logo.png'
+    },
+    {
+      id: 'dtdc',
+      name: 'DTDC',
+      services: ['Standard Delivery', 'Express Delivery', 'Premium Delivery'],
+      trackingUrl: 'https://www.dtdc.in/tracking.asp',
+      logo: '/shipping/dtdc-logo.png'
+    },
+    {
+      id: 'shiprocket',
+      name: 'ShipRocket',
+      services: ['Standard Delivery', 'Express Delivery', 'Premium Delivery', 'Same Day'],
+      trackingUrl: 'https://shiprocket.co/tracking',
+      logo: '/shipping/shiprocket-logo.png'
+    }
+  ]),
+  getOrderShipments: () => createMockApiResponse([
+    {
+      id: 'ship-001',
+      orderId: 'ORD-001',
+      trackingNumber: 'DLV123456789',
+      provider: 'Delhivery',
+      status: 'in_transit',
+      shippedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      estimatedDelivery: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+      trackingEvents: [
+        {
+          status: 'picked_up',
+          location: 'Mumbai Warehouse',
+          timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          description: 'Package picked up from warehouse'
+        },
+        {
+          status: 'in_transit',
+          location: 'Delhi Transit Center',
+          timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          description: 'Package in transit to destination'
+        }
+      ]
+    }
+  ]),
+  trackOrder: () => createMockApiResponse({
+    orderNumber: 'ORD-001',
+    trackingNumber: 'DLV123456789',
+    status: 'in_transit',
+    provider: 'Delhivery',
+    estimatedDelivery: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(),
+    trackingEvents: [
+      {
+        status: 'picked_up',
+        location: 'Mumbai Warehouse',
+        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        description: 'Package picked up from warehouse'
+      },
+      {
+        status: 'in_transit',
+        location: 'Delhi Transit Center',
+        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        description: 'Package in transit to destination'
+      }
+    ]
+  })
 }

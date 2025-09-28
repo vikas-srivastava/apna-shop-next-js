@@ -3,9 +3,14 @@ import Image from 'next/image'
 import { Button } from '@/components/atoms/Button'
 import { Typography } from '@/components/atoms/Typography'
 import { Card } from '@/components/ui/Card'
-import { FeaturedProducts } from '@/components/organisms/ProductGrid'
+import dynamic from 'next/dynamic'
 import { getCategories, getFeaturedProducts } from '@/lib/api'
 import { ArrowRight, Star, Shield, Truck, HeadphonesIcon, Gift, Zap, Trophy } from 'lucide-react'
+
+// Lazy load FeaturedProducts for better code splitting
+const FeaturedProducts = dynamic(() => import('@/components/organisms/ProductGrid').then(mod => ({ default: mod.FeaturedProducts })), {
+  loading: () => <div className="text-center py-8">Loading featured products...</div>
+})
 
 /**
  * Homepage component with hero section, featured products, and categories
@@ -199,11 +204,7 @@ export default async function HomePage() {
                   </Typography>
                 </div>
                 <Button
-                  style={{
-                    backgroundColor: 'rgb(var(--color-warning-700))',
-                    color: 'white',
-                    '&:hover': { backgroundColor: 'rgb(var(--color-warning-800))' }
-                  }}
+                  className="bg-warning-700 text-white hover:bg-warning-800"
                 >
                   Shop Sale
                 </Button>
@@ -219,7 +220,7 @@ export default async function HomePage() {
             {features.map((feature, index) => {
               const Icon = feature.icon
               return (
-                <Card key={feature.title} className="text-center animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                <Card key={feature.title} className="text-center animate-fade-in">
                   <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Icon className="w-6 h-6 text-primary-600" />
                   </div>
@@ -255,7 +256,6 @@ export default async function HomePage() {
                   hover
                   padding="none"
                   className="animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <Link href={`/products?category=${category.slug}`}>
                     <div className="relative aspect-square overflow-hidden rounded-t-theme-lg">
@@ -320,12 +320,7 @@ export default async function HomePage() {
                 </div>
                 <div className="text-center">
                   <Button
-                    className="font-bold px-8 py-3"
-                    style={{
-                      backgroundColor: 'white',
-                      color: 'rgb(var(--color-primary-600))',
-                      '&:hover': { backgroundColor: 'rgb(var(--color-secondary-100))' }
-                    }}
+                    className="font-bold px-8 py-3 bg-white text-primary-600 hover:bg-secondary-100"
                   >
                     Join VIP Club
                   </Button>
@@ -403,12 +398,7 @@ export default async function HomePage() {
                 </Typography>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <Button
-                    className="font-bold px-8 py-3"
-                    style={{
-                      backgroundColor: 'white',
-                      color: 'rgb(var(--color-success-600))',
-                      '&:hover': { backgroundColor: 'rgb(var(--color-secondary-100))' }
-                    }}
+                    className="font-bold px-8 py-3 bg-white text-success-600 hover:bg-secondary-100"
                   >
                     Shop Final Sale
                   </Button>

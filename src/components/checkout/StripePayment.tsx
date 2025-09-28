@@ -22,6 +22,35 @@ function StripePaymentForm({ amount, currency = 'usd', onSuccess, onError, onCan
     const elements = useElements()
     const [isProcessing, setIsProcessing] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
+    const [retryCount, setRetryCount] = useState(0)
+    const [lastError, setLastError] = useState<string | null>(null)
+    const maxRetries = 3
+
+    const verifyPayment = async (paymentIntentId: string) => {
+        try {
+            const response = await fetch('/api/payments/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    gateway: 'stripe',
+                    order_id: `order_${Date.now()}`, // Mock order ID
+                    payment_id: paymentIntentId,
+                    amount: amount,
+                    currency: currency
+                })
+            })
+
+            const data = await response.json()
+            if (data.success) {
+                return data
+            } else {
+                throw new Error(data.message || 'Payment verification failed')
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Payment verification failed'
+            throw new Error(errorMessage)
+        }
+    }
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -32,6 +61,7 @@ function StripePaymentForm({ amount, currency = 'usd', onSuccess, onError, onCan
 
         setIsProcessing(true)
         setMessage(null)
+        setLastError(null)
 
         try {
             // Mock payment processing
@@ -42,17 +72,30 @@ function StripePaymentForm({ amount, currency = 'usd', onSuccess, onError, onCan
 
             if (isSuccess) {
                 const mockPaymentIntentId = `pi_mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
+                // Verify payment with backend
+                await verifyPayment(mockPaymentIntentId)
+
                 setMessage('Payment successful!')
                 onSuccess(mockPaymentIntentId)
+                setRetryCount(0) // Reset retry count on success
             } else {
                 throw new Error('Payment failed. Please try again.')
             }
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.'
             setMessage(errorMessage)
+            setLastError(errorMessage)
             onError(errorMessage)
         } finally {
             setIsProcessing(false)
+        }
+    }
+
+    const handleRetry = () => {
+        if (retryCount < maxRetries) {
+            setRetryCount(prev => prev + 1)
+            handleSubmit({ preventDefault: () => { } } as React.FormEvent)
         }
     }
 
@@ -60,7 +103,7 @@ function StripePaymentForm({ amount, currency = 'usd', onSuccess, onError, onCan
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="p-4 bg-secondary-50 rounded-lg">
                 <Typography variant="subtitle" weight="semibold" className="mb-2">
-                    Payment Details
+                    Stripe Payment
                 </Typography>
                 <Typography variant="body" className="text-secondary-600 mb-4">
                     Amount: {currency.toUpperCase()} ${(amount / 100).toFixed(2)}
@@ -118,15 +161,30 @@ function StripePaymentForm({ amount, currency = 'usd', onSuccess, onError, onCan
                         Cancel
                     </Button>
                 )}
-                <Button
-                    type="submit"
-                    variant="primary"
-                    size="lg"
-                    disabled={!stripe || isProcessing}
-                    className="flex-1"
-                >
-                    {isProcessing ? 'Processing...' : `Pay $${(amount / 100).toFixed(2)}`}
-                </Button>
+
+                <div className="flex gap-3 flex-1">
+                    <Button
+                        type="submit"
+                        variant="primary"
+                        size="lg"
+                        disabled={!stripe || isProcessing}
+                        className="flex-1"
+                    >
+                        {isProcessing ? 'Processing...' : `Pay $${(amount / 100).toFixed(2)}`}
+                    </Button>
+
+                    {lastError && retryCount < maxRetries && (
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            size="lg"
+                            onClick={handleRetry}
+                            disabled={isProcessing}
+                        >
+                            Retry ({retryCount}/{maxRetries})
+                        </Button>
+                    )}
+                </div>
             </div>
         </form>
     )
@@ -134,6 +192,7 @@ function StripePaymentForm({ amount, currency = 'usd', onSuccess, onError, onCan
 
 export function StripePayment(props: StripePaymentProps) {
     const [clientSecret, setClientSecret] = useState<string>('')
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         // Create mock payment intent
@@ -151,11 +210,16 @@ export function StripePayment(props: StripePaymentProps) {
                 const data = await response.json()
                 if (data.success) {
                     setClientSecret(data.clientSecret)
+                    setError(null)
                 } else {
-                    props.onError('Failed to initialize payment')
+                    const errorMsg = 'Failed to initialize payment'
+                    setError(errorMsg)
+                    props.onError(errorMsg)
                 }
             } catch (error) {
-                props.onError('Failed to initialize payment')
+                const errorMsg = 'Failed to initialize payment'
+                setError(errorMsg)
+                props.onError(errorMsg)
             }
         }
 
@@ -167,6 +231,23 @@ export function StripePayment(props: StripePaymentProps) {
         appearance: {
             theme: 'stripe',
         },
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center p-8">
+                <div className="text-center">
+                    <Typography variant="body" className="text-red-600 mb-4">{error}</Typography>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => window.location.reload()}
+                    >
+                        Retry
+                    </Button>
+                </div>
+            </div>
+        )
     }
 
     if (!clientSecret) {

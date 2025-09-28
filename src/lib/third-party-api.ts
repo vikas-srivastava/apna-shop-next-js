@@ -26,7 +26,8 @@ async function getMockResponse(endpoint: string): Promise<ApiResponse<any> | nul
         },
         '/shop/search': () => {
             const query = params.get('q') || ''
-            return mockApiGenerators.searchProducts(query)
+            // TODO: Implement searchProducts in mock-data.ts
+            return { success: true, data: [] }
         },
         '/user/register': mockApiGenerators.registerUser,
         '/user/login': mockApiGenerators.loginUser,
@@ -716,4 +717,40 @@ export async function submitContactQuery(queryData: {
         method: 'POST',
         body: JSON.stringify(queryData),
     })
+}
+/**
+ * Get shipping rates
+ */
+export async function getShippingRates(data?: {
+    weight?: number
+    destination?: string
+    provider?: string
+}): Promise<ApiResponse<any[]>> {
+    const params = new URLSearchParams()
+    if (data?.weight) params.append('weight', data.weight.toString())
+    if (data?.destination) params.append('destination', data.destination)
+    if (data?.provider) params.append('provider', data.provider)
+
+    return apiRequest<any[]>(`/shipping/rates?${params.toString()}`)
+}
+
+/**
+ * Get shipping providers
+ */
+export async function getShippingProviders(): Promise<ApiResponse<any[]>> {
+    return apiRequest<any[]>('/shipping/providers')
+}
+
+/**
+ * Get order shipments
+ */
+export async function getOrderShipments(orderId: string): Promise<ApiResponse<any[]>> {
+    return apiRequest<any[]>(`/orders/${orderId}/shipments`)
+}
+
+/**
+ * Track order by order number
+ */
+export async function trackOrder(orderNumber: string): Promise<ApiResponse<any>> {
+    return apiRequest<any>(`/shipping/track/${orderNumber}`)
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getProducts } from '@/lib/third-party-api'
 import { ProductFilter } from '@/lib/types'
+import { cache, CACHE_TTL, generateCacheKey } from '@/lib/cache'
 
 /**
  * GET /api/products - Get products with filtering and pagination
@@ -51,6 +52,24 @@ export async function GET(request: NextRequest) {
         if (tags) {
             filters.tags = tags.split(',').map(t => t.trim())
         }
+        // Generate cache key from request parameters
+        const cacheKey = generateCacheKey('products', {
+            page,
+            limit,
+            ...filters
+        })
+
+        // Check cache first
+        const cachedResponse = cache.get(cacheKey)
+        if (cachedResponse) {
+            return NextResponse.json(cachedResponse, {
+                headers: {
+                    'Cache-Control': 'public, max-age=300',
+                    'X-Cache-Status': 'HIT'
+                }
+            })
+        }
+
 
         // Fetch products from third-party API
         const response = await getProducts(filters, page, limit)
@@ -62,9 +81,13 @@ export async function GET(request: NextRequest) {
             )
         }
 
+        // Cache the successful response
+        cache.set(cacheKey, response, CACHE_TTL.PRODUCTS)
+
         return NextResponse.json(response, {
             headers: {
-                'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300'
+                'Cache-Control': 'public, max-age=300',
+                'X-Cache-Status': 'MISS'
             }
         })
     } catch (error) {

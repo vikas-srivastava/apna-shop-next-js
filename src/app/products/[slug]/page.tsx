@@ -1,7 +1,12 @@
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
-import { ProductDetailTemplate } from '@/components/templates/ProductDetailTemplate'
+import dynamic from 'next/dynamic'
 import { getProduct } from '@/lib/api'
+
+// Lazy load the product detail template for better code splitting
+const ProductDetailTemplate = dynamic(() => import('@/components/templates/ProductDetailTemplate').then(mod => ({ default: mod.ProductDetailTemplate })), {
+    loading: () => <div className="container-theme py-8"><div className="text-center">Loading product...</div></div>
+})
 
 interface ProductPageProps {
     params: Promise<{

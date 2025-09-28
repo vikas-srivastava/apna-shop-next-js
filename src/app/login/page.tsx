@@ -8,6 +8,9 @@ import { useSupabaseAuth } from '@/components/auth/SupabaseAuthProvider'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 
+// Force dynamic rendering to avoid SSR issues with useSearchParams
+export const dynamic = 'force-dynamic'
+
 /**
  * Login page
  */

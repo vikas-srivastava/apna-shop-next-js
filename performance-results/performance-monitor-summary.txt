@@ -1,0 +1,44 @@
+PERFORMANCE MONITORING SUMMARY
+==============================
+Generated: 2025-09-28T11:27:29.673Z
+
+SYSTEM INFORMATION
+------------------
+Platform: darwin
+Architecture: arm64
+CPU Cores: 8
+Total Memory: 8.00 GB
+Hostname: Prathams-MacBook-Air.local
+
+MONITORING RESULTS
+------------------
+Duration: 29s
+Samples Collected: 29
+
+MEMORY USAGE (%)
+----------------
+Minimum: 96.10%
+Maximum: 99.23%
+Average: 98.14%
+Median: 98.38%
+95th Percentile: 99.20%
+99th Percentile: 99.22%
+
+CPU USAGE (%)
+-------------
+Minimum: 26.77%
+Maximum: 26.77%
+Average: 26.77%
+Median: 26.77%
+95th Percentile: 26.77%
+99th Percentile: 26.77%
+
+
+
+
+
+PERFORMANCE ANALYSIS
+--------------------
+⚠️  HIGH MEMORY USAGE: Average memory usage is above 80%
+✅ GOOD CPU USAGE: CPU usage is within acceptable limits
+🚨 MEMORY PRESSURE: Peak memory usage exceeded 90%

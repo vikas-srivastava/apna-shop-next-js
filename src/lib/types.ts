@@ -132,7 +132,8 @@ export interface Order {
     shipping: number
     tax: number
     total: number
-    status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'
+    status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled' | 'payment_failed' | 'refunded'
+    paymentStatus?: 'pending' | 'paid' | 'failed' | 'cancelled' | 'refunded'
     createdAt: string
     updatedAt: string
 }
