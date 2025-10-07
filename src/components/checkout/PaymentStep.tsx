@@ -14,7 +14,7 @@ const RazorpayPayment = dynamic(() => import('./RazorpayPayment').then(mod => ({
 
 export function PaymentStep() {
     const { updateData, nextStep, prevStep, setProcessing, setError } = useCheckout()
-    const { total } = useCart()
+    const { total, clearCart } = useCart()
     const [paymentSuccess, setPaymentSuccess] = useState(false)
     const [paymentError, setPaymentError] = useState<string | null>(null)
     const [showRazorpay, setShowRazorpay] = useState(false)
@@ -34,6 +34,8 @@ export function PaymentStep() {
     }
 
     const handlePaymentSuccess = (paymentId: string, orderId?: string) => {
+        // Clear cart after successful payment
+        clearCart()
         // Redirect to confirmation page for Razorpay payments
         window.location.href = `/order-confirmation?payment=${paymentId}`
     }

@@ -2,18 +2,20 @@ import * as yaml from 'js-yaml'
 import type { ThemeConfig } from './server-theme-loader'
 
 /**
- * Load theme configuration from various sources based on THEME_SOURCE environment variable
- * Mode 1: THEME_SOURCE="api" - Load from mock API (/api/themes)
- * Mode 2: THEME_SOURCE="Theme Name" - Load specific theme from theme.yml
- * Default: Load all themes from theme.yml
+ * Load theme configuration from various sources based on THEME_MODE and THEME_SOURCE environment variables
+ * THEME_MODE="api" - Fetch from mock API /api/theme
+ * THEME_MODE other - Load from theme.yml by name (THEME_SOURCE || "Classic Light")
  */
 export async function loadThemeConfig(): Promise<ThemeConfig> {
-    const themeSource = process.env.THEME_SOURCE
+    const source = process.env.THEME_SOURCE || "Classic Light";
+    console.log('🎨 loadThemeConfig called');
+    console.log('🎨 THEME_SOURCE:', source);
+    console.log('🎨 THEME_MODE:', process.env.THEME_MODE);
 
     try {
-        if (themeSource === 'api') {
-            // Mode 1: Load from mock API
-            const response = await fetch('/api/themes')
+        if (process.env.THEME_MODE === "api") {
+            // Fetch from mock API /api/theme
+            const response = await fetch(`/api/theme?name=${encodeURIComponent(source)}`)
             if (!response.ok) {
                 throw new Error('Failed to load theme from API')
             }
@@ -46,8 +48,8 @@ export async function loadThemeConfig(): Promise<ThemeConfig> {
                 },
                 animation: {}
             }
-        } else if (themeSource && themeSource !== 'api') {
-            // Mode 2: Load specific theme by name from theme.yml
+        } else {
+            // Load from theme.yml by name
             const response = await fetch('/theme.yml')
             if (!response.ok) {
                 throw new Error('Failed to load theme.yml')
@@ -56,9 +58,11 @@ export async function loadThemeConfig(): Promise<ThemeConfig> {
             const yamlContent = await response.text()
             const themeConfig = yaml.load(yamlContent) as any
 
-            // Find theme by name (case-insensitive)
+            // Find theme by name (flexible matching: convert dashes to spaces, case-insensitive)
+            const normalizeName = (name: string) => name.toLowerCase().replace(/-/g, ' ')
+            const normalizedSource = normalizeName(source)
             const themeKey = Object.keys(themeConfig.themes || {}).find(key =>
-                themeConfig.themes[key].name?.toLowerCase() === themeSource.toLowerCase()
+                normalizeName(themeConfig.themes[key].name || '') === normalizedSource
             )
 
             if (themeKey) {
@@ -71,7 +75,7 @@ export async function loadThemeConfig(): Promise<ThemeConfig> {
                     animation: themeConfig.animation || {}
                 }
             } else {
-                console.warn(`Theme "${themeSource}" not found, loading all themes`)
+                console.warn(`Theme "${source}" not found, loading all themes`)
                 return {
                     version: themeConfig.version || '2.0.0',
                     description: themeConfig.description || '',
@@ -80,24 +84,6 @@ export async function loadThemeConfig(): Promise<ThemeConfig> {
                     components: themeConfig.components || {},
                     animation: themeConfig.animation || {}
                 }
-            }
-        } else {
-            // Default: Load all themes from theme.yml
-            const response = await fetch('/theme.yml')
-            if (!response.ok) {
-                throw new Error('Failed to load theme.yml')
-            }
-
-            const yamlContent = await response.text()
-            const themeConfig = yaml.load(yamlContent) as any
-
-            return {
-                version: themeConfig.version || '2.0.0',
-                description: themeConfig.description || '',
-                themes: themeConfig.themes || {},
-                layout: themeConfig.layout || {},
-                components: themeConfig.components || {},
-                animation: themeConfig.animation || {}
             }
         }
     } catch (error) {

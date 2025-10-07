@@ -1,145 +1,174 @@
-'use client'
+'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { loadThemeConfig } from '@/lib/theme-loader'
-import type { ThemeConfig } from '@/lib/server-theme-loader'
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    ReactNode,
+} from 'react';
+import { loadThemeConfig } from '@/lib/theme-loader';
+import type { ThemeConfig } from '@/lib/server-theme-loader';
 
-type ThemeMode = 'light'
+type ThemeMode = 'light';
 
 interface ThemeContextType {
-    theme: ThemeMode
-    currentTheme: string
-    themeConfig: ThemeConfig | null
-    availableThemes: string[]
-    setTheme: (themeName: string) => void
-    exportTheme: () => string
-    importTheme: (themeData: string) => Promise<void>
-    isLoading: boolean
+    theme: ThemeMode;
+    currentTheme: string;
+    themeConfig: ThemeConfig | null;
+    availableThemes: string[];
+    setTheme: (themeName: string) => void;
+    exportTheme: () => string;
+    importTheme: (themeData: string) => Promise<void>;
+    isLoading: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 /**
- * Theme Provider Component
- * Manages global theme state and applies theme variations to document
+ * ✅ ThemeProvider
+ * Manages theme config, applies CSS variables, and provides context globally.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme] = useState<ThemeMode>('light') // Always light theme
-    const [currentTheme, setCurrentTheme] = useState<string>('classic-light')
-    const [themeConfig, setThemeConfig] = useState<ThemeConfig | null>(null)
-    const [availableThemes, setAvailableThemes] = useState<string[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [theme] = useState<ThemeMode>('light'); // Static light mode
+    const [currentTheme, setCurrentTheme] = useState<string>(process.env.THEME_SOURCE || 'classic-light');
+    const [themeConfig, setThemeConfig] = useState<ThemeConfig | null>(null);
+    const [availableThemes, setAvailableThemes] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    // Initialize theme from localStorage on mount
+    // Initialize from localStorage only on client
     useEffect(() => {
-        const savedTheme = localStorage.getItem('currentTheme') || 'classic-light'
-        setCurrentTheme(savedTheme)
-    }, [])
+        if (typeof window === 'undefined') return;
+        const saved = localStorage.getItem('currentTheme');
+        if (saved) setCurrentTheme(saved);
+    }, []);
 
-    // Load theme configuration
+    // Load YAML theme configuration
     useEffect(() => {
+        let isMounted = true;
         const loadTheme = async () => {
-            setIsLoading(true)
             try {
-                const config = await loadThemeConfig()
-                setThemeConfig(config)
-                setAvailableThemes(Object.keys(config.themes || {}))
-            } catch (error) {
-                console.error('Failed to load theme configuration:', error)
-                setThemeConfig(null)
-                setAvailableThemes([])
-            } finally {
-                setIsLoading(false)
-                // Always show the page after theme loading attempt, even if it fails
-                setTimeout(() => {
-                    document.documentElement.classList.add('theme-loaded')
-                }, 100)
-            }
-        }
+                setIsLoading(true);
+                const config = await loadThemeConfig();
+                if (!isMounted) return;
 
-        loadTheme()
-    }, [])
+                setThemeConfig(config);
+                const themeKeys = Object.keys(config.themes || {});
+                setAvailableThemes(themeKeys);
 
-    // Apply theme to document
-    useEffect(() => {
-        const root = document.documentElement
-
-        // Apply theme mode class (always light)
-        root.classList.remove('light', 'dark')
-        root.classList.add('light')
-
-        // Apply current theme CSS variables if available
-        if (themeConfig && themeConfig.themes && themeConfig.themes[currentTheme]) {
-            const currentThemeData = themeConfig.themes[currentTheme]
-
-            // Set color variables
-            Object.entries(currentThemeData.colors).forEach(([colorName, shades]) => {
-                if (typeof shades === 'object' && shades !== null) {
-                    Object.entries(shades).forEach(([shade, value]) => {
-                        root.style.setProperty(`--color-${colorName}-${shade}`, value as string)
-                    })
+                // Fallback: ensure currentTheme is valid
+                if (!themeKeys.includes(currentTheme)) {
+                    setCurrentTheme(themeKeys[0] || 'classic-light');
                 }
-            })
-
-            // Set typography variables
-            if (currentThemeData.typography) {
-                Object.entries(currentThemeData.typography.fontFamily).forEach(([name, value]) => {
-                    root.style.setProperty(`--font-${name}`, value as string)
-                })
-                Object.entries(currentThemeData.typography.fontSize).forEach(([name, value]) => {
-                    root.style.setProperty(`--text-${name}`, value as string)
-                })
-                Object.entries(currentThemeData.typography.fontWeight).forEach(([name, value]) => {
-                    root.style.setProperty(`--font-weight-${name}`, value as string)
-                })
+            } catch (err) {
+                console.error('❌ Failed to load theme config:', err);
+                if (isMounted) {
+                    setThemeConfig(null);
+                    setAvailableThemes([]);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                    document.documentElement.classList.add('theme-loaded');
+                }
             }
+        };
 
-            // Set text color variables for Typography component
-            if (currentThemeData.colors.text) {
-                Object.entries(currentThemeData.colors.text).forEach(([name, value]) => {
-                    root.style.setProperty(`--text-${name}`, value as string)
-                })
+        loadTheme();
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    // Apply CSS variables when theme or config changes
+    useEffect(() => {
+        if (!themeConfig || !themeConfig.themes || !themeConfig.themes[currentTheme])
+            return;
+
+        const root = document.documentElement;
+        const themeData = themeConfig.themes[currentTheme];
+        console.log(`🎨 Applying theme: ${currentTheme}`, themeData.colors);
+
+        // Reset previous vars
+        const prevVars = Array.from(root.style).filter((v) =>
+            v.startsWith('--color-')
+        );
+        prevVars.forEach((v) => root.style.removeProperty(v));
+
+        // Always apply light mode
+        root.classList.remove('light', 'dark');
+        root.classList.add('light');
+
+        // Apply color variables
+        Object.entries(themeData.colors || {}).forEach(([colorName, shades]) => {
+            if (typeof shades === 'object' && shades !== null) {
+                Object.entries(shades).forEach(([shade, value]) => {
+                    console.log(`🔧 Setting CSS var: --color-${colorName}-${shade} = ${value} (type: ${typeof value})`);
+                    root.style.setProperty(`--color-${colorName}-${shade}`, String(value));
+                });
             }
+        });
+
+        // Apply text color shortcuts
+        if (themeData.colors?.text) {
+            Object.entries(themeData.colors.text).forEach(([key, val]) => {
+                root.style.setProperty(`--text-${key}`, String(val));
+            });
+        }
+        // Apply theme accent variables for neutral backgrounds
+        root.style.setProperty('--background-accent', 'var(--theme-accent-bg, #fff7f0)');
+        root.style.setProperty('--foreground-accent', 'var(--theme-accent-text, #1a1a1a)');
+        root.style.setProperty('--theme-primary', 'var(--color-primary-500)');
+        root.style.setProperty('--theme-surface-bg', 'var(--color-secondary-50)');
+
+        // Typography
+        if (themeData.typography) {
+            Object.entries(themeData.typography.fontFamily || {}).forEach(
+                ([key, val]) => root.style.setProperty(`--font-${key}`, String(val))
+            );
+            Object.entries(themeData.typography.fontSize || {}).forEach(
+                ([key, val]) => root.style.setProperty(`--text-${key}`, String(val))
+            );
+            Object.entries(themeData.typography.fontWeight || {}).forEach(
+                ([key, val]) => root.style.setProperty(`--font-weight-${key}`, String(val))
+            );
         }
 
-        // Save to localStorage
-        localStorage.setItem('currentTheme', currentTheme)
+        // Persist choice
+        localStorage.setItem('currentTheme', currentTheme);
+    }, [currentTheme, themeConfig]);
 
-        // Mark theme as loaded to prevent flash
-        setTimeout(() => {
-            root.classList.add('theme-loaded')
-        }, 100)
-    }, [currentTheme, themeConfig])
-
+    // Change theme
     const setTheme = (themeName: string) => {
         if (availableThemes.includes(themeName)) {
-            setCurrentTheme(themeName)
+            setCurrentTheme(themeName);
+        } else {
+            console.warn(`⚠️ Tried to set invalid theme: ${themeName}`);
         }
-    }
+    };
 
+    // Export YAML theme as JSON
     const exportTheme = (): string => {
-        if (!themeConfig) return ''
-        return JSON.stringify(themeConfig, null, 2)
-    }
+        return themeConfig ? JSON.stringify(themeConfig, null, 2) : '';
+    };
 
+    // Import theme JSON
     const importTheme = async (themeData: string): Promise<void> => {
         try {
-            const parsed = JSON.parse(themeData)
-            // Validate theme structure
+            const parsed = JSON.parse(themeData);
             if (parsed.themes && typeof parsed.themes === 'object') {
-                setThemeConfig(parsed)
-                setAvailableThemes(Object.keys(parsed.themes))
-                // Apply first available theme
-                const firstTheme = Object.keys(parsed.themes)[0]
-                if (firstTheme) {
-                    setCurrentTheme(firstTheme)
-                }
+                setThemeConfig(parsed);
+                const keys = Object.keys(parsed.themes);
+                setAvailableThemes(keys);
+                setCurrentTheme(keys[0] || 'classic-light');
+            } else {
+                throw new Error('Invalid theme data structure');
             }
-        } catch (error) {
-            console.error('Failed to import theme:', error)
-            throw new Error('Invalid theme data')
+        } catch (err) {
+            console.error('❌ Failed to import theme:', err);
+            throw new Error('Invalid theme data');
         }
-    }
+    };
 
     const value: ThemeContextType = {
         theme,
@@ -149,23 +178,34 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         setTheme,
         exportTheme,
         importTheme,
-        isLoading
-    }
+        isLoading,
+    };
 
     return (
         <ThemeContext.Provider value={value}>
-            {children}
+            {!isLoading && children}
         </ThemeContext.Provider>
-    )
+    );
 }
 
 /**
- * Hook to use theme context
+ * ✅ Safe useTheme Hook
  */
-export function useTheme() {
-    const context = useContext(ThemeContext)
-    if (context === undefined) {
-        throw new Error('useTheme must be used within a ThemeProvider')
+export function useTheme(): ThemeContextType {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        console.warn('⚠️ useTheme() called outside <ThemeProvider>.');
+        // Optional fallback instead of throwing
+        return {
+            theme: 'light',
+            currentTheme: 'classic-light',
+            themeConfig: null,
+            availableThemes: [],
+            setTheme: () => { },
+            exportTheme: () => '',
+            importTheme: async () => { },
+            isLoading: true,
+        };
     }
-    return context
+    return context;
 }

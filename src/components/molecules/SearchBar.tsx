@@ -95,13 +95,13 @@ export function SearchBar({
 interface SearchFiltersProps {
     onFilterChange: (filters: any) => void
     categories?: Array<{ id: string; name: string }>
-    brands?: Array<{ id: string; name: string }>
+    brands?: string[]
 }
 
 /**
  * Search filters component for advanced product filtering
  */
-export function SearchFilters({ onFilterChange, categories = [] }: SearchFiltersProps) {
+export function SearchFilters({ onFilterChange, categories = [], brands = [] }: SearchFiltersProps) {
     const [filters, setFilters] = useState({
         category: '',
         brand: '',
@@ -150,9 +150,11 @@ export function SearchFilters({ onFilterChange, categories = [] }: SearchFilters
                     className="input w-full"
                 >
                     <option value="">All Brands</option>
-                    {/* Brands would be populated from API */}
-                    <option value="brand1">Brand 1</option>
-                    <option value="brand2">Brand 2</option>
+                    {brands.map((brand) => (
+                        <option key={brand} value={brand}>
+                            {brand}
+                        </option>
+                    ))}
                 </select>
             </div>
 

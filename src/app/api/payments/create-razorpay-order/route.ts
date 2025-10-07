@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
         const razorpayOrder = await razorpayResponse.json()
 
-        return NextResponse.json({
+        return Response.json({
             success: true,
             data: razorpayOrder,
             message: 'Razorpay order created successfully'

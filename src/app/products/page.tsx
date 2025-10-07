@@ -1,22 +1,78 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Typography } from '@/components/atoms/Typography'
 import { Button } from '@/components/atoms/Button'
 import { ProductGrid } from '@/components/organisms/ProductGrid'
 import { SearchFilters } from '@/components/molecules/SearchBar'
-import { ProductFilter } from '@/lib/types'
+import { ProductFilter, Product } from '@/lib/types'
 import { Filter, Grid, List, SlidersHorizontal } from 'lucide-react'
 import { useProducts } from '@/contexts/ProductContext'
+
+// Utility functions
+function getPriceRanges(products: Product[]) {
+    if (!products.length) return []
+    const prices = products.map(p => p.price || 0).filter(p => p > 0)
+    if (!prices.length) return []
+    const min = Math.min(...prices)
+    const max = Math.max(...prices)
+    const range = max - min
+    const step = Math.ceil(range / 4)
+    const ranges = []
+    for (let i = 0; i < 4; i++) {
+        const rangeMin = min + i * step
+        const rangeMax = i === 3 ? max : min + (i + 1) * step
+        ranges.push({ min: rangeMin, max: rangeMax, label: `$${rangeMin} - $${rangeMax}` })
+    }
+    return ranges
+}
+
+function filterProducts(products: Product[], filters: ProductFilter) {
+    return products.filter(product => {
+        if (filters.category && product.category.name !== filters.category) return false
+        if (filters.brand && (product as any).brand !== filters.brand) return false
+        if (filters.search && !product.name.toLowerCase().includes(filters.search.toLowerCase())) return false
+        if (filters.priceRange) {
+            const price = product.price || 0
+            if (price < filters.priceRange.min || price > filters.priceRange.max) return false
+        }
+        if (filters.rating && (product.rating || 0) < filters.rating) return false
+        if (filters.inStock && !product.inStock) return false
+        if (filters.sizes && filters.sizes.length && !filters.sizes.some(size => product.sizes?.includes(size))) return false
+        if (filters.colors && filters.colors.length && !filters.colors.some(color => product.colors?.includes(color))) return false
+        return true
+    })
+}
+
+function sortProducts(products: Product[], sortBy: ProductFilter['sortBy']) {
+    const sorted = [...products]
+    switch (sortBy) {
+        case 'price-asc':
+            return sorted.sort((a, b) => a.price - b.price)
+        case 'price-desc':
+            return sorted.sort((a, b) => b.price - a.price)
+        case 'rating':
+            return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0))
+        case 'newest':
+            return sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        case 'popularity':
+            return sorted.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0))
+        default:
+            return sorted
+    }
+}
 
 /**
  * Products page with filtering and search functionality
  */
 export default function ProductsPage() {
     const searchParams = useSearchParams()
+    const router = useRouter()
     const [showFilters, setShowFilters] = useState(false)
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+    const [allProducts, setAllProducts] = useState<Product[]>([])
 
     const { state, actions, stableActions } = useProducts()
     const { filters, sortBy, categories, brands, loading, errors } = state
@@ -61,16 +117,50 @@ export default function ProductsPage() {
         stableActions.setFilters(initialFilters)
     }, [searchParams, stableActions])
 
-    const handleFilterChange = (newFilters: any) => {
+    // Fetch all products initially
+    useEffect(() => {
+        if (allProducts.length === 0 && !loading.products) {
+            actions.fetchProducts(1, 1000) // Fetch with large limit
+        }
+    }, [allProducts.length, loading.products, actions])
+
+    useEffect(() => {
+        if (state.products.length > 0 && allProducts.length === 0) {
+            setAllProducts(state.products)
+        }
+    }, [state.products, allProducts.length])
+
+    // Generate dynamic filter options
+    const dynamicCategories = useMemo(() => [...new Set(allProducts.map(p => p.category.name).filter(Boolean))], [allProducts])
+    const dynamicBrands = useMemo(() => [...new Set(allProducts.map(p => (p as any).brand).filter(Boolean))], [allProducts])
+    const priceRanges = useMemo(() => getPriceRanges(allProducts), [allProducts])
+
+    // Filter and sort products client-side
+    const filteredProducts = useMemo(() => {
+        const filtered = filterProducts(allProducts, filters)
+        return sortProducts(filtered, sortBy)
+    }, [allProducts, filters, sortBy])
+
+    const handleFilterChange = (newFilters: ProductFilter) => {
         stableActions.setFilters(newFilters)
-        // Trigger fetch with new filters synchronously
-        actions.fetchProducts(1, 12)
+        // Update URL
+        const params = new URLSearchParams()
+        if (newFilters.category) params.set('category', newFilters.category)
+        if (newFilters.brand) params.set('brand', newFilters.brand)
+        if (newFilters.search) params.set('search', newFilters.search)
+        if (newFilters.priceRange) {
+            params.set('minPrice', newFilters.priceRange.min.toString())
+            params.set('maxPrice', newFilters.priceRange.max.toString())
+        }
+        if (newFilters.rating) params.set('rating', newFilters.rating.toString())
+        if (newFilters.inStock) params.set('inStock', 'true')
+        if (newFilters.sizes) params.set('sizes', newFilters.sizes.join(','))
+        if (newFilters.colors) params.set('colors', newFilters.colors.join(','))
+        router.push(`/products?${params.toString()}`)
     }
 
     const handleSortChange = (newSortBy: ProductFilter['sortBy']) => {
         stableActions.setSortBy(newSortBy)
-        // Trigger fetch with new sort synchronously
-        actions.fetchProducts(1, 12)
     }
 
     const sortOptions = [
@@ -107,7 +197,8 @@ export default function ProductsPage() {
                         </div>
                         <SearchFilters
                             onFilterChange={handleFilterChange}
-                            categories={categories}
+                            categories={dynamicCategories.map(name => ({ id: name, name }))}
+                            brands={dynamicBrands}
                         />
                     </div>
                 </aside>
@@ -173,14 +264,15 @@ export default function ProductsPage() {
                         <div className="lg:hidden">
                             <SearchFilters
                                 onFilterChange={handleFilterChange}
-                                categories={categories}
+                                categories={dynamicCategories.map(name => ({ id: name, name }))}
+                                brands={dynamicBrands}
                             />
                         </div>
                     )}
 
                     {/* Products Grid */}
                     <ProductGrid
-                        filters={filters}
+                        initialProducts={filteredProducts}
                         columns={viewMode === 'grid' ? 3 : 2}
                     />
                 </main>

@@ -1,38 +1,36 @@
 # Light Theme Configuration for E-commerce Storefront
-# This file defines multiple light theme variations for the application
-# Colors support any valid CSS color format (hex, rgb, hsl, etc.)
+# Enhanced for consistent contrast, balanced color harmony, and accessibility
 
-version: "2.0.0"
-description: "Light theme collection with multiple variations"
+version: "2.1.0"
+description: "Refined light & dark theme collection with improved color harmony and accessibility compliance"
 
-# Available Themes
 themes:
   classic-light:
     name: "Classic Light"
-    description: "Clean, professional light theme with neutral colors"
+    description: "Neutral, balanced light theme for professional storefronts"
     colors:
       primary:
-        50: "#f8fafc"
-        100: "#f1f5f9"
-        200: "#e2e8f0"
-        300: "#cbd5e1"
-        400: "#94a3b8"
-        500: "#64748b"
-        600: "#475569"
-        700: "#334155"
-        800: "#1e293b"
-        900: "#0f172a"
+        50: "#f9fafb"
+        100: "#f3f4f6"
+        200: "#e5e7eb"
+        300: "#d1d5db"
+        400: "#9ca3af"
+        500: "#6b7280"
+        600: "#4b5563"
+        700: "#374151"
+        800: "#1f2937"
+        900: "#111827"
       secondary:
-        50: "#fefefe"
-        100: "#fdfdfd"
-        200: "#fafafa"
-        300: "#f5f5f5"
-        400: "#e5e5e5"
-        500: "#d4d4d4"
-        600: "#a3a3a3"
-        700: "#737373"
-        800: "#525252"
-        900: "#404040"
+        50: "#ffffff"
+        100: "#f9fafb"
+        200: "#f3f4f6"
+        300: "#e5e7eb"
+        400: "#d1d5db"
+        500: "#9ca3af"
+        600: "#6b7280"
+        700: "#4b5563"
+        800: "#374151"
+        900: "#1f2937"
       accent:
         50: "#eff6ff"
         100: "#dbeafe"
@@ -45,61 +43,23 @@ themes:
         800: "#1e40af"
         900: "#1e3a8a"
       success:
-        50: "#f0fdf4"
-        100: "#dcfce7"
-        200: "#bbf7d0"
-        300: "#86efac"
-        400: "#4ade80"
-        500: "#22c55e"
-        600: "#16a34a"
-        700: "#15803d"
-        800: "#166534"
-        900: "#14532d"
+        500: "#16a34a"
       warning:
-        50: "#fffbeb"
-        100: "#fef3c7"
-        200: "#fde68a"
-        300: "#fcd34d"
-        400: "#fbbf24"
-        500: "#f59e0b"
-        600: "#d97706"
-        700: "#b45309"
-        800: "#92400e"
-        900: "#78350f"
+        500: "#eab308"
       error:
-        50: "#fef2f2"
-        100: "#fee2e2"
-        200: "#fecaca"
-        300: "#fca5a5"
-        400: "#f87171"
-        500: "#ef4444"
-        600: "#dc2626"
-        700: "#b91c1c"
-        800: "#991b1b"
-        900: "#7f1d1d"
+        500: "#dc2626"
       text:
-        primary: "#000000"
-        secondary: "#374151"
-        accent: "#1d4ed8"
+        primary: "#111827"
+        secondary: "#4b5563"
+        accent: "#2563eb"
         success: "#166534"
-        error: "#991b1b"
         warning: "#92400e"
+        error: "#b91c1c"
     typography:
       fontFamily:
         sans: ["Inter", "system-ui", "sans-serif"]
         serif: ["Georgia", "serif"]
         mono: ["JetBrains Mono", "monospace"]
-      fontSize:
-        xs: "0.75rem"
-        sm: "0.875rem"
-        base: "1rem"
-        lg: "1.125rem"
-        xl: "1.25rem"
-        "2xl": "1.5rem"
-        "3xl": "1.875rem"
-        "4xl": "2.25rem"
-        "5xl": "3rem"
-        "6xl": "3.75rem"
       fontWeight:
         normal: 400
         medium: 500
@@ -108,7 +68,7 @@ themes:
 
   ocean-breeze:
     name: "Ocean Breeze"
-    description: "Refreshing blue and teal theme inspired by the ocean"
+    description: "Calming aqua-blue theme inspired by ocean waves"
     colors:
       primary:
         50: "#f0fdfa"
@@ -133,81 +93,31 @@ themes:
         800: "#075985"
         900: "#0c4a6e"
       accent:
-        50: "#ecfeff"
-        100: "#cffafe"
-        200: "#a5f3fc"
-        300: "#67e8f9"
-        400: "#22d3ee"
         500: "#06b6d4"
         600: "#0891b2"
         700: "#0e7490"
-        800: "#155e75"
-        900: "#164e63"
       success:
-        50: "#f0fdf4"
-        100: "#dcfce7"
-        200: "#bbf7d0"
-        300: "#86efac"
-        400: "#4ade80"
         500: "#22c55e"
-        600: "#16a34a"
-        700: "#15803d"
-        800: "#166534"
-        900: "#14532d"
       warning:
-        50: "#fffbeb"
-        100: "#fef3c7"
-        200: "#fde68a"
-        300: "#fcd34d"
-        400: "#fbbf24"
         500: "#f59e0b"
-        600: "#d97706"
-        700: "#b45309"
-        800: "#92400e"
-        900: "#78350f"
       error:
-        50: "#fef2f2"
-        100: "#fee2e2"
-        200: "#fecaca"
-        300: "#fca5a5"
-        400: "#f87171"
         500: "#ef4444"
-        600: "#dc2626"
-        700: "#b91c1c"
-        800: "#991b1b"
-        900: "#7f1d1d"
       text:
-        primary: "#000000"
-        secondary: "#64748b"
-        accent: "#0891b2"
-        success: "#166534"
-        error: "#991b1b"
+        primary: "#0f172a"
+        secondary: "#334155"
+        accent: "#0e7490"
+        success: "#15803d"
         warning: "#92400e"
+        error: "#991b1b"
     typography:
       fontFamily:
         sans: ["Poppins", "system-ui", "sans-serif"]
         serif: ["Playfair Display", "serif"]
         mono: ["Fira Code", "monospace"]
-      fontSize:
-        xs: "0.75rem"
-        sm: "0.875rem"
-        base: "1rem"
-        lg: "1.125rem"
-        xl: "1.25rem"
-        "2xl": "1.5rem"
-        "3xl": "1.875rem"
-        "4xl": "2.25rem"
-        "5xl": "3rem"
-        "6xl": "3.75rem"
-      fontWeight:
-        normal: 400
-        medium: 500
-        semibold: 600
-        bold: 700
 
   sunset-glow:
     name: "Sunset Glow"
-    description: "Warm orange and pink theme inspired by sunset colors"
+    description: "Warm, inviting orange-pink blend evoking sunset skies"
     colors:
       primary:
         50: "#fff7ed"
@@ -232,81 +142,29 @@ themes:
         800: "#9d174d"
         900: "#831843"
       accent:
-        50: "#fef3c7"
-        100: "#fde68a"
-        200: "#fcd34d"
-        300: "#fbbf24"
-        400: "#f59e0b"
-        500: "#d97706"
-        600: "#b45309"
-        700: "#92400e"
-        800: "#78350f"
-        900: "#451a03"
+        500: "#f59e0b"
       success:
-        50: "#f0fdf4"
-        100: "#dcfce7"
-        200: "#bbf7d0"
-        300: "#86efac"
-        400: "#4ade80"
         500: "#22c55e"
-        600: "#16a34a"
-        700: "#15803d"
-        800: "#166534"
-        900: "#14532d"
       warning:
-        50: "#fefce8"
-        100: "#fef9c3"
-        200: "#fef08a"
-        300: "#fde047"
-        400: "#facc15"
         500: "#eab308"
-        600: "#ca8a04"
-        700: "#a16207"
-        800: "#854d0e"
-        900: "#713f12"
       error:
-        50: "#fef2f2"
-        100: "#fee2e2"
-        200: "#fecaca"
-        300: "#fca5a5"
-        400: "#f87171"
         500: "#ef4444"
-        600: "#dc2626"
-        700: "#b91c1c"
-        800: "#991b1b"
-        900: "#7f1d1d"
       text:
-        primary: "#000000"
-        secondary: "#64748b"
-        accent: "#92400e"
-        success: "#166534"
-        error: "#991b1b"
+        primary: "#1f2937"
+        secondary: "#4b5563"
+        accent: "#c2410c"
+        success: "#15803d"
         warning: "#92400e"
+        error: "#b91c1c"
     typography:
       fontFamily:
         sans: ["Nunito", "system-ui", "sans-serif"]
         serif: ["Crimson Text", "serif"]
         mono: ["Source Code Pro", "monospace"]
-      fontSize:
-        xs: "0.75rem"
-        sm: "0.875rem"
-        base: "1rem"
-        lg: "1.125rem"
-        xl: "1.25rem"
-        "2xl": "1.5rem"
-        "3xl": "1.875rem"
-        "4xl": "2.25rem"
-        "5xl": "3rem"
-        "6xl": "3.75rem"
-      fontWeight:
-        normal: 400
-        medium: 500
-        semibold: 600
-        bold: 700
 
   vibrant-orange:
     name: "Vibrant Orange"
-    description: "Bold orange theme with high contrast and modern aesthetics"
+    description: "High-contrast, energetic orange theme for bold storefronts"
     colors:
       primary:
         50: "#fff7ed"
@@ -320,28 +178,94 @@ themes:
         800: "#9a3412"
         900: "#7c2d12"
       secondary:
-        50: "#fefefe"
-        100: "#fdfdfd"
-        200: "#fafafa"
-        300: "#f5f5f5"
-        400: "#e5e5e5"
-        500: "#d4d4d4"
-        600: "#a3a3a3"
-        700: "#737373"
-        800: "#525252"
-        900: "#404040"
+        50: "#ffffff"
+        100: "#fafafa"
+        200: "#f5f5f5"
+        300: "#e5e5e5"
+        400: "#d4d4d4"
+        500: "#a3a3a3"
+        600: "#737373"
+        700: "#525252"
+        800: "#404040"
+        900: "#262626"
       accent:
-        50: "#fef3c7"
-        100: "#fde68a"
-        200: "#fcd34d"
-        300: "#fbbf24"
-        400: "#f59e0b"
-        500: "#d97706"
-        600: "#b45309"
-        700: "#92400e"
-        800: "#78350f"
-        900: "#451a03"
+        500: "#f59e0b"
+        600: "#d97706"
+        700: "#b45309"
       success:
+        500: "#22c55e"
+      warning:
+        500: "#eab308"
+      error:
+        500: "#ef4444"
+      text:
+        primary: "#1f2937"
+        secondary: "#4b5563"
+        accent: "#ea580c"
+        success: "#166534"
+        warning: "#92400e"
+        error: "#b91c1c"
+    typography:
+      fontFamily:
+        sans: ["Inter", "system-ui", "sans-serif"]
+        serif: ["Georgia", "serif"]
+        mono: ["JetBrains Mono", "monospace"]
+
+  arctic-frost:
+    name: "Arctic Frost"
+    description: "Minimal icy mint-blue theme for modern, clean storefronts"
+    colors:
+      primary:
+        50: "#f0fdfd"
+        100: "#ccfbf1"
+        200: "#a7f3d0"
+        300: "#6ee7b7"
+        400: "#34d399"
+        500: "#10b981"
+        600: "#059669"
+        700: "#047857"
+        800: "#065f46"
+        900: "#064e3b"
+      secondary:
+        50: "#ecfeff"
+        100: "#cffafe"
+        200: "#a5f3fc"
+        300: "#67e8f9"
+        400: "#22d3ee"
+        500: "#06b6d4"
+        600: "#0891b2"
+        700: "#0e7490"
+        800: "#155e75"
+        900: "#164e63"
+      accent:
+        500: "#14b8a6"
+      success:
+        500: "#16a34a"
+      warning:
+        500: "#f59e0b"
+      error:
+        500: "#dc2626"
+      text:
+        primary: "#082f49"
+        secondary: "#164e63"
+        accent: "#0e7490"
+
+  emerald-forest:
+    name: "Emerald Forest"
+    description: "Rich natural greens inspired by deep forest canopies"
+    colors:
+      primary:
+        50: "#ecfdf5"
+        100: "#d1fae5"
+        200: "#a7f3d0"
+        300: "#6ee7b7"
+        400: "#34d399"
+        500: "#10b981"
+        600: "#059669"
+        700: "#047857"
+        800: "#065f46"
+        900: "#064e3b"
+      secondary:
         50: "#f0fdf4"
         100: "#dcfce7"
         200: "#bbf7d0"
@@ -352,58 +276,78 @@ themes:
         700: "#15803d"
         800: "#166534"
         900: "#14532d"
-      warning:
-        50: "#fffbeb"
-        100: "#fef3c7"
-        200: "#fde68a"
-        300: "#fcd34d"
-        400: "#fbbf24"
-        500: "#f59e0b"
-        600: "#d97706"
-        700: "#b45309"
-        800: "#92400e"
-        900: "#78350f"
-      error:
-        50: "#fef2f2"
-        100: "#fee2e2"
-        200: "#fecaca"
-        300: "#fca5a5"
-        400: "#f87171"
-        500: "#ef4444"
-        600: "#dc2626"
-        700: "#b91c1c"
-        800: "#991b1b"
-        900: "#7f1d1d"
+      accent:
+        500: "#22d3ee"
       text:
-        primary: "#000000"
-        secondary: "#374151"
-        accent: "#ea580c"
-        success: "#166534"
-        error: "#991b1b"
-        warning: "#92400e"
-    typography:
-      fontFamily:
-        sans: ["Inter", "system-ui", "sans-serif"]
-        serif: ["Georgia", "serif"]
-        mono: ["JetBrains Mono", "monospace"]
-      fontSize:
-        xs: "0.75rem"
-        sm: "0.875rem"
-        base: "1rem"
-        lg: "1.125rem"
-        xl: "1.25rem"
-        "2xl": "1.5rem"
-        "3xl": "1.875rem"
-        "4xl": "2.25rem"
-        "5xl": "3rem"
-        "6xl": "3.75rem"
-      fontWeight:
-        normal: 400
-        medium: 500
-        semibold: 600
-        bold: 700
+        primary: "#052e16"
+        secondary: "#166534"
+        accent: "#047857"
 
-# Global Layout & Spacing (shared across themes)
+  midnight-dark:
+    name: "Midnight Dark"
+    description: "Elegant dark theme with blue-gray highlights"
+    colors:
+      primary:
+        50: "#1e293b"
+        100: "#1e293b"
+        200: "#334155"
+        300: "#475569"
+        400: "#64748b"
+        500: "#94a3b8"
+        600: "#cbd5e1"
+        700: "#e2e8f0"
+        800: "#f1f5f9"
+        900: "#f8fafc"
+      secondary:
+        50: "#0f172a"
+        100: "#1e293b"
+        200: "#334155"
+        300: "#475569"
+        400: "#64748b"
+        500: "#94a3b8"
+        600: "#cbd5e1"
+        700: "#e2e8f0"
+        800: "#f1f5f9"
+        900: "#f8fafc"
+      accent:
+        500: "#3b82f6"
+        600: "#2563eb"
+        700: "#1d4ed8"
+      text:
+        primary: "#f8fafc"
+        secondary: "#e2e8f0"
+        accent: "#3b82f6"
+
+  royal-amethyst:
+    name: "Royal Amethyst"
+    description: "Regal purple-gold palette for premium brand storefronts"
+    colors:
+      primary:
+        50: "#f5f3ff"
+        100: "#ede9fe"
+        200: "#ddd6fe"
+        300: "#c4b5fd"
+        400: "#a78bfa"
+        500: "#8b5cf6"
+        600: "#7c3aed"
+        700: "#6d28d9"
+        800: "#5b21b6"
+        900: "#4c1d95"
+      secondary:
+        50: "#fefce8"
+        100: "#fef9c3"
+        200: "#fef08a"
+        300: "#fde047"
+        400: "#facc15"
+        500: "#eab308"
+      accent:
+        500: "#a855f7"
+      text:
+        primary: "#2e1065"
+        secondary: "#6d28d9"
+        accent: "#a855f7"
+
+# Global Layout & Shared Settings
 layout:
   maxWidth: "1280px"
   containerPadding: "1rem"
@@ -416,17 +360,16 @@ layout:
     "2xl": "1rem"
     full: "9999px"
 
-# Component Styles (shared across themes)
 components:
   button:
     defaultVariant: "primary"
     borderRadius: "0.5rem"
-    fontWeight: "600"
+    fontWeight: 600
     transition: "all 0.2s ease-in-out"
 
   card:
     borderRadius: "0.75rem"
-    shadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+    shadow: "0 1px 3px rgba(0,0,0,0.1)"
     padding: "1.5rem"
 
   input:
@@ -434,7 +377,6 @@ components:
     padding: "0.75rem 1rem"
     fontSize: "1rem"
 
-# Animation & Transitions (shared across themes)
 animation:
   duration:
     fast: "150ms"

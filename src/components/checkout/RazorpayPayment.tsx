@@ -108,7 +108,8 @@ export function RazorpayPayment({
                 })
             })
 
-            const data = await response.json()
+            const text = await response.text()
+            const data = text ? JSON.parse(text) : {}
             if (data.success) {
                 setRazorpayOrderId(data.data.id)
                 return data.data
@@ -137,7 +138,8 @@ export function RazorpayPayment({
                 })
             })
 
-            const data = await response.json()
+            const text = await response.text()
+            const data = text ? JSON.parse(text) : {}
             if (data.success) {
                 return data
             } else {

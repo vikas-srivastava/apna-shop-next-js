@@ -73,7 +73,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
     ]
 
     return (
-        <div className="container-theme py-8 space-y-12">
+        <div className="container-theme py-8 space-y-12" style={{ backgroundColor: 'var(--theme-surface-bg)', color: 'var(--text-primary)' }}>
             {/* Breadcrumb */}
             <nav className="text-sm text-secondary-600">
                 <Link href="/" className="hover:underline">Home</Link>

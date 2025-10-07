@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
     try {
@@ -100,17 +101,10 @@ export async function POST(request: NextRequest) {
             }, { status: 400 })
         }
 
-        return NextResponse.json({
+        return Response.json({
             success: true,
-            data: {
-                payment_id: payment_id,
-                order_id: order_id,
-                gateway,
-                status: 'success',
-                amount: amount,
-                verified_at: new Date().toISOString()
-            },
-            message: 'Payment verified successfully'
+            orderId: order_id,
+            paymentId: payment_id
         })
     } catch (error) {
         console.error('Payment verification error:', error)

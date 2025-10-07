@@ -34,74 +34,74 @@
   }
 
   .btn-primary {
-    background-color: var(--color-primary-500);
+    background-color: var(--color-primary-500, #3b82f6);
     color: white;
     @apply text-white;
   }
 
   .btn-primary:hover {
-    background-color: var(--color-primary-600);
+    background-color: var(--color-primary-600, #2563eb);
   }
 
   .btn-primary:focus-visible {
-    outline: 2px solid var(--color-primary-500);
+    outline: 2px solid var(--color-primary-500, #3b82f6);
     outline-offset: 2px;
   }
 
   .btn-secondary {
-    background-color: var(--color-secondary-100);
-    color: var(--text-primary);
+    background-color: var(--color-secondary-100, #f3f4f6);
+    color: var(--text-primary, #111827);
   }
 
   .btn-secondary:hover {
-    background-color: var(--color-secondary-200);
+    background-color: var(--color-secondary-200, #e5e7eb);
   }
 
   .btn-secondary:focus-visible {
-    outline: 2px solid var(--color-secondary-500);
+    outline: 2px solid var(--color-secondary-500, #6b7280);
     outline-offset: 2px;
   }
   .btn-outline {
     background-color: transparent;
-    color: var(--color-primary-500);
-    border: 1px solid var(--color-primary-500);
+    color: var(--color-primary-500, #3b82f6);
+    border: 1px solid var(--color-primary-500, #3b82f6);
   }
 
   .btn-outline:hover {
-    background-color: var(--color-primary-50);
-    border-color: var(--color-primary-600);
+    background-color: var(--color-primary-50, #eff6ff);
+    border-color: var(--color-primary-600, #2563eb);
   }
 
   .btn-outline:focus-visible {
-    outline: 2px solid var(--color-primary-500);
+    outline: 2px solid var(--color-primary-500, #3b82f6);
     outline-offset: 2px;
   }
 
   .btn-ghost {
     background-color: transparent;
-    color: var(--text-primary);
+    color: var(--text-primary, #111827);
   }
 
   .btn-ghost:hover {
-    background-color: var(--color-secondary-100);
+    background-color: var(--color-secondary-100, #f3f4f6);
   }
 
   .btn-ghost:focus-visible {
-    outline: 2px solid var(--color-primary-500);
+    outline: 2px solid var(--color-primary-500, #3b82f6);
     outline-offset: 2px;
   }
 
   .btn-danger {
-    background-color: var(--color-error-500);
+    background-color: var(--color-error-500, #ef4444);
     color: white;
   }
 
   .btn-danger:hover {
-    background-color: var(--color-error-600);
+    background-color: var(--color-error-600, #dc2626);
   }
 
   .btn-danger:focus-visible {
-    outline: 2px solid var(--color-error-500);
+    outline: 2px solid var(--color-error-500, #ef4444);
     outline-offset: 2px;
   }
 
@@ -109,9 +109,9 @@
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-shadow);
     padding: var(--card-padding);
-    background-color: var(--color-secondary-50);
-    border: 1px solid var(--color-secondary-200);
-    color: var(--text-primary);
+    background-color: var(--color-secondary-50, #f9fafb);
+    border: 1px solid var(--color-secondary-200, #e5e7eb);
+    color: var(--text-primary, #111827);
   }
 
   .input {
@@ -119,9 +119,9 @@
     border-width: var(--input-border-width);
     padding: var(--input-padding);
     font-size: var(--input-font-size);
-    border-color: var(--color-secondary-300);
-    color: var(--text-primary);
-    background-color: var(--color-secondary-50);
+    border-color: var(--color-secondary-300, #d1d5db);
+    color: var(--text-primary, #111827);
+    background-color: var(--color-secondary-50, #f9fafb);
     @apply w-full;
   }
 
@@ -138,22 +138,22 @@
 /* Global base styles */
 body {
   @apply font-sans antialiased;
-  background-color: var(--color-secondary-50);
-  color: var(--text-primary);
+  background-color: var(--color-secondary-50, #f9fafb);
+  color: var(--text-primary, #111827);
 }
 
 /* Link styles */
 a {
-  color: var(--text-primary);
+  color: var(--text-primary, #111827);
 }
 
 a:hover {
-  color: var(--color-primary-600);
+  color: var(--color-primary-600, #2563eb);
 }
 
 /* Button visibility across themes */
 button {
-  color: var(--text-primary);
+  color: var(--text-primary, #111827);
 }
 
 button:disabled {
@@ -185,21 +185,21 @@ html.theme-loaded {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-secondary-100);
+  background: var(--color-secondary-100, #f3f4f6);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-secondary-400);
+  background: var(--color-secondary-400, #9ca3af);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-secondary-500);
+  background: var(--color-secondary-500, #6b7280);
 }
 
 /* Focus styles */
 :focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--color-primary-500, #3b82f6);
   outline-offset: 2px;
 }
 
