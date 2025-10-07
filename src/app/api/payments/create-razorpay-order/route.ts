@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Helper function to simulate API delay
-function mockDelay(minMs = 500, maxMs = 1500): Promise<void> {
-    const delay = Math.random() * (maxMs - minMs) + minMs
-    return new Promise(resolve => setTimeout(resolve, delay))
-}
-
 export async function POST(request: NextRequest) {
     try {
-        await mockDelay()
-
+        console.log('Razorpay order creation request received');
         const body = await request.json()
         const { order_id, amount, currency = 'INR' } = body
 
@@ -21,28 +13,53 @@ export async function POST(request: NextRequest) {
             }, { status: 422 })
         }
 
-        // Generate mock Razorpay order
-        const mockOrderId = `order_mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
+        const razorpaySecret = process.env.RAZORPAY_SECRET_KEY
+
+        if (!razorpayKeyId || !razorpaySecret) {
+            return NextResponse.json({
+                success: false,
+                message: 'Razorpay credentials not configured',
+                error: 'Configuration error'
+            }, { status: 500 })
+        }
+
+        // Create Razorpay order using their API
+        const auth = Buffer.from(`${razorpayKeyId}:${razorpaySecret}`).toString('base64')
+
+        const razorpayResponse = await fetch('https://api.razorpay.com/v1/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Basic ${auth}`
+            },
+            body: JSON.stringify({
+                amount: amount, // Amount in paisa (smallest currency unit)
+                currency: currency.toUpperCase(),
+                receipt: order_id,
+                payment_capture: 1 // Auto capture payment
+            })
+        })
+
+        if (!razorpayResponse.ok) {
+            const errorData = await razorpayResponse.text()
+            console.error('Razorpay API error:', errorData)
+            return NextResponse.json({
+                success: false,
+                message: 'Failed to create Razorpay order',
+                error: 'Razorpay API error'
+            }, { status: razorpayResponse.status })
+        }
+
+        const razorpayOrder = await razorpayResponse.json()
 
         return NextResponse.json({
             success: true,
-            data: {
-                id: mockOrderId,
-                entity: 'order',
-                amount: amount,
-                amount_paid: 0,
-                amount_due: amount,
-                currency: currency.toUpperCase(),
-                receipt: order_id,
-                offer_id: null,
-                status: 'created',
-                attempts: 0,
-                notes: [],
-                created_at: Math.floor(Date.now() / 1000)
-            },
+            data: razorpayOrder,
             message: 'Razorpay order created successfully'
         })
     } catch (error) {
+        console.error('Razorpay order creation error:', error)
         return NextResponse.json({
             success: false,
             message: 'Failed to create Razorpay order',

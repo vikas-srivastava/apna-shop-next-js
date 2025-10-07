@@ -66,6 +66,25 @@ const defaultAddresses: Address[] = [
 mockStorage.cart.set('default-user', defaultCartItems)
 mockStorage.addresses.set('default-user', defaultAddresses)
 
+// Mock Brands
+export const mockBrands: any[] = [
+  { id: 1, name: 'AudioTech', slug: 'audiotech' },
+  { id: 2, name: 'FitTech', slug: 'fittech' },
+  { id: 3, name: 'ComfortWear', slug: 'comfortwear' },
+  { id: 4, name: 'VisionTech', slug: 'visiontech' },
+  { id: 5, name: 'PhotoPro', slug: 'photopro' },
+  { id: 6, name: 'GameGear', slug: 'gamegear' },
+  { id: 7, name: 'StyleCo', slug: 'styleco' },
+  { id: 8, name: 'RunFit', slug: 'runfit' },
+  { id: 9, name: 'LeatherLux', slug: 'leatherlux' },
+  { id: 10, name: 'TechBooks', slug: 'techbooks' },
+  { id: 11, name: 'GardenPro', slug: 'gardenpro' },
+  { id: 12, name: 'ZenFit', slug: 'zenfit' },
+  { id: 13, name: 'HomeEssentials', slug: 'homeessentials' },
+  { id: 14, name: 'OutdoorGear', slug: 'outdoorgear' },
+  { id: 15, name: 'ArtisanDecor', slug: 'artisandecor' }
+]
+
 // Mock Categories
 export const mockCategories: Category[] = [
   {
@@ -127,7 +146,9 @@ export const mockApiProducts: ApiProduct[] = [
         name: 'Electronics',
         slug: 'electronics'
       }
-    ]
+    ],
+    sizes: [],
+    colors: ['Black', 'White', 'Blue']
   },
   {
     id: 2,
@@ -198,7 +219,9 @@ export const mockApiProducts: ApiProduct[] = [
         name: 'Electronics',
         slug: 'electronics'
       }
-    ]
+    ],
+    sizes: [],
+    colors: ['Black']
   },
   {
     id: 5,
@@ -220,7 +243,9 @@ export const mockApiProducts: ApiProduct[] = [
         name: 'Electronics',
         slug: 'electronics'
       }
-    ]
+    ],
+    sizes: [],
+    colors: ['Black']
   },
   {
     id: 6,
@@ -242,7 +267,9 @@ export const mockApiProducts: ApiProduct[] = [
         name: 'Electronics',
         slug: 'electronics'
       }
-    ]
+    ],
+    sizes: [],
+    colors: ['Black', 'White', 'RGB']
   },
   {
     id: 7,
@@ -264,7 +291,9 @@ export const mockApiProducts: ApiProduct[] = [
         name: 'Clothing',
         slug: 'clothing'
       }
-    ]
+    ],
+    sizes: ['28', '30', '32', '34', '36', '38'],
+    colors: ['Blue', 'Black', 'Gray']
   },
   {
     id: 8,
@@ -291,7 +320,9 @@ export const mockApiProducts: ApiProduct[] = [
         name: 'Sports & Outdoors',
         slug: 'sports-outdoors'
       }
-    ]
+    ],
+    sizes: ['6', '7', '8', '9', '10', '11', '12'],
+    colors: ['White', 'Black', 'Blue', 'Red']
   },
   {
     id: 9,
@@ -313,7 +344,9 @@ export const mockApiProducts: ApiProduct[] = [
         name: 'Clothing',
         slug: 'clothing'
       }
-    ]
+    ],
+    sizes: [],
+    colors: ['Black', 'Brown', 'Tan']
   },
   {
     id: 10,
@@ -335,7 +368,9 @@ export const mockApiProducts: ApiProduct[] = [
         name: 'Books',
         slug: 'books'
       }
-    ]
+    ],
+    sizes: [],
+    colors: []
   },
   {
     id: 11,
@@ -835,6 +870,7 @@ export function mockApiDelay(minMs = 200, maxMs = 800): Promise<void> {
 // Mock API response generators
 export const mockApiGenerators = {
   getCategories: () => createMockApiResponse(mockCategories),
+  getBrands: () => createMockApiResponse(mockBrands),
   getProducts: (page = 1, limit = 12, filters: Partial<any> = {}) => {
     let filteredProducts = [...mockApiProducts]
 
@@ -877,6 +913,20 @@ export const mockApiGenerators = {
     // Apply in stock filter
     if (filters.inStock === true) {
       filteredProducts = filteredProducts.filter(product => product.qty > 0)
+    }
+
+    // Apply size filter
+    if (filters.sizes && filters.sizes.length > 0) {
+      filteredProducts = filteredProducts.filter(product =>
+        filters.sizes!.some((size: string) => product.sizes?.includes(size))
+      )
+    }
+
+    // Apply color filter
+    if (filters.colors && filters.colors.length > 0) {
+      filteredProducts = filteredProducts.filter(product =>
+        filters.colors!.some((color: string) => product.colors?.includes(color))
+      )
     }
 
     // Apply sorting

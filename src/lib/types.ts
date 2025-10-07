@@ -58,6 +58,7 @@ export interface Category {
 
 export interface ProductFilter {
     category?: string
+    brand?: string
     priceRange?: {
         min: number
         max: number

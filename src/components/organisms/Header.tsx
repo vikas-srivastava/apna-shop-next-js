@@ -79,7 +79,7 @@ export function Header({ onSearch }: HeaderProps) {
                     <div className="flex items-center space-x-2">
                         {/* Cart */}
                         <Button variant="ghost" size="sm" className="p-2 relative" asChild>
-                            <Link href="/cart">
+                            <Link href="/cart" aria-label="Shopping cart">
                                 <ShoppingCart className="w-5 h-5" />
                                 {itemCount > 0 && (
                                     <span className="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -91,7 +91,7 @@ export function Header({ onSearch }: HeaderProps) {
 
                         {/* Wishlist */}
                         <Button variant="ghost" size="sm" className="p-2" asChild>
-                            <Link href="/wishlist">
+                            <Link href="/wishlist" aria-label="Wishlist">
                                 <Heart className="w-5 h-5" />
                             </Link>
                         </Button>
@@ -100,14 +100,14 @@ export function Header({ onSearch }: HeaderProps) {
                         {isAuthenticated ? (
                             <div className="flex items-center gap-2">
                                 <Button variant="ghost" size="sm" className="p-2" asChild>
-                                    <Link href="/account">
+                                    <Link href="/account" aria-label="Account">
                                         <User className="w-5 h-5" />
                                     </Link>
                                 </Button>
                             </div>
                         ) : (
                             <Button variant="ghost" size="sm" className="p-2" asChild>
-                                <Link href="/login">
+                                <Link href="/login" aria-label="Sign in">
                                     <User className="w-5 h-5" />
                                 </Link>
                             </Button>
@@ -122,6 +122,7 @@ export function Header({ onSearch }: HeaderProps) {
                             size="sm"
                             className="md:hidden p-2"
                             onClick={toggleMobileMenu}
+                            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                         >
                             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </Button>

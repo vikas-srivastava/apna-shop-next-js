@@ -37,10 +37,6 @@ export class CircuitBreaker {
         private name: string,
         private config: CircuitBreakerConfig
     ) {
-    constructor(
-        private name: string,
-        private config: CircuitBreakerConfig
-    ) {
         // Cleanup is manual - call cleanup() when needed
     }
     /**

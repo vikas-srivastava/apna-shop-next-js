@@ -103,7 +103,7 @@ export function Footer() {
                                     placeholder="Enter your email"
                                     className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
                                 />
-                                <Button variant="primary" size="md" className="bg-blue-600 hover:bg-blue-700 text-white">
+                                <Button variant="primary" size="md">
                                     Subscribe
                                 </Button>
                             </form>

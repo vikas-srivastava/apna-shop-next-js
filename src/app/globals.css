@@ -34,31 +34,74 @@
   }
 
   .btn-primary {
-    background-color: rgb(var(--color-primary-500));
+    background-color: var(--color-primary-500);
     color: white;
     @apply text-white;
   }
 
   .btn-primary:hover {
-    background-color: rgb(var(--color-primary-600));
+    background-color: var(--color-primary-600);
   }
 
   .btn-primary:focus-visible {
-    outline: 2px solid rgb(var(--color-primary-500));
+    outline: 2px solid var(--color-primary-500);
     outline-offset: 2px;
   }
 
   .btn-secondary {
-    background-color: rgb(var(--color-secondary-100));
-    color: rgb(var(--text-primary));
+    background-color: var(--color-secondary-100);
+    color: var(--text-primary);
   }
 
   .btn-secondary:hover {
-    background-color: rgb(var(--color-secondary-200));
+    background-color: var(--color-secondary-200);
   }
 
   .btn-secondary:focus-visible {
-    outline: 2px solid rgb(var(--color-secondary-500));
+    outline: 2px solid var(--color-secondary-500);
+    outline-offset: 2px;
+  }
+  .btn-outline {
+    background-color: transparent;
+    color: var(--color-primary-500);
+    border: 1px solid var(--color-primary-500);
+  }
+
+  .btn-outline:hover {
+    background-color: var(--color-primary-50);
+    border-color: var(--color-primary-600);
+  }
+
+  .btn-outline:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--text-primary);
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--color-secondary-100);
+  }
+
+  .btn-ghost:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+
+  .btn-danger {
+    background-color: var(--color-error-500);
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: var(--color-error-600);
+  }
+
+  .btn-danger:focus-visible {
+    outline: 2px solid var(--color-error-500);
     outline-offset: 2px;
   }
 
@@ -66,9 +109,9 @@
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-shadow);
     padding: var(--card-padding);
-    background-color: rgb(var(--color-secondary-50));
-    border: 1px solid rgb(var(--color-secondary-200));
-    color: rgb(var(--text-primary));
+    background-color: var(--color-secondary-50);
+    border: 1px solid var(--color-secondary-200);
+    color: var(--text-primary);
   }
 
   .input {
@@ -76,15 +119,15 @@
     border-width: var(--input-border-width);
     padding: var(--input-padding);
     font-size: var(--input-font-size);
-    border-color: rgb(var(--color-secondary-300));
-    color: rgb(var(--text-primary));
-    background-color: rgb(var(--color-secondary-50));
+    border-color: var(--color-secondary-300);
+    color: var(--text-primary);
+    background-color: var(--color-secondary-50);
     @apply w-full;
   }
 
   .input:focus {
-    border-color: rgb(var(--color-primary-500));
-    box-shadow: 0 0 0 1px rgb(var(--color-primary-500));
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 1px var(--color-primary-500);
   }
 
   .container-theme {
@@ -95,22 +138,22 @@
 /* Global base styles */
 body {
   @apply font-sans antialiased;
-  background-color: rgb(var(--color-secondary-50));
-  color: rgb(var(--text-primary));
+  background-color: var(--color-secondary-50);
+  color: var(--text-primary);
 }
 
 /* Link styles */
 a {
-  color: rgb(var(--text-primary));
+  color: var(--text-primary);
 }
 
 a:hover {
-  color: rgb(var(--color-primary-600));
+  color: var(--color-primary-600);
 }
 
 /* Button visibility across themes */
 button {
-  color: rgb(var(--text-primary));
+  color: var(--text-primary);
 }
 
 button:disabled {
@@ -142,21 +185,21 @@ html.theme-loaded {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgb(var(--color-secondary-100));
+  background: var(--color-secondary-100);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--color-secondary-400));
+  background: var(--color-secondary-400);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--color-secondary-500));
+  background: var(--color-secondary-500);
 }
 
 /* Focus styles */
 :focus-visible {
-  outline: 2px solid rgb(var(--color-primary-500));
+  outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }
 

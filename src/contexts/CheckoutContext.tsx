@@ -1,7 +1,33 @@
 'use client'
 
-import { createContext, useContext, useReducer, ReactNode, useCallback } from 'react'
+import { createContext, useContext, useReducer, ReactNode, useCallback, useEffect } from 'react'
 import { Address } from '@/lib/types'
+
+const CHECKOUT_STORAGE_KEY = 'checkout-state'
+
+const loadCheckoutState = (): CheckoutState | null => {
+    if (typeof window === 'undefined') return null; // SSR check
+    try {
+        const stored = localStorage.getItem(CHECKOUT_STORAGE_KEY);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            return {
+                currentStep: parsed.currentStep || 1,
+                data: parsed.data || initialState.data,
+                isProcessing: false,
+                error: null
+            };
+        }
+    } catch (error) {
+        console.warn('Failed to load checkout state from localStorage:', error);
+    }
+    return null;
+};
+
+const getInitialState = (): CheckoutState => {
+    const loaded = loadCheckoutState();
+    return loaded || initialState;
+};
 
 export interface CheckoutData {
     shippingAddress: Address | null
@@ -93,7 +119,7 @@ function checkoutReducer(state: CheckoutState, action: CheckoutAction): Checkout
 }
 
 export function CheckoutProvider({ children }: { children: ReactNode }) {
-    const [state, dispatch] = useReducer(checkoutReducer, initialState)
+    const [state, dispatch] = useReducer(checkoutReducer, getInitialState())
 
     const goToStep = useCallback((step: number) => {
         dispatch({ type: 'SET_STEP', payload: step })
@@ -120,8 +146,22 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     }, [])
 
     const reset = useCallback(() => {
+        localStorage.removeItem(CHECKOUT_STORAGE_KEY);
         dispatch({ type: 'RESET' })
     }, [])
+
+    // Persist checkout state to localStorage
+    useEffect(() => {
+        try {
+            const toSave = {
+                currentStep: state.currentStep,
+                data: state.data
+            };
+            localStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(toSave));
+        } catch (error) {
+            console.warn('Failed to save checkout state to localStorage:', error);
+        }
+    }, [state.currentStep, state.data]);
 
     // Determine if user can proceed to next step
     const canProceedToNext = (() => {

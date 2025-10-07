@@ -19,7 +19,7 @@ export default function ProductsPage() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
     const { state, actions, stableActions } = useProducts()
-    const { filters, sortBy, categories, loading, errors } = state
+    const { filters, sortBy, categories, brands, loading, errors } = state
 
     // Initialize filters from URL params
     useEffect(() => {
@@ -28,16 +28,28 @@ export default function ProductsPage() {
         const initialFilters: ProductFilter = {}
 
         const category = searchParams.get('category')
+        const brand = searchParams.get('brand')
         const search = searchParams.get('search')
-        const minPrice = searchParams.get('minPrice')
-        const maxPrice = searchParams.get('maxPrice')
+        const minPrice = searchParams.get('minPrice') || searchParams.get('min_price')
+        const maxPrice = searchParams.get('maxPrice') || searchParams.get('max_price')
         const rating = searchParams.get('rating')
         const inStock = searchParams.get('inStock')
+        const sizes = searchParams.get('sizes')
+        const colors = searchParams.get('colors')
 
         if (category) initialFilters.category = category
+        if (brand) initialFilters.brand = brand
         if (search) initialFilters.search = search
         if (rating) initialFilters.rating = parseFloat(rating)
         if (inStock) initialFilters.inStock = inStock === 'true'
+
+        if (sizes) {
+            initialFilters.sizes = sizes.split(',').map(s => s.trim())
+        }
+
+        if (colors) {
+            initialFilters.colors = colors.split(',').map(c => c.trim())
+        }
 
         if (minPrice || maxPrice) {
             initialFilters.priceRange = {
@@ -51,14 +63,14 @@ export default function ProductsPage() {
 
     const handleFilterChange = (newFilters: any) => {
         stableActions.setFilters(newFilters)
-        // Trigger fetch with new filters
-        setTimeout(() => actions.fetchProducts(1, 12), 0)
+        // Trigger fetch with new filters synchronously
+        actions.fetchProducts(1, 12)
     }
 
     const handleSortChange = (newSortBy: ProductFilter['sortBy']) => {
         stableActions.setSortBy(newSortBy)
-        // Trigger fetch with new sort
-        setTimeout(() => actions.fetchProducts(1, 12), 0)
+        // Trigger fetch with new sort synchronously
+        actions.fetchProducts(1, 12)
     }
 
     const sortOptions = [

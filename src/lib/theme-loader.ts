@@ -2,30 +2,106 @@ import * as yaml from 'js-yaml'
 import type { ThemeConfig } from './server-theme-loader'
 
 /**
- * Load theme configuration from YAML file
+ * Load theme configuration from various sources based on THEME_SOURCE environment variable
+ * Mode 1: THEME_SOURCE="api" - Load from mock API (/api/themes)
+ * Mode 2: THEME_SOURCE="Theme Name" - Load specific theme from theme.yml
+ * Default: Load all themes from theme.yml
  */
 export async function loadThemeConfig(): Promise<ThemeConfig> {
+    const themeSource = process.env.THEME_SOURCE
+
     try {
-        const response = await fetch('/theme.yml')
+        if (themeSource === 'api') {
+            // Mode 1: Load from mock API
+            const response = await fetch('/api/themes')
+            if (!response.ok) {
+                throw new Error('Failed to load theme from API')
+            }
+            const apiData = await response.json()
 
-        if (!response.ok) {
-            throw new Error('Failed to load theme.yml')
-        }
+            // Transform API response to ThemeConfig format
+            return {
+                version: '2.0.0',
+                description: 'Loaded from API',
+                themes: {
+                    'api-theme': {
+                        name: apiData.data.name || 'API Theme',
+                        colors: apiData.data.colors,
+                        typography: {
+                            fontFamily: { sans: ['Inter', 'system-ui'], serif: ['Georgia'], mono: ['JetBrains Mono'] },
+                            fontSize: { xs: '0.75rem', sm: '0.875rem', base: '1rem', lg: '1.125rem', xl: '1.25rem', '2xl': '1.5rem', '3xl': '1.875rem', '4xl': '2.25rem', '5xl': '3rem', '6xl': '3.75rem' },
+                            fontWeight: { normal: 400, medium: 500, semibold: 600, bold: 700 }
+                        }
+                    }
+                },
+                layout: {
+                    containerMaxWidth: '1280px',
+                    borderRadius: { sm: '4px', md: '8px', lg: '12px', xl: '16px' },
+                    spacing: { xs: '0.5rem', sm: '0.75rem', md: '1rem', lg: '1.5rem', xl: '2rem', '2xl': '3rem', '3xl': '4rem' }
+                },
+                components: {
+                    button: { borderRadius: '8px', fontWeight: '600', transition: 'all 0.2s ease-in-out' },
+                    card: { borderRadius: '12px', shadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)', padding: '1.5rem' },
+                    input: { borderRadius: '8px', borderWidth: '1px', padding: '0.75rem 1rem', fontSize: '1rem' }
+                },
+                animation: {}
+            }
+        } else if (themeSource && themeSource !== 'api') {
+            // Mode 2: Load specific theme by name from theme.yml
+            const response = await fetch('/theme.yml')
+            if (!response.ok) {
+                throw new Error('Failed to load theme.yml')
+            }
 
-        const yamlContent = await response.text()
-        const themeConfig = yaml.load(yamlContent) as any
+            const yamlContent = await response.text()
+            const themeConfig = yaml.load(yamlContent) as any
 
-        // Validate and structure the theme config
-        return {
-            version: themeConfig.version || '1.0.0',
-            description: themeConfig.description || '',
-            themes: themeConfig.themes || {},
-            layout: themeConfig.layout || {},
-            components: themeConfig.components || {},
-            animation: themeConfig.animation || {}
+            // Find theme by name (case-insensitive)
+            const themeKey = Object.keys(themeConfig.themes || {}).find(key =>
+                themeConfig.themes[key].name?.toLowerCase() === themeSource.toLowerCase()
+            )
+
+            if (themeKey) {
+                return {
+                    version: themeConfig.version || '2.0.0',
+                    description: themeConfig.description || '',
+                    themes: { [themeKey]: themeConfig.themes[themeKey] },
+                    layout: themeConfig.layout || {},
+                    components: themeConfig.components || {},
+                    animation: themeConfig.animation || {}
+                }
+            } else {
+                console.warn(`Theme "${themeSource}" not found, loading all themes`)
+                return {
+                    version: themeConfig.version || '2.0.0',
+                    description: themeConfig.description || '',
+                    themes: themeConfig.themes || {},
+                    layout: themeConfig.layout || {},
+                    components: themeConfig.components || {},
+                    animation: themeConfig.animation || {}
+                }
+            }
+        } else {
+            // Default: Load all themes from theme.yml
+            const response = await fetch('/theme.yml')
+            if (!response.ok) {
+                throw new Error('Failed to load theme.yml')
+            }
+
+            const yamlContent = await response.text()
+            const themeConfig = yaml.load(yamlContent) as any
+
+            return {
+                version: themeConfig.version || '2.0.0',
+                description: themeConfig.description || '',
+                themes: themeConfig.themes || {},
+                layout: themeConfig.layout || {},
+                components: themeConfig.components || {},
+                animation: themeConfig.animation || {}
+            }
         }
     } catch (error) {
-        console.warn('Could not load theme.yml, using default theme', error)
+        console.warn('Could not load theme configuration, using default theme', error)
         return getDefaultTheme()
     }
 }

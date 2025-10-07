@@ -15,6 +15,7 @@ interface StripePaymentProps {
     onSuccess: (paymentIntentId: string) => void
     onError: (error: string) => void
     onCancel?: () => void
+    embedded?: boolean
 }
 
 function StripePaymentForm({ amount, currency = 'usd', onSuccess, onError, onCancel }: StripePaymentProps) {

@@ -95,6 +95,7 @@ export function SearchBar({
 interface SearchFiltersProps {
     onFilterChange: (filters: any) => void
     categories?: Array<{ id: string; name: string }>
+    brands?: Array<{ id: string; name: string }>
 }
 
 /**
@@ -103,7 +104,10 @@ interface SearchFiltersProps {
 export function SearchFilters({ onFilterChange, categories = [] }: SearchFiltersProps) {
     const [filters, setFilters] = useState({
         category: '',
+        brand: '',
         priceRange: { min: 0, max: 1000 },
+        sizes: [] as string[],
+        colors: [] as string[],
         rating: 0,
         inStock: false
     })
@@ -133,6 +137,77 @@ export function SearchFilters({ onFilterChange, categories = [] }: SearchFilters
                         </option>
                     ))}
                 </select>
+            </div>
+
+            {/* Brand Filter */}
+            <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-2">
+                    Brand
+                </label>
+                <select
+                    value={filters.brand}
+                    onChange={(e) => handleFilterChange('brand', e.target.value)}
+                    className="input w-full"
+                >
+                    <option value="">All Brands</option>
+                    {/* Brands would be populated from API */}
+                    <option value="brand1">Brand 1</option>
+                    <option value="brand2">Brand 2</option>
+                </select>
+            </div>
+
+            {/* Size Filter */}
+            <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-2">
+                    Size
+                </label>
+                <div className="flex flex-wrap gap-2">
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                        <button
+                            key={size}
+                            type="button"
+                            onClick={() => {
+                                const newSizes = filters.sizes.includes(size)
+                                    ? filters.sizes.filter(s => s !== size)
+                                    : [...filters.sizes, size]
+                                handleFilterChange('sizes', newSizes)
+                            }}
+                            className={`px-3 py-1 text-sm border rounded ${filters.sizes.includes(size)
+                                ? 'bg-primary-500 text-white border-primary-500'
+                                : 'bg-white text-secondary-700 border-secondary-300 hover:border-primary-300'
+                                }`}
+                        >
+                            {size}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Color Filter */}
+            <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-2">
+                    Color
+                </label>
+                <div className="flex flex-wrap gap-2">
+                    {['Red', 'Blue', 'Green', 'Black', 'White', 'Gray'].map((color) => (
+                        <button
+                            key={color}
+                            type="button"
+                            onClick={() => {
+                                const newColors = filters.colors.includes(color)
+                                    ? filters.colors.filter(c => c !== color)
+                                    : [...filters.colors, color]
+                                handleFilterChange('colors', newColors)
+                            }}
+                            className={`px-3 py-1 text-sm border rounded ${filters.colors.includes(color)
+                                ? 'bg-primary-500 text-white border-primary-500'
+                                : 'bg-white text-secondary-700 border-secondary-300 hover:border-primary-300'
+                                }`}
+                        >
+                            {color}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Price Range Filter */}
@@ -205,7 +280,10 @@ export function SearchFilters({ onFilterChange, categories = [] }: SearchFilters
                 onClick={() => {
                     const resetFilters = {
                         category: '',
+                        brand: '',
                         priceRange: { min: 0, max: 1000 },
+                        sizes: [],
+                        colors: [],
                         rating: 0,
                         inStock: false
                     }

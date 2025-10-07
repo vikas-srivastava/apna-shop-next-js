@@ -203,9 +203,7 @@ export default async function HomePage() {
                     Up to 70% OFF on Electronics | Limited Time Only!
                   </Typography>
                 </div>
-                <Button
-                  className="bg-warning-700 text-white hover:bg-warning-800"
-                >
+                <Button variant="primary">
                   Shop Sale
                 </Button>
               </div>
@@ -319,9 +317,7 @@ export default async function HomePage() {
                   </Typography>
                 </div>
                 <div className="text-center">
-                  <Button
-                    className="font-bold px-8 py-3 bg-white text-primary-600 hover:bg-secondary-100"
-                  >
+                  <Button variant="secondary" className="font-bold px-8 py-3">
                     Join VIP Club
                   </Button>
                 </div>
@@ -397,9 +393,7 @@ export default async function HomePage() {
                   Last chance to grab amazing deals before they're gone!
                 </Typography>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Button
-                    className="font-bold px-8 py-3 bg-white text-success-600 hover:bg-secondary-100"
-                  >
+                  <Button variant="secondary" className="font-bold px-8 py-3">
                     Shop Final Sale
                   </Button>
                   <Typography variant="body" className="font-semibold" style={{ color: 'rgb(var(--color-success-100))' }}>

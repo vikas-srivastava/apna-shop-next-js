@@ -219,6 +219,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                                     onClick={() => handleQuantityChange(-1)}
                                     disabled={quantity <= 1}
                                     className="rounded-r-none"
+                                    aria-label="Decrease quantity"
                                 >
                                     <Minus className="w-4 h-4" />
                                 </Button>
@@ -229,6 +230,7 @@ export function ProductDetailTemplate({ product }: ProductDetailTemplateProps) {
                                     onClick={() => handleQuantityChange(1)}
                                     disabled={product.stockCount > 0 && quantity >= product.stockCount}
                                     className="rounded-l-none"
+                                    aria-label="Increase quantity"
                                 >
                                     <Plus className="w-4 h-4" />
                                 </Button>

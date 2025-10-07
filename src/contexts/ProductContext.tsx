@@ -22,6 +22,7 @@ interface ProductState {
   // Data
   products: Product[]
   categories: Category[]
+  brands: any[]
   featuredProducts: Product[]
   currentProduct: Product | null
   relatedProducts: Product[]
@@ -42,6 +43,7 @@ interface ProductState {
   loading: {
     products: boolean
     categories: boolean
+    brands: boolean
     product: boolean
     featured: boolean
     related: boolean
@@ -52,6 +54,7 @@ interface ProductState {
   errors: {
     products?: string
     categories?: string
+    brands?: string
     product?: string
     featured?: string
     related?: string
@@ -86,6 +89,7 @@ type ProductAction =
 const initialState: ProductState = {
   products: [],
   categories: [],
+  brands: [],
   featuredProducts: [],
   currentProduct: null,
   relatedProducts: [],
@@ -100,6 +104,7 @@ const initialState: ProductState = {
   loading: {
     products: false,
     categories: false,
+    brands: false,
     product: false,
     featured: false,
     related: false,

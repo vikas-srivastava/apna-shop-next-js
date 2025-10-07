@@ -21,8 +21,9 @@ export async function POST(request: NextRequest) {
             }, { status: 422 })
         }
 
-        // Generate mock Stripe payment intent
-        const clientSecret = `pi_mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_secret_${Math.random().toString(36).substr(2, 9)}`
+        // Generate mock Stripe payment intent in correct format
+        const paymentIntentId = `pi_${Math.random().toString(36).substr(2, 9)}${Date.now().toString(36)}`
+        const clientSecret = `${paymentIntentId}_secret_${Math.random().toString(36).substr(2, 9)}`
 
         return NextResponse.json({
             success: true,

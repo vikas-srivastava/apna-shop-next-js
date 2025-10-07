@@ -15,10 +15,11 @@ export async function GET(request: NextRequest) {
         const page = parseInt(searchParams.get('page') || '1')
         const limit = parseInt(searchParams.get('limit') || '12')
         const category = searchParams.get('category') || undefined
+        const brand = searchParams.get('brand') || undefined
         const search = searchParams.get('search') || undefined
         const sortBy = searchParams.get('sortBy') as ProductFilter['sortBy'] || undefined
-        const minPrice = searchParams.get('minPrice')
-        const maxPrice = searchParams.get('maxPrice')
+        const minPrice = searchParams.get('min_price') || searchParams.get('minPrice')
+        const maxPrice = searchParams.get('max_price') || searchParams.get('maxPrice')
         const rating = searchParams.get('rating')
         const inStock = searchParams.get('inStock')
         const colors = searchParams.get('colors')
@@ -29,6 +30,7 @@ export async function GET(request: NextRequest) {
         const filters: ProductFilter = {}
 
         if (category) filters.category = category
+        if (brand) filters.brand = brand
         if (search) filters.search = search
         if (sortBy) filters.sortBy = sortBy
         if (rating) filters.rating = parseFloat(rating)

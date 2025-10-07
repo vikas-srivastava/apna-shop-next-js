@@ -381,6 +381,7 @@ export async function getProducts(
 
     // Add filters to query parameters
     if (filters.category) params.append('category', filters.category)
+    if (filters.brand) params.append('brand', filters.brand)
     if (filters.search) params.append('search', filters.search)
     if (filters.sortBy) params.append('sort_by', filters.sortBy)
     if (filters.rating) params.append('rating', filters.rating.toString())
@@ -753,4 +754,48 @@ export async function getOrderShipments(orderId: string): Promise<ApiResponse<an
  */
 export async function trackOrder(orderNumber: string): Promise<ApiResponse<any>> {
     return apiRequest<any>(`/shipping/track/${orderNumber}`)
+}
+/**
+ * Get best selling products
+ */
+export async function getBestSellers(limit = 12): Promise<ApiResponse<Product[]>> {
+    return apiRequest<Product[]>(`/shop/best-sellers?limit=${limit}`)
+}
+
+/**
+ * Get latest arrival products
+ */
+export async function getLatestArrivals(limit = 12): Promise<ApiResponse<Product[]>> {
+    return apiRequest<Product[]>(`/shop/latest-arrivals?limit=${limit}`)
+}
+
+/**
+ * Log product view
+ */
+export async function logProductView(productId: string): Promise<ApiResponse<null>> {
+    return apiRequest<null>(`/shop/products/${productId}/log-view`, {
+        method: 'POST',
+    })
+}
+
+/**
+ * Get recent product views
+ */
+export async function getRecentViews(limit = 10): Promise<ApiResponse<Product[]>> {
+    return apiRequest<Product[]>(`/shop/recent-views?limit=${limit}`)
+}
+
+/**
+ * Get all brands
+ */
+export async function getBrands(): Promise<ApiResponse<any[]>> {
+    return apiRequest<any[]>('/shop/brands')
+}
+
+/**
+ * Search brands
+ */
+export async function searchBrands(query: string): Promise<ApiResponse<any[]>> {
+    const params = new URLSearchParams({ q: query })
+    return apiRequest<any[]>(`/shop/brands/search?${params.toString()}`)
 }
