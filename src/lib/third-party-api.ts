@@ -153,12 +153,6 @@ const getApiBaseUrl = (): string => {
     // Priority order for API base URL
     const urls = [
         process.env.NEXT_PUBLIC_API_BASE_URL,
-        process.env.THIRD_PARTY_API_URL,
-        process.env.API_BASE_URL,
-        'http://localhost:8000/api', // Common Laravel development port
-        'http://localhost:3001/api', // Alternative development port
-        'http://127.0.0.1:8000/api', // IPv4 localhost
-        'http://localhost/api' // Fallback
     ]
 
     // Return the first non-empty URL
@@ -268,11 +262,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
 
     // Try different base URLs if the primary one fails
     const fallbackUrls = [
-        API_BASE_URL,
-        'http://localhost:8000/api',
-        'http://127.0.0.1:8000/api',
-        'http://localhost:3001/api',
-        'https://api.example.com' // Production fallback (should be configured)
+        process.env.NEXT_PUBLIC_API_BASE_URL,
     ];
 
     for (const baseUrl of fallbackUrls) {
