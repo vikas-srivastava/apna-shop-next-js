@@ -254,8 +254,12 @@ export class ApiService {
     operation: () => Promise<ApiResponse<T>>,
     fallbackData: T
   ): Promise<ApiResponse<T>> {
-    if (!API_CONFIG.useMock) {
-      return await operation()
+    if (API_CONFIG.useMock) {
+      ApiLogger.info('Using mock data (mock mode enabled)');
+      return {
+        success: true,
+        data: fallbackData
+      };
     }
 
     try {
