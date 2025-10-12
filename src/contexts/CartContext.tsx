@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useReducer, ReactNode, useEffect, useCallback } from 'react'
+import { createContext, useContext, useReducer, ReactNode, useEffect, useCallback, useRef } from 'react'
 import { Product } from '@/lib/types'
 import {
   addToCart as apiAddToCart,
@@ -551,6 +551,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState)
   const router = useRouter()
 
+  const isInitialRender = useRef(true)
+
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = CartPersistence.load()
@@ -561,6 +563,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // Save cart to localStorage whenever state changes
   useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false
+      return
+    }
     CartPersistence.save(state)
   }, [state])
 

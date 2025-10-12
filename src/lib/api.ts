@@ -3,7 +3,7 @@
  * Includes caching, deduplication, retry logic, and monitoring
  */
 
-import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User } from './types'
+import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User, Order } from './types'
 import * as thirdPartyApi from './third-party-api'
 import { mockApiProducts, mockCategories, mockCart } from './mock-data'
 
@@ -704,7 +704,7 @@ export class ApiService {
   }
 
   // Orders methods
-  static async getOrders(): Promise<ApiResponse<any[]>> {
+  static async getOrders(): Promise<ApiResponse<Order[]>> {
     return await this.executeWithMonitoring(
       () => this.withFallback(
         () => thirdPartyApi.getOrders(),
