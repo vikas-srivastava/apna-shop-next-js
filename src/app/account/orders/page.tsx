@@ -109,8 +109,25 @@ export default function OrdersPage() {
                         My Orders
                     </Typography>
                     <Card className="p-6">
-                        <div className="text-center py-12">
-                            <Typography variant="body">Loading orders...</Typography>
+                        <div className="space-y-6">
+                            {[...Array(3)].map((_, i) => (
+                                <div key={i} className="border border-secondary-200 rounded-lg p-6 animate-pulse">
+                                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-secondary-100">
+                                        <div>
+                                            <div className="h-6 bg-secondary-200 rounded w-3/4 mb-2"></div>
+                                            <div className="h-4 bg-secondary-200 rounded w-1/2"></div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="h-6 bg-secondary-200 rounded w-1/4 mb-2"></div>
+                                            <div className="h-4 bg-secondary-200 rounded w-1/4"></div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3 pt-4">
+                                        <div className="h-8 bg-secondary-200 rounded w-24"></div>
+                                        <div className="h-8 bg-secondary-200 rounded w-24"></div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </Card>
                 </div>

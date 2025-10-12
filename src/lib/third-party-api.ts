@@ -148,24 +148,7 @@ async function getMockResponse(endpoint: string): Promise<ApiResponse<any> | nul
     return null
 }
 
-// Base URL for the third-party API with multiple fallback options
-const getApiBaseUrl = (): string => {
-    // Priority order for API base URL
-    const urls = [
-        process.env.NEXT_PUBLIC_API_BASE_URL,
-    ]
 
-    // Return the first non-empty URL
-    for (const url of urls) {
-        if (url && url.trim()) {
-            return url.trim()
-        }
-    }
-
-    return 'http://localhost/api' // Final fallback
-}
-
-const API_BASE_URL = getApiBaseUrl()
 
 // Helper function to transform API product to frontend product
 function transformApiProduct(apiProduct: ApiProduct): Product {
@@ -257,96 +240,44 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
         console.warn(`[MOCK MODE] No mock data found for ${endpoint}, falling back to real API`)
     }
 
-    const maxRetries = 3;
-    let lastError: any = null;
+    const baseUrl = process.env.NEXT_PRIVATE_API_BASE_URL;
+    const url = `${baseUrl}${endpoint}`;
 
-    // Try different base URLs if the primary one fails
-    const fallbackUrls = [
-        process.env.NEXT_PUBLIC_API_BASE_URL,
-    ];
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Tenant': process.env.NEXT_PRIVATE_TENANT_ID || '',
+                'X-Requested-With': 'XMLHttpRequest', // For CSRF protection
+                ...(process.env.NEXT_PUBLIC_TOKEN ? {
+                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`
+                } : {}),
+                ...options.headers,
+            },
+            ...options,
+            // Add timeout
+            signal: AbortSignal.timeout(10000), // 10 second timeout
+        });
 
-    for (const baseUrl of fallbackUrls) {
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-                const url = `${baseUrl}${endpoint}`;
-                if (!isMockMode) {
-                    console.log(`Attempting API request to: ${url} (attempt ${attempt + 1})`);
-                }
-
-                const response = await fetch(url, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Tenant': process.env.NEXT_PUBLIC_TENANT_ID || '',
-                        'X-Requested-With': 'XMLHttpRequest', // For CSRF protection
-                        ...(process.env.NEXT_PUBLIC_TOKEN ? {
-                            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`
-                        } : {}),
-                        ...options.headers,
-                    },
-                    ...options,
-                    // Add timeout
-                    signal: AbortSignal.timeout(10000), // 10 second timeout
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    const message =
-                        (errorData && ((errorData as any).message || (errorData as any).error)) ||
-                        `HTTP error! status: ${response.status}`;
-
-                    // Don't retry on client errors (4xx) except 429 (rate limit)
-                    if (response.status >= 400 && response.status < 500 && response.status !== 429) {
-                        return { success: false, error: message } as ApiResponse<T>;
-                    }
-
-                    // For 5xx, network errors, and rate limits: capture and retry
-                    lastError = new Error(message);
-
-                    // If last attempt on last URL, break out and return failure
-                    if (attempt === maxRetries && baseUrl === fallbackUrls[fallbackUrls.length - 1]) {
-                        break;
-                    }
-
-                    // Exponential backoff before retrying (longer for rate limits)
-                    const delay = response.status === 429 ? 5000 : Math.pow(2, attempt) * 1000;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    continue;
-                }
-
-                const data = await response.json().catch(() => ({}));
-                return {
-                    success: true,
-                    data: (data as any).data || (data as any),
-                };
-            } catch (error: any) {
-                lastError = error;
-
-                // If this is a timeout or network error, try next URL
-                if (error.name === 'TimeoutError' || error.name === 'TypeError') {
-                    if (!isMockMode) {
-                        console.warn(`Network error for ${baseUrl}, trying next fallback URL...`);
-                    }
-                    break; // Break inner loop to try next URL
-                }
-
-                // Only log on final attempt to reduce console noise
-                if (attempt === maxRetries && baseUrl === fallbackUrls[fallbackUrls.length - 1]) {
-                    if (!isMockMode) {
-                        console.error(`API request failed for ${endpoint} (final attempt):`, error?.message || error);
-                    }
-                    break;
-                }
-
-                // Exponential backoff before next attempt
-                await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
-            }
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            const message =
+                (errorData && ((errorData as any).message || (errorData as any).error)) ||
+                `HTTP error! status: ${response.status}`;
+            return { success: false, error: message } as ApiResponse<T>;
         }
-    }
 
-    return {
-        success: false,
-        error: lastError instanceof Error ? lastError.message : 'Unable to connect to API server. Please check your connection and try again.',
-    };
+        const data = await response.json().catch(() => ({}));
+        return {
+            success: true,
+            data: (data as any).data || (data as any),
+        };
+    } catch (error: any) {
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Unable to connect to API server. Please check your connection and try again.',
+        };
+    }
 }
 
 /**

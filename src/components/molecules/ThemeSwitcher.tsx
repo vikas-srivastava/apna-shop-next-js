@@ -8,30 +8,13 @@ import { useTheme } from '@/contexts/ThemeContext'
  * Theme switcher component for selecting between available light themes
  */
 export function ThemeSwitcher() {
-    const { currentTheme, availableThemes, setTheme } = useTheme()
+    const { currentTheme, availableThemes, setTheme, themeConfig } = useTheme()
 
-    const themeOptions = [
-        {
-            key: 'classic-light',
-            label: 'Classic Light',
-            description: 'Clean, professional neutral theme'
-        },
-        {
-            key: 'ocean-breeze',
-            label: 'Ocean Breeze',
-            description: 'Refreshing blue and teal theme'
-        },
-        {
-            key: 'sunset-glow',
-            label: 'Sunset Glow',
-            description: 'Warm orange and pink theme'
-        },
-        {
-            key: 'vibrant-orange',
-            label: 'Vibrant Orange',
-            description: 'Bold orange theme with high contrast'
-        }
-    ]
+    const themeOptions = availableThemes.map(key => ({
+        key,
+        label: themeConfig?.themes?.[key]?.name || key,
+        description: themeConfig?.themes?.[key]?.description || ''
+    }))
 
     return (
         <div className="flex items-center gap-2">
@@ -62,19 +45,10 @@ export function ThemeSwitcher() {
  * Compact theme switcher that cycles through available themes
  */
 export function CompactThemeSwitcher() {
-    const { currentTheme, availableThemes, setTheme } = useTheme()
+    const { currentTheme, availableThemes, setTheme, themeConfig } = useTheme()
 
     const getThemeLabel = () => {
-        switch (currentTheme) {
-            case 'ocean-breeze':
-                return 'Ocean Breeze'
-            case 'sunset-glow':
-                return 'Sunset Glow'
-            case 'vibrant-orange':
-                return 'Vibrant Orange'
-            default:
-                return 'Classic Light'
-        }
+        return themeConfig?.themes?.[currentTheme]?.name || currentTheme
     }
 
     const cycleTheme = () => {

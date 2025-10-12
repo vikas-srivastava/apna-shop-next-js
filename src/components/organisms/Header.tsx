@@ -52,7 +52,7 @@ export function Header({ onSearch }: HeaderProps) {
     ]
 
     return (
-        <header className="bg-white shadow-sm border-b border-secondary-200 sticky top-0 z-40">
+        <header className="bg-secondary-50 shadow-sm border-b border-secondary-200 sticky top-0 z-40">
             <div className="container-theme">
                 {/* Main Header */}
                 <div className="flex items-center justify-between h-16">
@@ -156,7 +156,7 @@ export function Header({ onSearch }: HeaderProps) {
 
             {/* Mobile Menu */}
             {isMobileMenuOpen && (
-                <div className="md:hidden bg-white border-t border-secondary-200">
+                <div className="md:hidden bg-secondary-50 border-t border-secondary-200">
                     <div className="container-theme py-4">
                         <nav className="flex flex-col space-y-4">
                             {navigation.map((item) => {

@@ -352,7 +352,7 @@ export default async function HomePage() {
 
       {/* Shiny Banner Section 3 - Before Footer */}
       <section className="relative overflow-hidden">
-        <div className="py-10 bg-gradient-to-r from-success-500 via-success-400 to-success-500">
+        <div className="py-10 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500">
           <div className="container-theme text-center">
             <div className="space-y-4">
               <Typography variant="h2" weight="bold" className="text-white">

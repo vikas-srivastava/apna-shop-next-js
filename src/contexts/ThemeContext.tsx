@@ -31,10 +31,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme] = useState<ThemeMode>('light'); // Static light mode
-    const [currentTheme, setCurrentTheme] = useState<string>(process.env.THEME_SOURCE || 'classic-light');
+    const [currentTheme, setCurrentTheme] = useState<string>(process.env.NEXT_PUBLIC_THEME_SOURCE || 'classic-light');
     const [themeConfig, setThemeConfig] = useState<ThemeConfig | null>(null);
     const [availableThemes, setAvailableThemes] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+
+
 
     // Initialize from localStorage only on client
     useEffect(() => {
@@ -103,7 +105,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         Object.entries(themeData.colors || {}).forEach(([colorName, shades]) => {
             if (typeof shades === 'object' && shades !== null) {
                 Object.entries(shades).forEach(([shade, value]) => {
-                    console.log(`🔧 Setting CSS var: --color-${colorName}-${shade} = ${value} (type: ${typeof value})`);
                     root.style.setProperty(`--color-${colorName}-${shade}`, String(value));
                 });
             }
@@ -142,6 +143,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const setTheme = (themeName: string) => {
         if (availableThemes.includes(themeName)) {
             setCurrentTheme(themeName);
+            localStorage.setItem('currentTheme', themeName);
         } else {
             console.warn(`⚠️ Tried to set invalid theme: ${themeName}`);
         }

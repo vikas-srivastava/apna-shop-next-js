@@ -262,24 +262,7 @@ export class ApiService {
       };
     }
 
-    try {
-      const result = await operation()
-      if (result.success) {
-        return result
-      }
-
-      ApiLogger.warn('API call failed, using mock data', { error: result.error })
-      return {
-        success: true,
-        data: fallbackData
-      }
-    } catch (error) {
-      ApiLogger.warn('API call threw error, using mock data', { error: error instanceof Error ? error.message : String(error) })
-      return {
-        success: true,
-        data: fallbackData
-      }
-    }
+    return await operation()
   }
   private static async localApiRequest<T>(
     endpoint: string,

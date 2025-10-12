@@ -7,10 +7,7 @@ import type { ThemeConfig } from './server-theme-loader'
  * THEME_MODE other - Load from theme.yml by name (THEME_SOURCE || "Classic Light")
  */
 export async function loadThemeConfig(): Promise<ThemeConfig> {
-    const source = process.env.THEME_SOURCE || "Classic Light";
-    console.log('🎨 loadThemeConfig called');
-    console.log('🎨 THEME_SOURCE:', source);
-    console.log('🎨 THEME_MODE:', process.env.THEME_MODE);
+    const source = process.env.NEXT_PUBLIC_THEME_SOURCE || "Classic Light";
 
     try {
         if (process.env.THEME_MODE === "api") {

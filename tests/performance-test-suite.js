@@ -20,7 +20,7 @@ const { execSync } = require('child_process');
 // Test configuration
 const TEST_CONFIG = {
     baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-    apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
+    apiBaseUrl: process.env.NEXT_PRIVATE_API_BASE_URL || 'http://localhost:3000/api',
     testDuration: 60, // seconds
     maxUsers: 100,
     rampUpTime: 30, // seconds

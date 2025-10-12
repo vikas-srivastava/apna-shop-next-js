@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
         }
 
         const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
-        const razorpaySecret = process.env.NEXT_PUBLIC_RAZORPAY_SECRET_KEY
+        const razorpaySecret = process.env.NEXT_PRIVATE_RAZORPAY_SECRET_KEY
 
         if (!razorpayKeyId || !razorpaySecret) {
             return NextResponse.json({

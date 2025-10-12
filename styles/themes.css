@@ -1,0 +1,71 @@
+:root[data-theme="celestial-silver"] {
+  --color-primary-500: 100, 116, 139;
+  --color-secondary-500: 107, 114, 128;
+  --color-accent-500: 96, 165, 250;
+  --color-success-500: 22, 163, 74;
+  --color-warning-500: 234, 179, 8;
+  --color-error-500: 220, 38, 38;
+  --text-primary: 15, 23, 42;
+  --text-secondary: 71, 85, 105;
+  --text-accent: 37, 99, 235;
+}
+
+:root[data-theme="celestial-silver-dark"] {
+  --color-primary-500: 148, 163, 184;
+  --color-secondary-500: 156, 163, 175;
+  --color-accent-500: 59, 130, 246;
+  --color-success-500: 34, 197, 94;
+  --color-warning-500: 234, 179, 8;
+  --color-error-500: 239, 68, 68;
+  --text-primary: 226, 232, 240;
+  --text-secondary: 148, 163, 184;
+  --text-accent: 96, 165, 250;
+}
+
+:root[data-theme="rose-quartz"] {
+  --color-primary-500: 244, 63, 94;
+  --color-secondary-500: 217, 70, 239;
+  --color-accent-500: 251, 113, 133;
+  --color-success-500: 34, 197, 94;
+  --color-warning-500: 234, 179, 8;
+  --color-error-500: 220, 38, 38;
+  --text-primary: 63, 7, 35;
+  --text-secondary: 107, 19, 57;
+  --text-accent: 190, 24, 93;
+}
+
+:root[data-theme="rose-quartz-dark"] {
+  --color-primary-500: 251, 113, 133;
+  --color-secondary-500: 232, 121, 249;
+  --color-accent-500: 244, 63, 94;
+  --color-success-500: 34, 197, 94;
+  --color-warning-500: 234, 179, 8;
+  --color-error-500: 239, 68, 68;
+  --text-primary: 255, 241, 242;
+  --text-secondary: 251, 207, 232;
+  --text-accent: 249, 168, 212;
+}
+
+:root[data-theme="neo-mint"] {
+  --color-primary-500: 20, 184, 166;
+  --color-secondary-500: 34, 197, 94;
+  --color-accent-500: 16, 185, 129;
+  --color-success-500: 22, 163, 74;
+  --color-warning-500: 245, 158, 11;
+  --color-error-500: 220, 38, 38;
+  --text-primary: 2, 44, 34;
+  --text-secondary: 6, 95, 70;
+  --text-accent: 4, 120, 87;
+}
+
+:root[data-theme="neo-mint-dark"] {
+  --color-primary-500: 45, 212, 191;
+  --color-secondary-500: 74, 222, 128;
+  --color-accent-500: 34, 197, 94;
+  --color-success-500: 34, 197, 94;
+  --color-warning-500: 245, 158, 11;
+  --color-error-500: 239, 68, 68;
+  --text-primary: 236, 253, 245;
+  --text-secondary: 153, 246, 228;
+  --text-accent: 52, 211, 153;
+}

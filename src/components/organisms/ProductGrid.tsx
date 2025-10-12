@@ -46,7 +46,7 @@ export function ProductGrid({
     }
 
     const displayProducts = initialProducts || products
-    const isLoading = loading.products && displayProducts.length === 0
+    const isLoading = loading.products
     const error = errors.products
 
     // Grid column classes based on columns prop
@@ -80,18 +80,7 @@ export function ProductGrid({
         )
     }
 
-    if (error) {
-        return (
-            <div className="text-center py-12">
-                <Typography variant="h4" color="error" className="mb-4">
-                    {error}
-                </Typography>
-                <Button onClick={() => actions.fetchProducts(1, limit)}>
-                    Try Again
-                </Button>
-            </div>
-        )
-    }
+
 
     if (displayProducts.length === 0) {
         return (

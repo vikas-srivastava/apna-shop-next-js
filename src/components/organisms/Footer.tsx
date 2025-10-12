@@ -64,7 +64,7 @@ export function Footer() {
     ]
 
     return (
-        <footer className="bg-gray-900 text-white">
+        <footer className="bg-secondary-900 text-secondary-50">
             {/* Main Footer */}
             <div className="container-theme py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
@@ -72,18 +72,18 @@ export function Footer() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Logo */}
                         <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                                <Typography variant="h6" className="text-white font-bold">
+                            <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                                <Typography variant="h6" className="text-primary-50 font-bold">
                                     S
                                 </Typography>
                             </div>
-                            <Typography variant="h6" weight="bold" className="text-white">
+                            <Typography variant="h6" weight="bold" className="text-secondary-50">
                                 StoreFront
                             </Typography>
                         </div>
 
                         {/* Description */}
-                        <Typography variant="body" className="text-gray-300 max-w-md">
+                        <Typography variant="body" className="text-secondary-300 max-w-md">
                             Your one-stop shop for quality products at unbeatable prices.
                             We're committed to providing exceptional customer service and
                             fast, reliable shipping.
@@ -91,17 +91,17 @@ export function Footer() {
 
                         {/* Newsletter Signup */}
                         <div className="space-y-3">
-                            <Typography variant="subtitle" weight="semibold" className="text-white">
+                            <Typography variant="subtitle" weight="semibold" className="text-secondary-50">
                                 Stay in the loop
                             </Typography>
-                            <Typography variant="caption" className="text-gray-300">
+                            <Typography variant="caption" className="text-secondary-300">
                                 Subscribe to get special offers, updates, and more.
                             </Typography>
                             <form className="flex gap-2">
                                 <Input
                                     type="email"
                                     placeholder="Enter your email"
-                                    className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
+                                    className="flex-1 bg-secondary-800 border-secondary-700 text-secondary-50 placeholder-secondary-400 focus:border-primary-500"
                                 />
                                 <Button variant="primary" size="md">
                                     Subscribe
@@ -113,7 +113,7 @@ export function Footer() {
                     {/* Footer Links */}
                     {footerSections.map((section, index) => (
                         <div key={section.title} className="space-y-4">
-                            <Typography variant="subtitle" weight="semibold" className="text-white">
+                            <Typography variant="subtitle" weight="semibold" className="text-secondary-50">
                                 {section.title}
                             </Typography>
                             <nav className="space-y-2">
@@ -121,7 +121,7 @@ export function Footer() {
                                     <Link
                                         key={link.name}
                                         href={link.href}
-                                        className="block text-gray-300 hover:text-white text-sm transition-colors"
+                                        className="block text-secondary-300 hover:text-secondary-50 text-sm transition-colors"
                                     >
                                         {link.name}
                                     </Link>
@@ -135,24 +135,24 @@ export function Footer() {
                 <div className="mt-12 pt-8 border-t border-gray-800">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="flex items-center space-x-3">
-                            <Mail className="w-5 h-5 text-blue-400" />
+                            <Mail className="w-5 h-5 text-primary-400" />
                             <div>
-                                <Typography variant="caption" className="text-gray-300">
+                                <Typography variant="caption" className="text-secondary-300">
                                     Email us
                                 </Typography>
-                                <Typography variant="body" className="text-white">
+                                <Typography variant="body" className="text-secondary-50">
                                     support@storefront.com
                                 </Typography>
                             </div>
                         </div>
 
                         <div className="flex items-center space-x-3">
-                            <Phone className="w-5 h-5 text-blue-400" />
+                            <Phone className="w-5 h-5 text-primary-400" />
                             <div>
-                                <Typography variant="caption" className="text-gray-300">
+                                <Typography variant="caption" className="text-secondary-300">
                                     Call us
                                 </Typography>
-                                <Typography variant="body" className="text-white">
+                                <Typography variant="body" className="text-secondary-50">
                                     1-800-STORE-01
                                 </Typography>
                             </div>

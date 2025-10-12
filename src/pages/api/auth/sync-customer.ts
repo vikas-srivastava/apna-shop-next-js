@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     const baseUrl = process.env.THIRD_PARTY_API_URL;
-    const tenantId = (process.env.NEXT_PUBLIC_TENANT_ID as string) || (req.headers["x-tenant"] as string) || "";
+    const tenantId = (process.env.NEXT_PRIVATE_TENANT_ID as string) || (req.headers["x-tenant"] as string) || "";
 
     // If tenant is missing and dev is enabled, mint a deterministic dev customer id
     if (!tenantId && devEnabled()) {
