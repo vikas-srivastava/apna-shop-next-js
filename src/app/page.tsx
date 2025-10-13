@@ -320,13 +320,13 @@ export default async function HomePage() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="bg-primary-500">
+      <section className="bg-accent-500">
         <div className="container-theme py-16">
           <div className="max-w-2xl mx-auto text-center space-y-6">
             <Typography variant="h3" weight="bold" className="text-white">
               Stay Updated with Our Latest Offers
             </Typography>
-            <Typography variant="body" className="text-primary-100">
+            <Typography variant="body" className="text-white">
               Subscribe to our newsletter and be the first to know about
               exclusive deals, new arrivals, and special promotions.
             </Typography>
@@ -343,7 +343,7 @@ export default async function HomePage() {
               </Button>
             </form>
 
-            <Typography variant="caption" className="text-primary-200">
+            <Typography variant="caption" className="text-white">
               No spam, unsubscribe anytime. Read our privacy policy.
             </Typography>
           </div>
@@ -352,13 +352,13 @@ export default async function HomePage() {
 
       {/* Shiny Banner Section 3 - Before Footer */}
       <section className="relative overflow-hidden">
-        <div className="py-10 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500">
+        <div className="py-10 bg-gradient-to-r from-accent-500 to-accent-600">
           <div className="container-theme text-center">
             <div className="space-y-4">
               <Typography variant="h2" weight="bold" className="text-white">
                 🌟 Don't Miss Out! 🌟
               </Typography>
-              <Typography variant="h4" className="text-success-100">
+              <Typography variant="h4" className="text-white">
                 Last chance to grab amazing deals before they're gone!
               </Typography>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -367,7 +367,7 @@ export default async function HomePage() {
                     Shop Final Sale
                   </Link>
                 </Button>
-                <Typography variant="body" className="font-semibold text-success-100">
+                <Typography variant="body" className="font-semibold text-white">
                   ⏰ Ends in 24 hours!
                 </Typography>
               </div>

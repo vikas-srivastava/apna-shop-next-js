@@ -40,7 +40,7 @@ class CartHookLogger {
 
     switch (level) {
       case 'info':
-        console.log(logMessage, data || '')
+
         break
       case 'warn':
         console.warn(logMessage, data || '')

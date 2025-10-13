@@ -152,77 +152,26 @@ async function getMockResponse(endpoint: string): Promise<ApiResponse<any> | nul
 
 // Helper function to transform API product to frontend product
 function transformApiProduct(apiProduct: ApiProduct): Product {
-    try {
-        // Use the first category or create a default one if no categories exist
-        const category = (apiProduct.categories && apiProduct.categories.length > 0 && apiProduct.categories[0])
-            ? {
-                id: (apiProduct.categories[0].id || 0).toString(),
-                name: apiProduct.categories[0].name || 'Uncategorized',
-                slug: apiProduct.categories[0].slug || 'uncategorized',
-            }
-            : {
-                id: '0',
-                name: 'Uncategorized',
-                slug: 'uncategorized',
-            };
+    const price = parseFloat(apiProduct.price) || 0;
+    const originalPrice = apiProduct.old_price ? parseFloat(apiProduct.old_price) : undefined;
 
-        // Parse price values, with fallbacks
-        const price = parseFloat(apiProduct.price) || 0;
-        const originalPrice = apiProduct.old_price ? (parseFloat(apiProduct.old_price) || 0) : undefined;
-
-        // Ensure price is always a number
-        const finalPrice = (typeof price === 'number' && !isNaN(price)) ? price : 0;
-        const finalOriginalPrice = (originalPrice === undefined || (typeof originalPrice === 'number' && !isNaN(originalPrice)))
-            ? originalPrice
-            : 0;
-
-        // Provide fallback images if API doesn't return any
-        const images = (apiProduct.images && apiProduct.images.length > 0)
-            ? apiProduct.images
-            : [`/globe.svg`];
-
-        return {
-            id: apiProduct.id.toString(),
-            name: apiProduct.name,
-            slug: apiProduct.slug,
-            description: apiProduct.description,
-            price: finalPrice,
-            originalPrice: finalOriginalPrice,
-            images,
-            category,
-            inStock: typeof apiProduct.qty === 'number' ? apiProduct.qty > 0 : true,
-            stockCount: typeof apiProduct.qty === 'number' && apiProduct.qty >= 0 ? apiProduct.qty : 999,
-            rating: 4.5, // Default rating since API doesn't return this in sample
-            reviewCount: 0, // Default review count since API doesn't return this in sample
-            tags: [], // API doesn't seem to return tags in the sample response
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            // Add other fields as needed
-        };
-    } catch (error) {
-        console.error('Error transforming product:', error, apiProduct);
-        // Return a default product in case of transformation error
-        return {
-            id: 'error-' + Math.random().toString(36).substr(2, 9),
-            name: 'Error Product',
-            slug: 'error-product',
-            description: 'Error occurred while loading product data',
-            price: 0,
-            images: [],
-            category: {
-                id: '0',
-                name: 'Error Category',
-                slug: 'error-category',
-            },
-            inStock: false,
-            stockCount: 0,
-            rating: 0,
-            reviewCount: 0,
-            tags: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-        };
-    }
+    return {
+        id: apiProduct.id.toString(),
+        name: apiProduct.name,
+        slug: apiProduct.slug,
+        description: apiProduct.description,
+        price: price,
+        originalPrice: originalPrice,
+        images: apiProduct.images || [],
+        category: apiProduct.categories[0] || { id: '0', name: 'Uncategorized', slug: 'uncategorized' },
+        inStock: apiProduct.qty > 0,
+        stockCount: apiProduct.qty,
+        rating: apiProduct.rating || 0,
+        reviewCount: apiProduct.reviewCount || 0,
+        tags: apiProduct.tags || [],
+        createdAt: apiProduct.created_at,
+        updatedAt: apiProduct.updated_at,
+    };
 }
 
 // Helper function to make API requests with retry logic and fallback endpoints
@@ -300,26 +249,8 @@ export async function getProducts(
         limit: limit.toString(),
     })
 
-    // Add filters to query parameters
-    if (filters.category) params.append('category', filters.category)
-    if (filters.brand) params.append('brand', filters.brand)
-    if (filters.search) params.append('search', filters.search)
-    if (filters.sortBy) params.append('sort_by', filters.sortBy)
-    if (filters.rating) params.append('rating', filters.rating.toString())
-    if (filters.inStock !== undefined) params.append('in_stock', filters.inStock.toString())
-    if (filters.priceRange) {
-        params.append('min_price', filters.priceRange.min.toString())
-        params.append('max_price', filters.priceRange.max.toString())
-    }
-    if (filters.colors && filters.colors.length > 0) {
-        params.append('colors', filters.colors.join(','))
-    }
-    if (filters.sizes && filters.sizes.length > 0) {
-        params.append('sizes', filters.sizes.join(','))
-    }
-
     // Get raw API response
-    const response = await apiRequest<ApiProduct[]>(`/shop/get-products?${params.toString()}`)
+    const response = await apiRequest<any>(`/shop/get-products?${params.toString()}`)
 
     if (!response.success || !response.data) {
         return {
@@ -329,19 +260,17 @@ export async function getProducts(
     }
 
     // Transform API products to frontend products
-    // Handle both direct array and paginated response formats
-    const productsData = Array.isArray(response.data) ? response.data : response.data.data || []
+    const productsData = Array.isArray(response.data.data) ? response.data.data : []
     const products = productsData.map(transformApiProduct)
 
     // Create paginated response structure
-    // Note: Since the API doesn't return pagination info in the sample, we'll create default values
     const paginatedResponse: PaginatedResponse<Product> = {
         data: products,
         pagination: {
-            page: page,
-            limit: limit,
-            total: products.length,
-            totalPages: 1
+            page: response.data.current_page || page,
+            limit: response.data.per_page || limit,
+            total: response.data.total || products.length,
+            totalPages: response.data.last_page || 1
         }
     }
 
@@ -397,8 +326,10 @@ export async function registerUser(userData: {
     name: string
     email: string
     password: string
-    gender: 'male' | 'female'
+    gender: 'male' | 'female' | 'other'
     password_confirmation: string
+    phone?: string
+    birthday?: string
 }): Promise<ApiResponse<{ user: string; customer_id: string }>> {
     return apiRequest<{ user: string; customer_id: string }>('/user/register', {
         method: 'POST',
@@ -431,8 +362,8 @@ export async function logoutUser(): Promise<ApiResponse<null>> {
 /**
  * Get user profile
  */
-export async function getUserProfile(): Promise<ApiResponse<{ user: string; role: string; tenant_id: string }>> {
-    return apiRequest<{ user: string; role: string; tenant_id: string }>('/user/get-profile')
+export async function getUserProfile(): Promise<ApiResponse<{ user: string; role: string; tenant_id: string; customer_id: string }>> {
+    return apiRequest<{ user: string; role: string; tenant_id: string; customer_id: string }>('/user/get-profile')
 }
 
 /**
@@ -443,8 +374,8 @@ export async function updateUserProfile(profileData: {
     email: string
     password?: string
     password_confirmation?: string
-}): Promise<ApiResponse<string>> {
-    return apiRequest<string>('/user/update-profile', {
+}): Promise<ApiResponse<UserResource>> {
+    return apiRequest<UserResource>('/user/update-profile', {
         method: 'PUT',
         body: JSON.stringify(profileData),
     })
@@ -493,7 +424,6 @@ export async function addToCart(productData: {
     product_quantity: number
     product_variant_id?: number | null
     product_variant_data?: string[] | null
-    customer_id?: string
 }): Promise<ApiResponse<string>> {
     return apiRequest<string>('/cart/cart', {
         method: 'POST',
@@ -560,7 +490,7 @@ export async function removeFromWishlist(productId: string): Promise<ApiResponse
  * Get wishlist
  */
 export async function getWishlist(): Promise<ApiResponse<string>> {
-    return apiRequest<string>('/shop/wishlist')
+    return apiRequest<string>('/shop/wishlist', { method: 'POST' })
 }
 
 /**

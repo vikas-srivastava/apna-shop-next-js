@@ -50,7 +50,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         let isMounted = true;
         const loadTheme = async () => {
             try {
-                setIsLoading(true);
                 const config = await loadThemeConfig();
                 if (!isMounted) return;
 
@@ -68,18 +67,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
                     setThemeConfig(null);
                     setAvailableThemes([]);
                 }
-            } finally {
-                if (isMounted) {
-                    setIsLoading(false);
-                    document.documentElement.classList.add('theme-loaded');
-                }
             }
         };
 
         loadTheme();
+
         return () => {
             isMounted = false;
         };
+    }, []);
+
+    useEffect(() => {
+        setIsLoading(false);
+        document.documentElement.classList.add('theme-loaded');
     }, []);
 
     // Apply CSS variables when theme or config changes

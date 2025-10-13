@@ -22,6 +22,11 @@ export interface ApiProduct {
         name: string
         slug: string
     }>
+    rating?: number
+    reviewCount?: number
+    tags?: string[]
+    created_at: string
+    updated_at: string
     // Add other fields as needed from the API response
     [key: string]: any
 }
@@ -39,9 +44,9 @@ export interface Product {
     colors?: string[]
     inStock: boolean
     stockCount: number
-    rating: number
-    reviewCount: number
-    tags: string[]
+    rating?: number
+    reviewCount?: number
+    tags?: string[]
     createdAt: string
     updatedAt: string
 }
@@ -87,6 +92,22 @@ export interface ApiResponse<T> {
     data?: T
     error?: string
     message?: string
+}
+
+export interface UserResource {
+    id: string;
+    name: string;
+    email: string;
+    email_verified_at: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+    customer: {
+        id: string;
+        first_name: string;
+        last_name: string;
+        phone: string;
+        gender: string;
+    };
 }
 
 export interface User {
