@@ -2,7 +2,6 @@
 
 import { ReactNode, ElementType } from 'react'
 import { clsx } from 'clsx'
-import { useTheme } from '@/contexts/ThemeContext'
 
 interface TypographyProps {
     as?: ElementType
@@ -31,7 +30,6 @@ export function Typography({
     children,
     ...props
 }: TypographyProps) {
-    const { currentTheme } = useTheme()
 
     // Auto-determine HTML element if not specified
     const Component = as || getDefaultElement(variant)

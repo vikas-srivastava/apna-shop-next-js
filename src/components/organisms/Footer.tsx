@@ -64,7 +64,7 @@ export function Footer() {
     ]
 
     return (
-        <footer className="bg-secondary-900 text-secondary-50">
+        <footer className="bg-black text-white">
             {/* Main Footer */}
             <div className="container-theme py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
@@ -174,7 +174,7 @@ export function Footer() {
             </div>
 
             {/* Bottom Footer */}
-            <div className="bg-gray-950 border-t border-gray-800">
+            <div className="bg-black border-t border-gray-700">
                 <div className="container-theme py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         {/* Copyright */}

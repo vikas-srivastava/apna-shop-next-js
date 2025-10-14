@@ -7,6 +7,7 @@ description: "Refined light & dark theme collection with improved color harmony 
 themes:
   classic-light:
     name: "Classic Light"
+    type: "light"
     description: "Neutral, balanced light theme for professional storefronts"
     colors:
       primary:
@@ -85,42 +86,10 @@ themes:
         "4xl": "2.25rem"
         "5xl": "3rem"
         "6xl": "3.75rem"
-      fontSize:
-        xs: "0.75rem"
-        sm: "0.875rem"
-        base: "1rem"
-        lg: "1.125rem"
-        xl: "1.25rem"
-        "2xl": "1.5rem"
-        "3xl": "1.875rem"
-        "4xl": "2.25rem"
-        "5xl": "3rem"
-        "6xl": "3.75rem"
-      fontSize:
-        xs: "0.75rem"
-        sm: "0.875rem"
-        base: "1rem"
-        lg: "1.125rem"
-        xl: "1.25rem"
-        "2xl": "1.5rem"
-        "3xl": "1.875rem"
-        "4xl": "2.25rem"
-        "5xl": "3rem"
-        "6xl": "3.75rem"
-      fontSize:
-        xs: "0.75rem"
-        sm: "0.875rem"
-        base: "1rem"
-        lg: "1.125rem"
-        xl: "1.25rem"
-        "2xl": "1.5rem"
-        "3xl": "1.875rem"
-        "4xl": "2.25rem"
-        "5xl": "3rem"
-        "6xl": "3.75rem"
 
   ocean-breeze:
     name: "Ocean Breeze"
+    type: "light"
     description: "Calming aqua-blue theme inspired by ocean waves"
     colors:
       primary:
@@ -173,6 +142,7 @@ themes:
 
   sunset-glow:
     name: "Sunset Glow"
+    type: "light"
     description: "Warm, inviting orange-pink blend evoking sunset skies"
     colors:
       primary:
@@ -225,6 +195,7 @@ themes:
 
   vibrant-orange:
     name: "Vibrant Orange"
+    type: "light"
     description: "High-contrast, energetic orange theme for bold storefronts"
     colors:
       primary:
@@ -283,6 +254,7 @@ themes:
 
   arctic-frost:
     name: "Arctic Frost"
+    type: "light"
     description: "Minimal icy mint-blue theme for modern, clean storefronts"
     colors:
       primary:
@@ -352,6 +324,7 @@ themes:
 
   emerald-forest:
     name: "Emerald Forest"
+    type: "light"
     description: "Rich natural greens inspired by deep forest canopies"
     colors:
       primary:
@@ -400,7 +373,59 @@ themes:
 
   midnight-dark:
     name: "Midnight Dark"
+    type: "dark"
     description: "Elegant dark theme with blue-gray highlights"
+    colors:
+      primary:
+        50: "#1e293b"
+        100: "#1e293b"
+        200: "#334155"
+        300: "#475569"
+        400: "#64748b"
+        500: "#94a3b8"
+        600: "#cbd5e1"
+        700: "#e2e8f0"
+        800: "#f1f5f9"
+        900: "#f8fafc"
+      secondary:
+        50: "#0f172a"
+        100: "#1e293b"
+        200: "#334155"
+        300: "#475569"
+        400: "#64748b"
+        500: "#94a3b8"
+        600: "#cbd5e1"
+        700: "#e2e8f0"
+        800: "#f1f5f9"
+        900: "#f8fafc"
+      accent:
+        500: "#3b82f6"
+        600: "#2563eb"
+        700: "#1d4ed8"
+      success:
+        500: "#16a34a"
+      warning:
+        50: "#fffbeb"
+        100: "#fef3c7"
+        200: "#fde68a"
+        300: "#fcd34d"
+        400: "#fbbf24"
+        500: "#f59e0b"
+        600: "#d97706"
+        700: "#b45309"
+        800: "#92400e"
+        900: "#78350f"
+      error:
+        500: "#dc2626"
+      text:
+        primary: "#f8fafc"
+        secondary: "#e2e8f0"
+        accent: "#3b82f6"
+
+  dark-delight:
+    name: "Dark Delight"
+    type: "dark"
+    description: "A delightful dark theme"
     colors:
       primary:
         50: "#1e293b"
@@ -450,6 +475,7 @@ themes:
 
   royal-amethyst:
     name: "Royal Amethyst"
+    type: "light"
     description: "Regal purple-gold palette for premium brand storefronts"
     colors:
       primary:

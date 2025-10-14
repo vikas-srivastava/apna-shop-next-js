@@ -74,19 +74,6 @@ export default function LoginPage() {
                     </div>
 
                     <AuthButton />
-
-                    <div className="mt-8 pt-8 border-t border-secondary-200 text-center">
-                        <Typography variant="caption" color="secondary">
-                            By signing in, you agree to our{' '}
-                            <Link href="/terms" className="text-primary-600 hover:underline">
-                                Terms of Service
-                            </Link>{' '}
-                            and{' '}
-                            <Link href="/privacy" className="text-primary-600 hover:underline">
-                                Privacy Policy
-                            </Link>
-                        </Typography>
-                    </div>
                 </Card>
             </div>
         </div>

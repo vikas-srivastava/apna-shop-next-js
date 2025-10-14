@@ -80,7 +80,7 @@ class ApiLogger {
 
     switch (level) {
       case 'info':
-        console.log(logMessage, data || '')
+
         break
       case 'warn':
         console.warn(logMessage, data || '')
@@ -211,17 +211,29 @@ class RequestDeduplicator {
     this.pendingRequests.clear()
   }
 }
+import { circuitBreaker } from './circuit-breaker';
+
 // Enhanced API wrapper with interceptors
 export class ApiService {
   private static async executeWithMonitoring<T>(
     operation: () => Promise<ApiResponse<T>>,
     method: string,
-    endpoint: string
+    endpoint: string,
+    fallbackData: T
   ): Promise<ApiResponse<T>> {
     const startTime = Date.now()
 
     try {
-      const result = await operation()
+      const result = await circuitBreaker.executeWithBreaker(
+        endpoint,
+        operation,
+        {
+          failureThreshold: 5,
+          recoveryTimeout: 60000, // 1 minute
+          monitoringPeriod: 300000, // 5 minutes
+          successThreshold: 3,
+        }
+      );
       const duration = Date.now() - startTime
 
       PerformanceMonitor.recordMetric({
@@ -246,7 +258,8 @@ export class ApiService {
         error: error instanceof Error ? error.message : String(error)
       })
 
-      throw error
+      ApiLogger.warn(`Circuit breaker is open for ${endpoint}. Returning fallback data.`)
+      return { success: true, data: fallbackData };
     }
   }
 
@@ -425,7 +438,8 @@ export class ApiService {
         )
       ),
       'GET',
-      '/shop/get-categories'
+      '/shop/get-categories',
+      MOCK_DATA.categories
     )
   }
 
@@ -445,7 +459,8 @@ export class ApiService {
         )
       ),
       'GET',
-      '/shop/get-products'
+      '/shop/get-products',
+      this.applyFiltersToMockData(filters, page, limit)
     )
   }
 
@@ -461,7 +476,8 @@ export class ApiService {
         )
       ),
       'GET',
-      `/shop/product/${slug}`
+      `/shop/product/${slug}`,
+      MOCK_DATA.products[0]
     )
   }
 
@@ -477,7 +493,8 @@ export class ApiService {
         )
       ),
       'GET',
-      '/shop/products-featured'
+      '/shop/products-featured',
+      MOCK_DATA.products.slice(0, limit)
     )
   }
 
@@ -496,7 +513,8 @@ export class ApiService {
         )
       ),
       'GET',
-      `/shop/products/${productId}/related`
+      `/shop/products/${productId}/related`,
+      MOCK_DATA.products.slice(0, limit)
     )
   }
 
@@ -511,7 +529,8 @@ export class ApiService {
     return await this.executeWithMonitoring(
       () => thirdPartyApi.registerUser(userData),
       'POST',
-      '/user/register'
+      '/user/register',
+      { user: '', customer_id: '' }
     )
   }
 
@@ -522,7 +541,8 @@ export class ApiService {
     return await this.executeWithMonitoring(
       () => thirdPartyApi.loginUser(credentials),
       'POST',
-      '/user/login'
+      '/user/login',
+      { user: '', customer_id: '' }
     )
   }
 
@@ -530,7 +550,8 @@ export class ApiService {
     return await this.executeWithMonitoring(
       () => thirdPartyApi.getUserProfile(),
       'GET',
-      '/user/get-profile'
+      '/user/get-profile',
+      { user: '', role: '', tenant_id: '' }
     )
   }
 
@@ -539,7 +560,8 @@ export class ApiService {
     return await this.executeWithMonitoring(
       () => thirdPartyApi.forgotPassword(email),
       'POST',
-      '/user/forgot-password'
+      '/user/forgot-password',
+      { message: '' }
     )
   }
 
@@ -547,7 +569,8 @@ export class ApiService {
     return await this.executeWithMonitoring(
       () => thirdPartyApi.sendPasswordResetOtp(email),
       'POST',
-      '/user/auth/forgot-password/send-otp'
+      '/user/auth/forgot-password/send-otp',
+      { message: '' }
     )
   }
 
@@ -560,7 +583,8 @@ export class ApiService {
     return await this.executeWithMonitoring(
       () => thirdPartyApi.resetPasswordWithOtp(data),
       'POST',
-      '/user/auth/forgot-password/reset'
+      '/user/auth/forgot-password/reset',
+      { message: '' }
     )
   }
 
@@ -568,7 +592,8 @@ export class ApiService {
     return await this.executeWithMonitoring(
       () => thirdPartyApi.logoutUser(),
       'POST',
-      '/user/logout'
+      '/user/logout',
+      null
     )
   }
 
@@ -591,7 +616,8 @@ export class ApiService {
         'Product added to cart successfully'
       ),
       'POST',
-      '/api/cart'
+      '/api/cart',
+      'Product added to cart successfully'
     )
   }
 
@@ -602,7 +628,8 @@ export class ApiService {
         mockCart
       ),
       'GET',
-      '/api/cart'
+      '/api/cart',
+      mockCart
     )
   }
   static async updateCartItem(
@@ -621,7 +648,8 @@ export class ApiService {
         'Cart item updated successfully'
       ),
       'PUT',
-      `/api/cart/${itemId}`
+      `/api/cart/${itemId}`,
+      'Cart item updated successfully'
     )
   }
 

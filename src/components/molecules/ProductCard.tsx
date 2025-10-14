@@ -106,7 +106,7 @@ export function ProductCard({
                                 fullWidth
                                 loading={isLoading}
                                 onClick={handleQuickAdd}
-                                className="bg-white text-secondary-900 hover:bg-primary-500 hover:text-white shadow-lg transform transition-transform duration-200 active:scale-95"
+                                className="shadow-lg transform transition-transform duration-200 active:scale-95"
                             >
                                 <ShoppingCart className="w-4 h-4 mr-2" />
                                 Quick Add

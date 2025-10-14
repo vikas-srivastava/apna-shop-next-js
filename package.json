@@ -2,9 +2,11 @@
   "name": "kn-final-next",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "generate-themes": "ts-node scripts/generate-themes-css.ts",
+    "build": "npm run generate-themes && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -20,16 +22,19 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.469.0",
     "next": "15.4.6",
+    "next-themes": "^0.4.6",
     "postcss": "^8.4.0",
     "razorpay": "^2.9.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hot-toast": "^2.6.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/js-yaml": "^4.0.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -37,7 +42,9 @@
     "dotenv": "^17.2.2",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
+    "js-yaml": "^4.1.0",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.1",
     "typescript": "^5"
   }
 }

@@ -182,8 +182,16 @@ export class CircuitBreaker {
 export class CircuitBreakerRegistry {
     private static instance: CircuitBreakerRegistry;
     private breakers: Map<string, CircuitBreaker> = new Map();
+    private cleanupInterval: NodeJS.Timeout | null = null;
 
-    private constructor() { }
+    private constructor() {
+        // Automatically clean up breakers periodically
+        this.cleanupInterval = setInterval(() => {
+            for (const breaker of this.breakers.values()) {
+                (breaker as any).cleanup();
+            }
+        }, 60000); // Run cleanup every minute
+    }
 
     static getInstance(): CircuitBreakerRegistry {
         if (!CircuitBreakerRegistry.instance) {
@@ -229,6 +237,15 @@ export class CircuitBreakerRegistry {
             breaker.forceState(CircuitState.CLOSED);
         }
     }
+
+    /**
+     * Stop the cleanup interval
+     */
+    destroy(): void {
+        if (this.cleanupInterval) {
+            clearInterval(this.cleanupInterval);
+        }
+    }
 }
 
 /**
@@ -236,6 +253,12 @@ export class CircuitBreakerRegistry {
  */
 export class CircuitBreakerMiddleware {
     private registry = CircuitBreakerRegistry.getInstance();
+    private isEnabled: boolean;
+
+    constructor() {
+        // Make circuit breaker switchable via .env
+        this.isEnabled = process.env.NEXT_PUBLIC_CIRCUIT_BREAKER_ENABLED !== 'false';
+    }
 
     /**
      * Execute API call with circuit breaker protection
@@ -245,6 +268,10 @@ export class CircuitBreakerMiddleware {
         apiCall: () => Promise<T>,
         config?: CircuitBreakerConfig
     ): Promise<T> {
+        if (!this.isEnabled) {
+            // If disabled, execute the call directly
+            return apiCall();
+        }
         const breaker = this.registry.getBreaker(serviceName, config);
         return breaker.execute(apiCall);
     }

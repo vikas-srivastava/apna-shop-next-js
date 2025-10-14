@@ -10,7 +10,24 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
+                dark: {
+                    50: 'rgb(var(--color-dark-50) / <alpha-value>)',
+                    100: 'rgb(var(--color-dark-100) / <alpha-value>)',
+                    200: 'rgb(var(--color-dark-200) / <alpha-value>)',
+                    300: 'rgb(var(--color-dark-300) / <alpha-value>)',
+                    400: 'rgb(var(--color-dark-400) / <alpha-value>)',
+                    500: 'rgb(var(--color-dark-500) / <alpha-value>)',
+                    600: 'rgb(var(--color-dark-600) / <alpha-value>)',
+                    700: 'rgb(var(--color-dark-700) / <alpha-value>)',
+                    800: 'rgb(var(--color-dark-800) / <alpha-value>)',
+                    900: 'rgb(var(--color-dark-900) / <alpha-value>)',
+                },
+                border: 'rgb(var(--border) / <alpha-value>)',
+                background: 'rgb(var(--color-secondary-50) / <alpha-value>)',
+                foreground: 'rgb(var(--color-text-primary) / <alpha-value>)',
                 primary: {
+                    DEFAULT: 'rgb(var(--color-primary-500) / <alpha-value>)',
+                    foreground: 'rgb(var(--color-text-primary) / <alpha-value>)',
                     50: 'rgb(var(--color-primary-50) / <alpha-value>)',
                     100: 'rgb(var(--color-primary-100) / <alpha-value>)',
                     200: 'rgb(var(--color-primary-200) / <alpha-value>)',
@@ -23,6 +40,8 @@ const config: Config = {
                     900: 'rgb(var(--color-primary-900) / <alpha-value>)',
                 },
                 secondary: {
+                    DEFAULT: 'rgb(var(--color-secondary-500) / <alpha-value>)',
+                    foreground: 'rgb(var(--color-text-secondary) / <alpha-value>)',
                     50: 'rgb(var(--color-secondary-50) / <alpha-value>)',
                     100: 'rgb(var(--color-secondary-100) / <alpha-value>)',
                     200: 'rgb(var(--color-secondary-200) / <alpha-value>)',

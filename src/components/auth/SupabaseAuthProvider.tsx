@@ -41,7 +41,7 @@ const AUTH_CONFIG = {
 // Logger for auth operations
 class AuthLogger {
   static info(message: string, data?: unknown) {
-    console.log(`[SupabaseAuth] ${message}`, data || '')
+
   }
 
   static warn(message: string, data?: unknown) {

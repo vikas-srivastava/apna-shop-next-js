@@ -262,7 +262,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
   // Logger utility
   const logger = useMemo(() => ({
     info: (message: string, data?: any) => {
-      console.log(`[ProductContext] ${message}`, data)
+
     },
     warn: (message: string, data?: any) => {
       console.warn(`[ProductContext] ${message}`, data)

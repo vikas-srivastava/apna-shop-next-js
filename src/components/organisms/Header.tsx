@@ -11,6 +11,7 @@ import { useCart } from '@/contexts/CartContext'
 import { useSupabaseAuth } from '../auth/SupabaseAuthProvider'
 import { LogoutButton } from '../auth/LogoutButton'
 import { useRouter } from 'next/navigation'
+import { ThemeSwitcher } from "@/components/molecules/ThemeSwitcher";
 
 interface HeaderProps {
     onSearch?: (query: string) => void
@@ -52,15 +53,15 @@ export function Header({ onSearch }: HeaderProps) {
     ]
 
     return (
-        <header className="bg-white shadow-sm border-b border-secondary-200 sticky top-0 z-40">
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-[var(--color-secondary-200)] sticky top-0 z-40">
             <div className="container-theme">
                 {/* Main Header */}
-                <div className="flex items-center justify-between h-16">
+                <div className="flex items-center justify-between h-16 text-[var(--color-text-primary)]">
                     {/* Logo */}
                     <div className="flex items-center">
                         <Link href="/" className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-                                <Typography variant="h6" className="text-white font-bold">
+                            <div className="w-8 h-8 bg-[var(--color-primary-500)] rounded-lg flex items-center justify-center">
+                                <Typography variant="h6" className="text-[var(--color-primary-contrast-text)] font-bold">
                                     S
                                 </Typography>
                             </div>
@@ -82,7 +83,7 @@ export function Header({ onSearch }: HeaderProps) {
                             <Link href="/cart" aria-label="Shopping cart">
                                 <ShoppingCart className="w-5 h-5" />
                                 {itemCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                    <span className="absolute -top-1 -right-1 bg-[var(--color-primary-500)] text-[var(--color-primary-contrast-text)] text-xs rounded-full w-5 h-5 flex items-center justify-center">
                                         {itemCount > 99 ? '99+' : itemCount}
                                     </span>
                                 )}
@@ -139,7 +140,7 @@ export function Header({ onSearch }: HeaderProps) {
                                 href={item.href}
                                 className={`font-medium transition-colors ${isActive
                                     ? 'text-primary-600 border-b-2 border-primary-600 pb-4 -mb-4'
-                                    : 'text-secondary-700 hover:text-primary-600'
+                                    : 'text-[var(--color-text-primary)] hover:text-primary-600'
                                     }`}
                             >
                                 {item.name}
@@ -167,7 +168,7 @@ export function Header({ onSearch }: HeaderProps) {
                                         href={item.href}
                                         className={`font-medium transition-colors ${isActive
                                             ? 'text-primary-600'
-                                            : 'text-secondary-700 hover:text-primary-600'
+                                            : 'text-[var(--color-text-primary)] hover:text-primary-600'
                                             }`}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >

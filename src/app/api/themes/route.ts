@@ -1,5 +1,12 @@
 import { NextResponse } from 'next/server'
-import { ThemeConfig } from '@/lib/server-theme-loader'
+
+interface ThemeConfig {
+    name?: string
+    colors?: {
+        primary: Record<string, string>
+        secondary: Record<string, string>
+    }
+}
 
 // Mock client themes data
 const clientThemes = {

@@ -10,6 +10,7 @@ import {
   getCartTotal as apiGetCartTotal
 } from '@/lib/api'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-hot-toast';
 
 // Enhanced TypeScript types
 export interface CartItem {
@@ -629,6 +630,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const validation = validateCartItem(product, quantity)
     if (!validation.valid) {
       CartLogger.warn('Cart item validation failed', validation.error)
+      toast.error(validation.error || 'Invalid item');
       return { success: false, error: validation.error }
     }
 
@@ -677,6 +679,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
     dispatch({ type: 'ADD_ITEM_SUCCESS', payload: optimisticItem })
+    toast.success('Item added to cart');
 
     try {
       // API call
@@ -696,6 +699,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         // Rollback optimistic update
         dispatch({ type: 'REMOVE_ITEM_SUCCESS', payload: itemId })
         dispatch({ type: 'ADD_ITEM_FAILURE', payload: { itemId, error: response.error || 'ADD_TO_CART_FAILED' } })
+        toast.error(response.error || 'Failed to add item to cart');
         return { success: false, error: response.error || 'ADD_TO_CART_FAILED' }
       }
     } catch (error) {
@@ -703,6 +707,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Rollback optimistic update
       dispatch({ type: 'REMOVE_ITEM_SUCCESS', payload: itemId })
       dispatch({ type: 'ADD_ITEM_FAILURE', payload: { itemId, error: 'ADD_TO_CART_EXCEPTION' } })
+      toast.error('An unexpected error occurred while adding the item.');
       return { success: false, error: 'ADD_TO_CART_EXCEPTION' }
     }
   }

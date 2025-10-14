@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/Card'
 import dynamic from 'next/dynamic'
 import { getCategories, getFeaturedProducts } from '@/lib/api'
 import { ArrowRight, Star, Shield, Truck, HeadphonesIcon, Gift, Zap, Trophy } from 'lucide-react'
-import { CompactThemeSwitcher } from '@/components/molecules/ThemeSwitcher'
+
 
 // Lazy load FeaturedProducts for better code splitting
 const FeaturedProducts = dynamic(() => import('@/components/organisms/ProductGrid').then(mod => ({ default: mod.FeaturedProducts })), {
@@ -60,7 +60,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section className="relative overflow-hidden" style={{ background: 'linear-gradient(to bottom right, var(--color-primary-50), var(--color-secondary-50))' }}>
+      <section className="relative overflow-hidden mb-0" style={{ background: 'linear-gradient(to bottom right, var(--color-primary-50), var(--color-secondary-50))' }}>
         <div className="container-theme py-20 lg:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Hero Content */}
@@ -98,7 +98,7 @@ export default async function HomePage() {
                     Browse Categories
                   </Link>
                 </Button>
-                <CompactThemeSwitcher />
+
               </div>
 
               {/* Stats */}
@@ -272,30 +272,30 @@ export default async function HomePage() {
 
       {/* Shiny Banner Section 2 - Mid Page */}
       <section className="relative overflow-hidden">
-        <div className="py-12 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600">
+        <div className="py-12 bg-[var(--color-secondary-50)]">
           <div className="container-theme">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center md:text-left">
-              <div className="text-white">
-                <Gift className="w-12 h-12 mx-auto md:mx-0 mb-4 animate-bounce" />
-                <Typography variant="h4" weight="bold" className="mb-2 text-white">
+              <div className="text-[var(--color-text-primary)]">
+                <Gift className="w-12 h-12 mx-auto md:mx-0 mb-4 animate-bounce " style={{ animationDelay: '0.2s' }} />
+                <Typography variant="h4" weight="bold" className="mb-2 text-[var(--color-text-primary)]">
                   Exclusive Deals
                 </Typography>
-                <Typography variant="body" className="opacity-90 text-white">
+                <Typography variant="body" className="opacity-90 text-[var(--color-text-primary)]">
                   Member-only special offers
                 </Typography>
               </div>
-              <div className="text-white">
+              <div className="text-[var(--color-text-primary)]">
                 <Trophy className="w-12 h-12 mx-auto md:mx-0 mb-4 animate-bounce" style={{ animationDelay: '0.2s' }} />
-                <Typography variant="h4" weight="bold" className="mb-2 text-white">
+                <Typography variant="h4" weight="bold" className="mb-2 text-[var(--color-text-primary)]">
                   Premium Quality
                 </Typography>
-                <Typography variant="body" className="opacity-90 text-white">
+                <Typography variant="body" className="opacity-90 text-[var(--color-text-primary)]">
                   Award-winning products
                 </Typography>
               </div>
               <div className="text-center">
-                <Button variant="secondary" className="font-bold px-8 py-3" asChild>
-                  <Link href="/account">
+                <Button variant="primary" asChild>
+                  <Link href="/login">
                     Join VIP Club
                   </Link>
                 </Button>
@@ -319,40 +319,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="bg-accent-500">
-        <div className="container-theme py-16">
-          <div className="max-w-2xl mx-auto text-center space-y-6">
-            <Typography variant="h3" weight="bold" className="text-white">
-              Stay Updated with Our Latest Offers
-            </Typography>
-            <Typography variant="body" className="text-white">
-              Subscribe to our newsletter and be the first to know about
-              exclusive deals, new arrivals, and special promotions.
-            </Typography>
-
-            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="input flex-1 bg-white text-primary border-secondary-300"
-                required
-              />
-              <Button variant="secondary" size="md" type="submit">
-                Subscribe
-              </Button>
-            </form>
-
-            <Typography variant="caption" className="text-white">
-              No spam, unsubscribe anytime. Read our privacy policy.
-            </Typography>
-          </div>
-        </div>
-      </section>
-
       {/* Shiny Banner Section 3 - Before Footer */}
       <section className="relative overflow-hidden">
-        <div className="py-10 bg-gradient-to-r from-accent-500 to-accent-600">
+        <div className="py-10" style={{ backgroundColor: '#000000' }}>
           <div className="container-theme text-center">
             <div className="space-y-4">
               <Typography variant="h2" weight="bold" className="text-white">
@@ -376,6 +345,10 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-pulse-shine"></div>
         </div>
       </section>
+
+
+
+
     </div>
   )
 }

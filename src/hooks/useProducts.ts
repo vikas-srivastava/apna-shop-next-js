@@ -112,7 +112,7 @@ class ProductsLogger {
 
   static info(message: string, data?: unknown, enableLogging = true) {
     if (!this.enabled || !enableLogging) return
-    console.log(`[useProducts] ${message}`, data)
+
   }
 
   static warn(message: string, data?: unknown, enableLogging = true) {

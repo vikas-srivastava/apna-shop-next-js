@@ -284,7 +284,7 @@ export function DiscountOffers({
  */
 export function DiscountBanner() {
     return (
-        <div className="bg-accent-500 text-white py-2">
+        <div className="bg-[var(--color-secondary-900)] text-[var(--color-secondary-50)] py-2">
             <div className="container-theme">
                 <div className="flex items-center justify-center gap-2 text-sm">
                     <Tag className="w-4 h-4" />
