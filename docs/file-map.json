@@ -1,0 +1,299 @@
+{
+  "summary": {
+    "totalFiles": 245,
+    "coreFiles": 85,
+    "themeFiles": 12,
+    "utilityFiles": 45,
+    "apiFiles": 28,
+    "componentFiles": 75
+  },
+  "structure": {
+    "app": {
+      "count": 45,
+      "description": "Next.js app router pages and API routes",
+      "subdirectories": {
+        "api": {
+          "count": 25,
+          "description": "API proxy routes for external integrations",
+          "files": [
+            "addresses/route.ts",
+            "auth/forgot-password/route.ts",
+            "auth/login/route.ts",
+            "auth/logout/route.ts",
+            "auth/profile/route.ts",
+            "auth/register/route.ts",
+            "auth/reset-password/route.ts",
+            "brands/route.ts",
+            "brands/search/route.ts",
+            "cart/route.ts",
+            "cart/[item_id]/route.ts",
+            "categories/route.ts",
+            "orders/route.ts",
+            "orders/[orderId]/route.ts",
+            "orders/[orderId]/address/route.ts",
+            "orders/[orderId]/shipments/route.ts",
+            "orders/[orderId]/status/route.ts",
+            "orders/by-number/[orderNumber]/route.ts",
+            "payments/route.ts",
+            "payments/create-razorpay-order/route.ts",
+            "payments/paypal/create-order/route.ts",
+            "payments/stripe/create-intent/route.ts",
+            "payments/verify/route.ts",
+            "payments/webhooks/route.ts",
+            "products/route.ts",
+            "products/[slug]/route.ts",
+            "products/[slug]/log-view/route.ts",
+            "products/best-sellers/route.ts",
+            "products/latest-arrivals/route.ts",
+            "products/recent-views/route.ts",
+            "shipping/providers/route.ts",
+            "shipping/rates/route.ts",
+            "shipping/track/[orderNumber]/route.ts",
+            "theme/route.ts",
+            "themes/route.ts"
+          ]
+        },
+        "pages": {
+          "count": 20,
+          "description": "Application pages and routes",
+          "files": [
+            "about/page.tsx",
+            "accessibility/page.tsx",
+            "account/page.tsx",
+            "account/addresses/page.tsx",
+            "account/orders/page.tsx",
+            "account/orders/[orderId]/page.tsx",
+            "account/payment-methods/page.tsx",
+            "account/profile/page.tsx",
+            "account/settings/page.tsx",
+            "affiliates/page.tsx",
+            "careers/page.tsx",
+            "cart/page.tsx",
+            "categories/page.tsx",
+            "checkout/page.tsx",
+            "contact/page.tsx",
+            "cookies/page.tsx",
+            "forgot-password/page.tsx",
+            "help/page.tsx",
+            "login/page.tsx",
+            "order-confirmation/page.tsx",
+            "order-tracking/[orderId]/page.tsx",
+            "press/page.tsx",
+            "privacy/page.tsx",
+            "privacy/do-not-sell/page.tsx",
+            "products/page.tsx",
+            "products/[slug]/page.tsx",
+            "reset-password/page.tsx",
+            "returns/page.tsx",
+            "shipping/page.tsx",
+            "size-guide/page.tsx",
+            "stores/page.tsx",
+            "sustainability/page.tsx",
+            "terms/page.tsx",
+            "test-supabase/page.tsx",
+            "track-order/page.tsx",
+            "wishlist/page.tsx"
+          ]
+        }
+      }
+    },
+    "components": {
+      "count": 75,
+      "description": "Reusable UI components following atomic design",
+      "subdirectories": {
+        "atoms": {
+          "count": 3,
+          "description": "Basic UI components",
+          "files": ["Button.tsx", "Input.tsx", "Typography.tsx"]
+        },
+        "molecules": {
+          "count": 5,
+          "description": "Composite components",
+          "files": [
+            "DiscountOffers.tsx",
+            "HeaderSearchBar.tsx",
+            "ProductCard.tsx",
+            "SearchBar.tsx",
+            "ThemeSwitcher.tsx"
+          ]
+        },
+        "organisms": {
+          "count": 3,
+          "description": "Complex components",
+          "files": ["Footer.tsx", "Header.tsx", "ProductGrid.tsx"]
+        },
+        "templates": {
+          "count": 1,
+          "description": "Page templates",
+          "files": ["ProductDetailTemplate.tsx"]
+        },
+        "ui": {
+          "count": 4,
+          "description": "Shared UI components",
+          "files": ["button.tsx", "Card.tsx", "ErrorBoundary.tsx", "Modal.tsx"]
+        },
+        "auth": {
+          "count": 5,
+          "description": "Authentication components",
+          "files": [
+            "AuthButton.tsx",
+            "AuthProvider.tsx",
+            "LogoutButton.tsx",
+            "ProtectedRoute.tsx",
+            "SupabaseAuthProvider.tsx"
+          ]
+        },
+        "checkout": {
+          "count": 8,
+          "description": "Checkout flow components",
+          "files": [
+            "CheckoutSidebar.tsx",
+            "index.ts",
+            "PaymentStep.tsx",
+            "PayPalPayment.tsx",
+            "RazorpayPayment.tsx",
+            "ReviewStep.tsx",
+            "ShippingStep.tsx",
+            "StripePayment.tsx"
+          ]
+        },
+        "providers": {
+          "count": 1,
+          "description": "Theme provider",
+          "files": ["theme-provider.tsx"]
+        }
+      }
+    },
+    "contexts": {
+      "count": 4,
+      "description": "React Context providers for state management",
+      "files": [
+        "CartContext.tsx",
+        "CheckoutContext.tsx",
+        "ProductContext.tsx",
+        "WishlistContext.tsx"
+      ]
+    },
+    "hooks": {
+      "count": 3,
+      "description": "Custom React hooks",
+      "files": ["useAuth.ts", "useCart.ts", "useProducts.ts"]
+    },
+    "lib": {
+      "count": 15,
+      "description": "Core utilities and services",
+      "files": [
+        "api-orders.ts",
+        "api.ts",
+        "auth-service.ts",
+        "cache.ts",
+        "circuit-breaker.ts",
+        "client-theme-names-loader.ts",
+        "error-handler.ts",
+        "mock-data.ts",
+        "security-edge.ts",
+        "security-node.ts",
+        "security.ts",
+        "supabase.ts",
+        "third-party-api.ts",
+        "types.ts",
+        "validation.ts"
+      ]
+    },
+    "styles": {
+      "count": 2,
+      "description": "Theme and global styles",
+      "files": ["themes.css"]
+    },
+    "middleware": {
+      "count": 2,
+      "description": "Next.js middleware",
+      "files": ["rate-limit.ts", "security.ts"]
+    },
+    "tests": {
+      "count": 25,
+      "description": "Test files and configurations",
+      "files": [
+        "api-performance-tester.js",
+        "bundle-analyzer.js",
+        "enable-mock-mode.js",
+        "jest.config.js",
+        "jest.setup.js",
+        "lighthouse-config.json",
+        "load-test-config.yml",
+        "load-test-processor.js",
+        "memory-cpu-monitor.js",
+        "performance-test-suite.js",
+        "run-all-tests.js",
+        "run-performance-tests.js",
+        "test-all.js",
+        "test-api-mock.js",
+        "test-application-components.js",
+        "test-comprehensive-api.js",
+        "test-live-api.js",
+        "test-mock-fallback.js",
+        "test-nextjs-app.js"
+      ]
+    },
+    "docs": {
+      "count": 15,
+      "description": "Documentation files",
+      "files": [
+        "api.json",
+        "fix-log.md",
+        "llm-instructions.md",
+        "missing-third-party-apis.md",
+        "MOCK_MODE_README.md",
+        "module-flows.md",
+        "PERFORMANCE-TESTING-README.md",
+        "SUPABASE_SETUP.md",
+        "templates/setup-theme.sh",
+        "templates/vercel.json"
+      ]
+    }
+  },
+  "issues": {
+    "unused": [
+      "src/pages/api/auth/sync-customer.ts",
+      "src/pages/api/auth/sync-login.ts",
+      "src/pages/api/auth/sync-register.ts",
+      "src/pages/auth/callback.tsx",
+      "src/app/account/orders/page-old.tsx"
+    ],
+    "duplicated": [
+      {
+        "pattern": "Button implementations",
+        "files": [
+          "src/components/atoms/Button.tsx",
+          "src/components/ui/button.tsx"
+        ]
+      },
+      {
+        "pattern": "Theme CSS files",
+        "files": ["src/styles/themes.css", "styles/themes.css"]
+      }
+    ],
+    "missing": [
+      "Integration tests for theme switching",
+      "E2E tests for checkout flow",
+      "Performance benchmarks documentation"
+    ]
+  },
+  "recommendations": {
+    "cleanup": [
+      "Remove unused legacy pages router files",
+      "Consolidate duplicate button components",
+      "Merge duplicate theme CSS files"
+    ],
+    "testing": [
+      "Add integration tests for theme switching",
+      "Implement E2E tests for critical user flows",
+      "Add performance regression tests"
+    ],
+    "documentation": [
+      "Document component API and props",
+      "Add architecture decision records",
+      "Create deployment guides"
+    ]
+  }
+}
