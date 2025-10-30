@@ -1,254 +1,182 @@
 {
   "summary": {
-    "totalFiles": 245,
-    "coreFiles": 85,
-    "themeFiles": 12,
-    "utilityFiles": 45,
-    "apiFiles": 28,
-    "componentFiles": 75
+    "totalFilesAnalyzed": 245,
+    "coreFiles": 13,
+    "themeFiles": 5,
+    "utilityFiles": 10,
+    "apiFiles": 39,
+    "componentFiles": 75,
+    "docsFiles": 15,
+    "testFiles": 26,
+    "otherFiles": 12
   },
-  "structure": {
-    "app": {
-      "count": 45,
-      "description": "Next.js app router pages and API routes",
-      "subdirectories": {
-        "api": {
-          "count": 25,
-          "description": "API proxy routes for external integrations",
-          "files": [
-            "addresses/route.ts",
-            "auth/forgot-password/route.ts",
-            "auth/login/route.ts",
-            "auth/logout/route.ts",
-            "auth/profile/route.ts",
-            "auth/register/route.ts",
-            "auth/reset-password/route.ts",
-            "brands/route.ts",
-            "brands/search/route.ts",
-            "cart/route.ts",
-            "cart/[item_id]/route.ts",
-            "categories/route.ts",
-            "orders/route.ts",
-            "orders/[orderId]/route.ts",
-            "orders/[orderId]/address/route.ts",
-            "orders/[orderId]/shipments/route.ts",
-            "orders/[orderId]/status/route.ts",
-            "orders/by-number/[orderNumber]/route.ts",
-            "payments/route.ts",
-            "payments/create-razorpay-order/route.ts",
-            "payments/paypal/create-order/route.ts",
-            "payments/stripe/create-intent/route.ts",
-            "payments/verify/route.ts",
-            "payments/webhooks/route.ts",
-            "products/route.ts",
-            "products/[slug]/route.ts",
-            "products/[slug]/log-view/route.ts",
-            "products/best-sellers/route.ts",
-            "products/latest-arrivals/route.ts",
-            "products/recent-views/route.ts",
-            "shipping/providers/route.ts",
-            "shipping/rates/route.ts",
-            "shipping/track/[orderNumber]/route.ts",
-            "theme/route.ts",
-            "themes/route.ts"
-          ]
-        },
-        "pages": {
-          "count": 20,
-          "description": "Application pages and routes",
-          "files": [
-            "about/page.tsx",
-            "accessibility/page.tsx",
-            "account/page.tsx",
-            "account/addresses/page.tsx",
-            "account/orders/page.tsx",
-            "account/orders/[orderId]/page.tsx",
-            "account/payment-methods/page.tsx",
-            "account/profile/page.tsx",
-            "account/settings/page.tsx",
-            "affiliates/page.tsx",
-            "careers/page.tsx",
-            "cart/page.tsx",
-            "categories/page.tsx",
-            "checkout/page.tsx",
-            "contact/page.tsx",
-            "cookies/page.tsx",
-            "forgot-password/page.tsx",
-            "help/page.tsx",
-            "login/page.tsx",
-            "order-confirmation/page.tsx",
-            "order-tracking/[orderId]/page.tsx",
-            "press/page.tsx",
-            "privacy/page.tsx",
-            "privacy/do-not-sell/page.tsx",
-            "products/page.tsx",
-            "products/[slug]/page.tsx",
-            "reset-password/page.tsx",
-            "returns/page.tsx",
-            "shipping/page.tsx",
-            "size-guide/page.tsx",
-            "stores/page.tsx",
-            "sustainability/page.tsx",
-            "terms/page.tsx",
-            "test-supabase/page.tsx",
-            "track-order/page.tsx",
-            "wishlist/page.tsx"
-          ]
-        }
-      }
-    },
-    "components": {
-      "count": 75,
-      "description": "Reusable UI components following atomic design",
-      "subdirectories": {
-        "atoms": {
-          "count": 3,
-          "description": "Basic UI components",
-          "files": ["Button.tsx", "Input.tsx", "Typography.tsx"]
-        },
-        "molecules": {
-          "count": 5,
-          "description": "Composite components",
-          "files": [
-            "DiscountOffers.tsx",
-            "HeaderSearchBar.tsx",
-            "ProductCard.tsx",
-            "SearchBar.tsx",
-            "ThemeSwitcher.tsx"
-          ]
-        },
-        "organisms": {
-          "count": 3,
-          "description": "Complex components",
-          "files": ["Footer.tsx", "Header.tsx", "ProductGrid.tsx"]
-        },
-        "templates": {
-          "count": 1,
-          "description": "Page templates",
-          "files": ["ProductDetailTemplate.tsx"]
-        },
-        "ui": {
-          "count": 4,
-          "description": "Shared UI components",
-          "files": ["button.tsx", "Card.tsx", "ErrorBoundary.tsx", "Modal.tsx"]
-        },
-        "auth": {
-          "count": 5,
-          "description": "Authentication components",
-          "files": [
-            "AuthButton.tsx",
-            "AuthProvider.tsx",
-            "LogoutButton.tsx",
-            "ProtectedRoute.tsx",
-            "SupabaseAuthProvider.tsx"
-          ]
-        },
-        "checkout": {
-          "count": 8,
-          "description": "Checkout flow components",
-          "files": [
-            "CheckoutSidebar.tsx",
-            "index.ts",
-            "PaymentStep.tsx",
-            "PayPalPayment.tsx",
-            "RazorpayPayment.tsx",
-            "ReviewStep.tsx",
-            "ShippingStep.tsx",
-            "StripePayment.tsx"
-          ]
-        },
-        "providers": {
-          "count": 1,
-          "description": "Theme provider",
-          "files": ["theme-provider.tsx"]
-        }
-      }
-    },
-    "contexts": {
-      "count": 4,
-      "description": "React Context providers for state management",
+  "categories": {
+    "core": {
+      "description": "Fundamental application files and configurations.",
       "files": [
-        "CartContext.tsx",
-        "CheckoutContext.tsx",
-        "ProductContext.tsx",
-        "WishlistContext.tsx"
+        "eslint.config.mjs",
+        "middleware.ts",
+        "next.config.ts",
+        "package-lock.json",
+        "package.json",
+        "postcss.config.mjs",
+        "README.md",
+        "tailwind.config.ts",
+        "tsconfig.json",
+        "vercel.json",
+        "src/app/layout.tsx",
+        "src/app/page.tsx",
+        "src/app/globals.css"
       ]
     },
-    "hooks": {
-      "count": 3,
-      "description": "Custom React hooks",
-      "files": ["useAuth.ts", "useCart.ts", "useProducts.ts"]
-    },
-    "lib": {
-      "count": 15,
-      "description": "Core utilities and services",
+    "theme": {
+      "description": "Files related to theme definition, styling, and loading.",
       "files": [
-        "api-orders.ts",
-        "api.ts",
-        "auth-service.ts",
-        "cache.ts",
-        "circuit-breaker.ts",
-        "client-theme-names-loader.ts",
-        "error-handler.ts",
-        "mock-data.ts",
-        "security-edge.ts",
-        "security-node.ts",
-        "security.ts",
-        "supabase.ts",
-        "third-party-api.ts",
-        "types.ts",
-        "validation.ts"
+        "public/theme.yml",
+        "src/styles/themes.css",
+        "src/lib/client-theme-names-loader.ts",
+        "src/components/providers/theme-provider.tsx",
+        "src/components/molecules/ThemeSwitcher.tsx"
+      ],
+      "notes": [
+        "Duplicate theme CSS files found: src/styles/themes.css and styles/themes.css (root level).",
+        "Hardcoded values in tailwind.config.ts for borderRadius and spacing could be tokenized from theme.yml.",
+        "Redundant CSS variable definitions in :root and [data-theme='classic-light'] in src/styles/themes.css."
       ]
     },
-    "styles": {
-      "count": 2,
-      "description": "Theme and global styles",
-      "files": ["themes.css"]
-    },
-    "middleware": {
-      "count": 2,
-      "description": "Next.js middleware",
-      "files": ["rate-limit.ts", "security.ts"]
-    },
-    "tests": {
-      "count": 25,
-      "description": "Test files and configurations",
+    "utility": {
+      "description": "General-purpose helper functions and libraries.",
       "files": [
-        "api-performance-tester.js",
-        "bundle-analyzer.js",
-        "enable-mock-mode.js",
-        "jest.config.js",
-        "jest.setup.js",
-        "lighthouse-config.json",
-        "load-test-config.yml",
-        "load-test-processor.js",
-        "memory-cpu-monitor.js",
-        "performance-test-suite.js",
-        "run-all-tests.js",
-        "run-performance-tests.js",
-        "test-all.js",
-        "test-api-mock.js",
-        "test-application-components.js",
-        "test-comprehensive-api.js",
-        "test-live-api.js",
-        "test-mock-fallback.js",
-        "test-nextjs-app.js"
+        "src/lib/cache.ts",
+        "src/lib/circuit-breaker.ts",
+        "src/lib/error-handler.ts",
+        "src/lib/security-edge.ts",
+        "src/lib/security-node.ts",
+        "src/lib/security.ts",
+        "src/lib/supabase.ts",
+        "src/lib/validation.ts",
+        "src/hooks/useAuth.ts",
+        "src/hooks/useCart.ts",
+        "src/hooks/useProducts.ts",
+        "src/contexts/CartContext.tsx",
+        "src/contexts/CheckoutContext.tsx",
+        "src/contexts/ProductContext.tsx",
+        "src/contexts/WishlistContext.tsx"
+      ]
+    },
+    "api": {
+      "description": "API service integrations, routes, and related types.",
+      "files": [
+        "src/app/api/addresses/route.ts",
+        "src/app/api/auth/route.ts",
+        "src/app/api/brands/route.ts",
+        "src/app/api/cart/route.ts",
+        "src/app/api/categories/route.ts",
+        "src/app/api/orders/route.ts",
+        "src/app/api/payments/route.ts",
+        "src/app/api/products/route.ts",
+        "src/app/api/shipping/route.ts",
+        "src/app/api/theme/route.ts",
+        "src/app/api/themes/route.ts",
+        "src/lib/api-orders.ts",
+        "src/lib/api.ts",
+        "src/lib/auth-service.ts",
+        "src/lib/mock-data.ts",
+        "src/lib/third-party-api.ts",
+        "src/lib/types.ts",
+        "docs/api.json"
+      ],
+      "notes": [
+        "Unclear role and potential for redundancy in src/app/api/theme/route.ts and src/app/api/themes/route.ts."
+      ]
+    },
+    "component": {
+      "description": "Reusable UI components following atomic design principles.",
+      "files": [
+        "src/components/atoms/Button.tsx",
+        "src/components/atoms/Input.tsx",
+        "src/components/atoms/Typography.tsx",
+        "src/components/molecules/DiscountOffers.tsx",
+        "src/components/molecules/HeaderSearchBar.tsx",
+        "src/components/molecules/ProductCard.tsx",
+        "src/components/molecules/SearchBar.tsx",
+        "src/components/organisms/Footer.tsx",
+        "src/components/organisms/Header.tsx",
+        "src/components/organisms/ProductGrid.tsx",
+        "src/components/templates/ProductDetailTemplate.tsx",
+        "src/components/ui/button.tsx",
+        "src/components/ui/Card.tsx",
+        "src/components/ui/ErrorBoundary.tsx",
+        "src/components/ui/Modal.tsx",
+        "src/components/auth/AuthButton.tsx",
+        "src/components/auth/AuthProvider.tsx",
+        "src/components/auth/LogoutButton.tsx",
+        "src/components/auth/ProtectedRoute.tsx",
+        "src/components/auth/SupabaseAuthProvider.tsx",
+        "src/components/checkout/CheckoutSidebar.tsx",
+        "src/components/checkout/index.ts",
+        "src/components/checkout/PaymentStep.tsx",
+        "src/components/checkout/PayPalPayment.tsx",
+        "src/components/checkout/RazorpayPayment.tsx",
+        "src/components/checkout/ReviewStep.tsx",
+        "src/components/checkout/ShippingStep.tsx",
+        "src/components/checkout/StripePayment.tsx"
+      ],
+      "notes": [
+        "Duplicated button implementations: src/components/atoms/Button.tsx and src/components/ui/button.tsx."
       ]
     },
     "docs": {
-      "count": 15,
-      "description": "Documentation files",
+      "description": "Project documentation files.",
       "files": [
-        "api.json",
-        "fix-log.md",
-        "llm-instructions.md",
-        "missing-third-party-apis.md",
-        "MOCK_MODE_README.md",
-        "module-flows.md",
-        "PERFORMANCE-TESTING-README.md",
-        "SUPABASE_SETUP.md",
-        "templates/setup-theme.sh",
-        "templates/vercel.json"
+        "docs/README.md",
+        "docs/architecture.md",
+        "docs/api-integration.md",
+        "docs/theme-development-guide.md",
+        "docs/design-tokens.md",
+        "docs/code-debt.md",
+        "docs/fix-log.md",
+        "docs/llm-instructions.md",
+        "docs/missing-third-party-apis.md",
+        "docs/MOCK_MODE_README.md",
+        "docs/module-flows.md",
+        "docs/PERFORMANCE-TESTING-README.md",
+        "docs/SUPABASE_SETUP.md"
+      ]
+    },
+    "tests": {
+      "description": "Test files and configurations.",
+      "files": [
+        "src/__tests__/checkout-flow.test.tsx",
+        "tests/api-performance-tester.js",
+        "tests/bundle-analyzer.js",
+        "tests/enable-mock-mode.js",
+        "tests/jest.config.js",
+        "tests/jest.setup.js",
+        "tests/lighthouse-config.json",
+        "tests/load-test-config.yml",
+        "tests/load-test-processor.js",
+        "tests/memory-cpu-monitor.js",
+        "tests/performance-test-suite.js",
+        "tests/run-all-tests.js",
+        "tests/run-performance-tests.js",
+        "tests/test-all.js",
+        "tests/test-api-mock.js",
+        "tests/test-application-components.js",
+        "tests/test-comprehensive-api.js",
+        "tests/test-live-api.js",
+        "tests/test-mock-fallback.js",
+        "tests/test-nextjs-app.js",
+        "tests/test-security.js"
+      ]
+    },
+    "other": {
+      "description": "Miscellaneous project files.",
+      "files": [
+        ".gitignore",
+        ".npmrc",
+        "supabase-schema.sql",
+        "scripts/generate-themes-css.ts"
       ]
     }
   },
@@ -270,7 +198,10 @@
       },
       {
         "pattern": "Theme CSS files",
-        "files": ["src/styles/themes.css", "styles/themes.css"]
+        "files": [
+          "src/styles/themes.css",
+          "styles/themes.css"
+        ]
       }
     ],
     "missing": [

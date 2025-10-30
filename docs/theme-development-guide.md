@@ -8,27 +8,27 @@ This guide explains how to create and integrate new themes into the Next.js eCom
 
 ### Theme Components
 
-1. **Theme Configuration** (`public/theme.yml`) - YAML definitions
-2. **CSS Variables** (`src/styles/themes.css`) - Dynamic styling
-3. **Theme Provider** - Runtime theme management
-4. **Theme Switcher** - UI for theme selection
+1.  **Theme Configuration** (`public/theme.yml`) - YAML definitions
+2.  **CSS Variables** (`src/styles/themes.css`) - Dynamic styling
+3.  **Theme Provider** - Runtime theme management
+4.  **Theme Switcher** - UI for theme selection
 
 ### Theme vs Core Separation
 
-- **Core**: Functionality, API integration, business logic
-- **Theme**: Colors, typography, spacing, visual design
+-   **Core**: Functionality, API integration, business logic
+-   **Theme**: Colors, typography, spacing, visual design
 
-## Creating a New Theme
+## Step-by-Step Guide for Building a New Theme
 
 ### Step 1: Define Theme in YAML
 
-Add your theme to `public/theme.yml`:
+Add your theme to `public/theme.yml`. This file acts as the central registry for all themes and their core design tokens. Ensure the `name` field is unique and descriptive.
 
 ```yaml
 themes:
   your-theme-name:
     name: "Your Theme Name"
-    type: "light" # or "dark"
+    type: "light" # or "dark" - indicates the base mode for the theme
     description: "Brief description of your theme"
     colors:
       primary:
@@ -111,7 +111,7 @@ themes:
 
 ### Step 2: Add CSS Variables
 
-Add your theme's CSS variables to `src/styles/themes.css`:
+Add your theme's CSS variables to `src/styles/themes.css`. These variables will be applied to the `[data-theme="your-theme-name"]` selector, ensuring they only apply when your theme is active. The values should correspond to the colors and other tokens defined in your `theme.yml`.
 
 ```css
 [data-theme="your-theme-name"] {
@@ -179,48 +179,116 @@ Add your theme's CSS variables to `src/styles/themes.css`:
 
 ### Step 3: Test Theme Loading
 
-1. Start the development server: `npm run dev`
-2. Open the theme switcher component
-3. Verify your theme appears in the dropdown
-4. Select your theme and check that colors update correctly
+1.  Start the development server: `npm run dev`
+2.  Open the theme switcher component (usually in the header or settings).
+3.  Verify your new theme appears in the dropdown.
+4.  Select your theme and check that colors, fonts, and other styles update correctly across the application.
 
-## Theme Development Best Practices
+## Naming Conventions, Folder Layout, and Best Practices
 
-### Color Harmony
+### Naming Conventions
 
-- Use a consistent color palette (3-5 main colors)
-- Ensure sufficient contrast ratios (WCAG AA compliance)
-- Test colors in both light and dark contexts
-- Consider color blindness accessibility
+*   **Theme Names**: Use kebab-case (e.g., `minimalist-blue`, `dark-delight`).
+*   **Color Variables**: `--color-{category}-{shade}` (e.g., `--color-primary-500`, `--color-text-primary`).
+*   **Font Variables**: `--font-{property}` (e.g., `--font-size-base`, `--font-weight-bold`).
+*   **Spacing Variables**: `--spacing-{size}` (e.g., `--spacing-4`, `--spacing-8`).
 
-### Typography
+### Folder Layout
 
-- Choose readable font combinations
-- Maintain consistent font scales
-- Ensure proper line heights and spacing
-- Test font rendering across devices
+Since themes are primarily defined through `public/theme.yml` and `src/styles/themes.css`, there isn't a separate folder for each theme. All theme-specific CSS variables reside in `src/styles/themes.css`.
 
-### Spacing and Layout
+### Best Practices
 
-- Use consistent spacing scales
-- Maintain proper visual hierarchy
-- Ensure responsive behavior
-- Test on various screen sizes
+*   **Centralized Definition**: Always define new themes and their core design tokens in `public/theme.yml` first.
+*   **CSS Variables for Styling**: Use CSS custom properties (`var(--your-variable)`) for all theme-dependent styling within components and global CSS.
+*   **Theme-Agnostic Components**: Ensure your React components are not hardcoded with colors or fonts. They should consume the CSS variables, making them automatically adapt to the active theme.
+*   **Accessibility**: Always consider accessibility (WCAG AA compliance) when defining colors and typography, especially contrast ratios.
+*   **Performance**: Keep the number of CSS variables manageable to avoid performance overhead.
 
-### Component Overrides
+## How to Override Styles, Extend Components, and Configure Colors/Fonts
 
-Themes can override component-specific styles by targeting data attributes:
+### Overriding Styles
+
+To override styles for a specific theme, target the `[data-theme="your-theme-name"]` attribute in `src/styles/themes.css` or in component-specific CSS modules if necessary. For example:
 
 ```css
-[data-theme="your-theme"] .btn-primary {
-  background-color: rgb(var(--color-primary-500));
-  border-radius: 8px;
-}
+/* In src/styles/themes.css */
+[data-theme="your-theme-name"] {
+  /* Override global variables */
+  --color-primary-500: 100, 100, 255; /* A custom blue for this theme */
 
-[data-theme="your-theme"] .card {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  /* Apply specific styles to elements */
+  .btn-primary {
+    background-color: rgb(var(--color-primary-500));
+    border-radius: 8px;
+  }
 }
 ```
+
+### Extending Components
+
+Components are designed to be reusable. If a component needs a theme-specific visual variation, consider using props to pass theme-dependent classes or styles, or leverage CSS variables. Avoid duplicating component logic for different themes.
+
+```tsx
+// Example: A button that changes color based on theme variables
+function ThemeButton({ children, className, ...props }) {
+  return (
+    <button
+      className={`px-4 py-2 rounded-md bg-[rgb(var(--color-primary-500))] text-white ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+### Configuring Colors and Fonts
+
+*   **Colors**: Defined in `public/theme.yml` and then translated into CSS variables in `src/styles/themes.css`. Tailwind CSS is configured to use these CSS variables, allowing you to use classes like `bg-primary-500` which will dynamically resolve to the current theme's primary color.
+*   **Fonts**: Font families and weights are also defined in `public/theme.yml` and exposed as CSS variables. You can configure `tailwind.config.ts` to use these variables for font stacks.
+
+## Instructions to Switch Themes Locally or at Runtime
+
+### Locally (Development)
+
+1.  **URL Parameter**: Append `?theme=your-theme-name` to your local development URL (e.g., `http://localhost:3000?theme=minimalist-blue`).
+2.  **Environment Variable**: Set `NEXT_PUBLIC_DEFAULT_THEME=your-theme-name` in your `.env.local` file. This will set the default theme when the application starts.
+
+### At Runtime (User Interaction)
+
+Use the `ThemeSwitcher` component (typically found in the header or user settings) to allow users to select their preferred theme. This component interacts with the `ThemeContext` to update the `data-theme` attribute on the `html` element, triggering the CSS variable changes.
+
+## Checklist for Consistency Across Themes
+
+### Before Committing
+
+-   [ ] **Theme Loading**: The new theme loads correctly when selected via the theme switcher or URL parameter.
+-   [ ] **Color Definitions**: All color variables (primary, secondary, accent, text, semantic) are defined in `public/theme.yml` and `src/styles/themes.css`.
+-   [ ] **Contrast Ratios**: Text and interactive elements meet WCAG AA contrast ratio standards in both light and dark contexts.
+-   [ ] **Typography**: Font families, sizes, and weights are consistent and readable across the theme.
+-   [ ] **Spacing & Layout**: Consistent spacing and responsive behavior are maintained across different screen sizes.
+-   [ ] **Component Adaptation**: All core components (buttons, cards, inputs, navigation) adapt correctly to the new theme's styles.
+-   [ ] **Functionality**: The new theme does not introduce any regressions or break existing application functionality.
+-   [ ] **Cross-Browser Compatibility**: The theme renders correctly across major browsers (Chrome, Firefox, Safari, Edge).
+-   [ ] **Accessibility**: Focus states, ARIA attributes, and semantic HTML are preserved and functional.
+-   [ ] **Performance**: Theme switching is smooth and does not introduce noticeable performance degradation.
+
+### Cross-Browser Testing
+
+-   [ ] Chrome/Chromium browsers
+-   [ ] Firefox
+-   [ ] Safari
+-   [ ] Edge
+-   [ ] Mobile browsers (iOS Safari, Chrome Mobile)
+
+### Accessibility Testing
+
+-   [ ] Color contrast ratios
+-   [ ] Keyboard navigation
+-   [ ] Screen reader compatibility
+-   [ ] Focus indicators
+-   [ ] Semantic HTML structure
 
 ## Advanced Theme Features
 
@@ -268,35 +336,6 @@ Use CSS custom properties for conditional styling:
 }
 ```
 
-## Theme Validation Checklist
-
-### Before Committing
-
-- [ ] Theme loads correctly in theme switcher
-- [ ] All color variables are defined
-- [ ] Text contrast meets WCAG AA standards
-- [ ] Theme works in both light and dark modes
-- [ ] Responsive design is maintained
-- [ ] Typography is readable on all screen sizes
-- [ ] Interactive elements have proper hover/focus states
-- [ ] Theme doesn't break existing functionality
-
-### Cross-Browser Testing
-
-- [ ] Chrome/Chromium browsers
-- [ ] Firefox
-- [ ] Safari
-- [ ] Edge
-- [ ] Mobile browsers (iOS Safari, Chrome Mobile)
-
-### Accessibility Testing
-
-- [ ] Color contrast ratios
-- [ ] Keyboard navigation
-- [ ] Screen reader compatibility
-- [ ] Focus indicators
-- [ ] Semantic HTML structure
-
 ## Theme Management
 
 ### Runtime Theme Switching
@@ -335,24 +374,24 @@ NEXT_PUBLIC_DEFAULT_THEME=classic-light
 
 ### Theme Not Loading
 
-1. Check YAML syntax in `theme.yml`
-2. Verify CSS variables are properly defined
-3. Ensure theme name matches between YAML and CSS
-4. Check browser console for errors
+1.  Check YAML syntax in `theme.yml`
+2.  Verify CSS variables are properly defined
+3.  Ensure theme name matches between YAML and CSS
+4.  Check browser console for errors
 
 ### Colors Not Applying
 
-1. Verify CSS custom property names
-2. Check that components use CSS variables
-3. Ensure proper CSS specificity
-4. Test with browser dev tools
+1.  Verify CSS custom property names
+2.  Check that components use CSS variables
+3.  Ensure proper CSS specificity
+4.  Test with browser dev tools
 
 ### Performance Issues
 
-1. Minimize CSS custom properties (keep under 100)
-2. Use CSS containment where possible
-3. Avoid complex CSS calculations
-4. Test theme switching performance
+1.  Minimize CSS custom properties (keep under 100)
+2.  Use CSS containment where possible
+3.  Avoid complex CSS calculations
+4.  Test theme switching performance
 
 ## Example Theme: Minimalist Blue
 

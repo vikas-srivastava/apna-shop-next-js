@@ -4,7 +4,16 @@
 
 Design tokens are the fundamental building blocks of the theme system. They provide a centralized way to manage design decisions like colors, typography, spacing, and other visual properties. This system uses CSS custom properties (variables) to implement design tokens, allowing for dynamic theme switching and consistent design application.
 
-## Token Categories
+## How Tailwind and CSS Variables are Used
+
+This project leverages a powerful combination of Tailwind CSS and native CSS custom properties (variables) to manage its design tokens. This approach offers the flexibility of dynamic theming with the utility-first benefits of Tailwind.
+
+1.  **CSS Custom Properties (`--var`)**: All core design tokens (colors, spacing, typography, etc.) are defined as CSS custom properties within `src/styles/themes.css`. These variables are scoped to specific `[data-theme="theme-name"]` attributes, enabling dynamic theme switching by simply changing the `data-theme` attribute on the `html` element.
+2.  **Tailwind CSS Configuration (`tailwind.config.ts`)**: Tailwind is configured to consume these CSS custom properties. For example, color utilities like `bg-primary-500` or `text-accent` are mapped to `rgb(var(--color-primary-500) / <alpha-value>)` or `rgb(var(--color-text-accent) / <alpha-value>)` respectively. This means that when the CSS variables change (due to a theme switch), the Tailwind utility classes automatically reflect the new theme's styles without needing to recompile Tailwind.
+
+This integration allows developers to use familiar Tailwind classes while benefiting from a dynamic and centralized theme system.
+
+## Current Token Definitions
 
 ### Color Tokens
 
@@ -191,6 +200,91 @@ Color tokens are organized in a systematic scale from 50 (lightest) to 900 (dark
 --input-height: 2.5rem;
 ```
 
+## Example Configuration for Adding a New Token or Extending Theme Colors
+
+### Adding a New Token (e.g., a new brand color)
+
+1.  **Define in `public/theme.yml`**: Add the new color to your theme's `colors` section.
+
+    ```yaml
+    themes:
+      your-theme-name:
+        colors:
+          # ... existing colors
+          brand:
+            500: "#FF5733" # Your new brand color
+    ```
+
+2.  **Add to `src/styles/themes.css`**: Create a corresponding CSS custom property for your new color.
+
+    ```css
+    [data-theme="your-theme-name"] {
+      --color-brand-500: 255, 87, 51; /* RGB values for #FF5733 */
+    }
+    ```
+
+3.  **Extend `tailwind.config.ts`**: Map the new CSS variable to a Tailwind color utility.
+
+    ```typescript
+    // tailwind.config.ts
+    module.exports = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              500: 'rgb(var(--color-brand-500) / <alpha-value>)',
+            },
+          },
+        },
+      },
+    };
+    ```
+
+4.  **Use in Components**: You can now use `bg-brand-500`, `text-brand-500`, etc., in your components.
+
+    ```tsx
+    <button className="bg-brand-500 text-white">New Brand Button</button>
+    ```
+
+### Extending Theme Colors (e.g., adding a new shade to an existing color)
+
+1.  **Define in `public/theme.yml`**: Add the new shade to the relevant color category.
+
+    ```yaml
+    themes:
+      your-theme-name:
+        colors:
+          primary:
+            # ... existing shades
+            950: "#000000" # A very dark primary shade
+    ```
+
+2.  **Add to `src/styles/themes.css`**: Create the CSS custom property.
+
+    ```css
+    [data-theme="your-theme-name"] {
+      --color-primary-950: 0, 0, 0;
+    }
+    ```
+
+3.  **Extend `tailwind.config.ts`**: Add the new shade to the existing color definition.
+
+    ```typescript
+    // tailwind.config.ts
+    module.exports = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              // ... existing shades
+              950: 'rgb(var(--color-primary-950) / <alpha-value>)',
+            },
+          },
+        },
+      },
+    };
+    ```
+
 ## Using Design Tokens
 
 ### In CSS
@@ -226,7 +320,7 @@ colors: {
 ### In Components
 
 ```tsx
-function MyButton({ variant = "primary" }) {
+function MyButton({ children, variant = "primary" }) {
   return (
     <button
       className={clsx("px-4 py-2 rounded-md font-semibold transition-colors", {
@@ -235,7 +329,7 @@ function MyButton({ variant = "primary" }) {
           variant === "secondary",
       })}
     >
-      Click me
+      {children}
     </button>
   );
 }
@@ -265,76 +359,47 @@ Each theme can override tokens to customize appearance:
 }
 ```
 
-## Adding New Tokens
-
-### 1. Define in CSS Variables
-
-```css
-:root {
-  --color-tertiary-500: 168, 85, 247; /* New tertiary color */
-  --spacing-0-5: 0.125rem; /* New spacing value */
-}
-```
-
-### 2. Update Tailwind Config
-
-```typescript
-// tailwind.config.ts
-colors: {
-    tertiary: 'rgb(var(--color-tertiary-500) / <alpha-value>)',
-},
-spacing: {
-    '0.5': 'var(--spacing-0-5)',
-}
-```
-
-### 3. Use in Components
-
-```tsx
-<div className="bg-tertiary text-primary-500 p-0.5">New token usage</div>
-```
-
 ## Token Naming Conventions
 
 ### Colors
 
-- `--color-{category}-{shade}` (e.g., `--color-primary-500`)
-- Categories: `primary`, `secondary`, `accent`, `success`, `warning`, `error`, `text`
-- Shades: `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`
+-   `--color-{category}-{shade}` (e.g., `--color-primary-500`)
+-   Categories: `primary`, `secondary`, `accent`, `success`, `warning`, `error`, `text`
+-   Shades: `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`
 
 ### Typography
 
-- `--font-{property}` (e.g., `--font-size-base`, `--font-weight-bold`)
-- `--text-{variant}` (e.g., `--text-primary`, `--text-secondary`)
+-   `--font-{property}` (e.g., `--font-size-base`, `--font-weight-bold`)
+-   `--text-{variant}` (e.g., `--text-primary`, `--text-secondary`)
 
 ### Spacing
 
-- `--spacing-{size}` (e.g., `--spacing-4`, `--spacing-8`)
+-   `--spacing-{size}` (e.g., `--spacing-4`, `--spacing-8`)
 
 ### Other
 
-- `--border-radius-{size}` (e.g., `--border-radius-md`)
-- `--shadow-{size}` (e.g., `--shadow-lg`)
+-   `--border-radius-{size}` (e.g., `--border-radius-md`)
+-   `--shadow-{size}` (e.g., `--shadow-lg`)
 
 ## Token Validation
 
 ### Contrast Requirements
 
-- Text on background: Minimum 4.5:1 contrast ratio
-- Large text: Minimum 3:1 contrast ratio
-- Interactive elements: Minimum 3:1 contrast ratio
+-   Text on background: Minimum 4.5:1 contrast ratio
+-   Large text: Minimum 3:1 contrast ratio
+-   Interactive elements: Minimum 3:1 contrast ratio
 
 ### Accessibility
 
-- Color tokens should support both light and dark themes
-- Text colors should maintain readability
-- Focus indicators should be clearly visible
+-   Color tokens should support both light and dark themes
+-   Text colors should maintain readability
+-   Focus indicators should be clearly visible
 
 ### Performance
 
-- Limit total CSS custom properties to under 200
-- Use efficient CSS selectors for theme overrides
-- Minimize CSS calculations in token usage
+-   Limit total CSS custom properties to under 200
+-   Use efficient CSS selectors for theme overrides
+-   Minimize CSS calculations in token usage
 
 ## Migration Guide
 
@@ -356,7 +421,7 @@ spacing: {
 ```css
 .button {
   background-color: rgb(var(--color-primary-500));
-  color: rgb(var(--text-primary));
+  color: rgb(var(--color-text-primary));
   border-radius: var(--border-radius-md);
   padding: var(--spacing-2) var(--spacing-4);
 }
@@ -364,32 +429,45 @@ spacing: {
 
 ### Component Refactoring
 
-1. Identify hardcoded values in components
-2. Replace with appropriate design tokens
-3. Test across all themes
-4. Update component documentation
+1.  Identify hardcoded values in components
+2.  Replace with appropriate design tokens
+3.  Test across all themes
+4.  Update component documentation
+
+## Missing Tokenization Opportunities
+
+While the current system covers core design tokens, there are opportunities to further enhance tokenization:
+
+*   **Z-index values**: Centralizing `z-index` values for modals, dropdowns, and other layered components could prevent conflicts and improve consistency.
+*   **Transition durations and easing functions**: Defining these as tokens would ensure consistent animation and transition behaviors across the UI.
+*   **Breakpoints**: Although Tailwind handles breakpoints, defining them as CSS variables could offer more flexibility for custom media queries or JavaScript-based responsive logic.
+*   **Container widths/max-widths**: Standardizing these values as tokens would ensure consistent content alignment and responsiveness.
+*   **Icon sizes**: If icons are used extensively, defining standard sizes as tokens could improve consistency.
+*   **Form element states**: Tokens for `hover`, `focus`, `active`, `disabled`, and `error` states for form elements could be more explicitly defined.
+
+Implementing these additional tokens would further centralize design decisions and reduce the likelihood of inconsistencies.
 
 ## Best Practices
 
 ### Token Organization
 
-- Group related tokens together
-- Use consistent naming patterns
-- Document token purposes and usage
-- Version token changes
+-   Group related tokens together
+-   Use consistent naming patterns
+-   Document token purposes and usage
+-   Version token changes
 
 ### Theme Compatibility
 
-- Ensure all themes define required tokens
-- Provide fallback values for optional tokens
-- Test token combinations across themes
-- Maintain design consistency
+-   Ensure all themes define required tokens
+-   Provide fallback values for optional tokens
+-   Test token combinations across themes
+-   Maintain design consistency
 
 ### Maintenance
 
-- Regularly audit token usage
-- Remove unused tokens
-- Update tokens based on design system changes
-- Document token relationships and dependencies
+-   Regularly audit token usage
+-   Remove unused tokens
+-   Update tokens based on design system changes
+-   Document token relationships and dependencies
 
 This design token system provides a solid foundation for scalable, maintainable, and themeable design systems in the Next.js eCommerce application.

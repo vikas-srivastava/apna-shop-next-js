@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Next.js application integrates with Apna Shop APIs through a comprehensive service layer that handles authentication, data fetching, caching, and error management. The integration is designed to be headless, allowing the frontend to work with different backend implementations while maintaining consistent functionality.
+This Next.js application integrates with Apna Shop APIs through a comprehensive service layer that handles authentication, data fetching, caching, and error management. The integration is designed to be headless, allowing the frontend to work with different backend implementations while maintaining consistent functionality and a clear authentication flow.
 
 ## API Base Configuration
 
@@ -36,10 +36,10 @@ All API requests include standard headers:
 
 The main API service class provides:
 
-- **Caching**: Request deduplication and response caching
-- **Monitoring**: Performance metrics and error tracking
-- **Circuit Breaker**: Automatic failure detection and recovery
-- **Fallbacks**: Mock data support for development/testing
+-   **Caching**: Request deduplication and response caching
+-   **Monitoring**: Performance metrics and error tracking
+-   **Circuit Breaker**: Automatic failure detection and recovery
+-   **Fallbacks**: Mock data support for development/testing
 
 ```typescript
 class ApiService {
@@ -70,7 +70,24 @@ export async function getProducts(
 export async function registerUser(userData): Promise<ApiResponse<User>>;
 ```
 
-## Authentication Flow
+## Authentication Flow and Token Management
+
+### Auth Flow
+
+The authentication flow typically involves:
+
+1.  **User Login/Registration**: User provides credentials (email, password) through the UI.
+2.  **API Call**: The frontend sends these credentials to the backend's login/register endpoint (e.g., `POST /user/login`).
+3.  **Token Reception**: Upon successful authentication, the backend responds with an authentication token (e.g., JWT).
+4.  **Token Storage**: The frontend stores this token securely, typically in `localStorage` or `sessionStorage` for client-side applications, or in HTTP-only cookies for server-side rendered applications to prevent XSS attacks.
+5.  **Subsequent Requests**: For all subsequent authenticated API requests, this token is included in the `Authorization` header as a Bearer token.
+6.  **Token Expiration/Refresh**: The system handles token expiration by either redirecting the user to the login page or attempting to refresh the token silently using a refresh token (if implemented by the backend).
+
+### Token Management
+
+-   **Storage**: Tokens are stored in `localStorage` (as seen in `ApiService` and `AuthService`) for easy access by client-side code.
+-   **Retrieval**: The `getAuthToken()` method in `ApiService` retrieves the token before making authenticated requests.
+-   **Invalidation**: Upon logout or receiving a 401 Unauthorized response, the token is removed from storage, and the user is redirected to the login page (`handleUnauthorized()` in `ApiService`).
 
 ### User Registration
 
@@ -161,12 +178,12 @@ const response = await ApiService.getProducts(
 
 **Query Parameters**:
 
-- `page`: Page number
-- `limit`: Items per page
-- `category`: Category slug
-- `search`: Search query
-- `price_min`: Minimum price
-- `price_max`: Maximum price
+-   `page`: Page number
+-   `limit`: Items per page
+-   `category`: Category slug
+-   `search`: Search query
+-   `price_min`: Minimum price
+-   `price_max`: Maximum price
 
 **Response**:
 
@@ -235,6 +252,7 @@ const response = await ApiService.getCart();
     "total": "total_amount"
   }
 }
+}
 ```
 
 ## Order Management
@@ -269,8 +287,8 @@ const response = await ApiService.verifyRazorpayPayment(paymentData);
 
 **API Endpoints**:
 
-- `POST /shop/create-razorpay-order`
-- `POST /shop/verify-razorpay-payment`
+-   `POST /shop/create-razorpay-order`
+-   `POST /shop/verify-razorpay-payment`
 
 ## Content Management
 
@@ -306,11 +324,11 @@ All API responses follow a consistent structure:
 
 ### Error Types
 
-- **Network Errors**: Connection failures, timeouts
-- **Authentication Errors**: Invalid tokens, expired sessions
-- **Validation Errors**: Invalid request data
-- **Server Errors**: 5xx responses, API downtime
-- **Client Errors**: 4xx responses, invalid requests
+-   **Network Errors**: Connection failures, timeouts
+-   **Authentication Errors**: Invalid tokens, expired sessions
+-   **Validation Errors**: Invalid request data
+-   **Server Errors**: 5xx responses, API downtime
+-   **Client Errors**: 4xx responses, invalid requests
 
 ### Circuit Breaker Pattern
 
@@ -449,12 +467,12 @@ src/app/api/
 
 ### Adding New API Integration
 
-1. Add method to `ApiService` class
-2. Implement in `third-party-api.ts`
-3. Add mock data generator
-4. Update TypeScript types
-5. Add error handling and caching
-6. Test with both mock and live data
+1.  Add method to `ApiService` class
+2.  Implement in `third-party-api.ts`
+3.  Add mock data generator
+4.  Update TypeScript types
+5.  Add error handling and caching
+6.  Test with both mock and live data
 
 ### Testing API Integration
 
@@ -468,10 +486,104 @@ NEXT_PUBLIC_USE_MOCK=false npm run dev
 
 ### Debugging API Issues
 
-1. Check browser network tab for request details
-2. Verify environment variables are set correctly
-3. Check API service logs in browser console
-4. Test with mock data to isolate issues
-5. Verify CORS headers and authentication
+1.  Check browser network tab for request details
+2.  Verify environment variables are set correctly
+3.  Check API service logs in browser console
+4.  Test with mock data to isolate issues
+5.  Verify CORS headers and authentication
+
+## Known Issues, Assumptions, or Areas Needing Improvement
+
+*   **Inconsistent Error Handling**: While a general error handling structure exists, specific error responses from the backend might not always be consistently mapped to user-friendly messages. This could lead to generic error messages for specific issues.
+*   **Token Refresh Mechanism**: The current token management primarily focuses on storing and invalidating tokens. A more robust solution would include a token refresh mechanism to seamlessly renew expired tokens without requiring the user to log in again.
+*   **API Client Structure**: The `ApiService` and `third-party-api.ts` files could be further refined to reduce redundancy and improve clarity, especially if the number of API endpoints grows significantly.
+*   **Backend API Documentation**: Assumptions are made about the backend API's behavior and response structures. Any discrepancies between the actual backend and these assumptions could lead to integration issues.
+*   **Security Enhancements**: While basic security measures like rate limiting and input validation are in place, further enhancements like more granular access control, advanced bot detection, and comprehensive vulnerability scanning could be considered.
 
 This comprehensive API integration ensures reliable, performant, and maintainable communication between the Next.js frontend and Apna Shop backend services.
+
+## Missing Third-Party API Integrations
+
+## Overview
+
+Based on the current integration status (~40% of Apna Shop APIs endpoints integrated), this document outlines the remaining 60% of APIs that need implementation for full eCommerce functionality. Core features (authentication, products, cart) are complete, but major gaps exist in orders, payments, blog, shipping, refunds, reviews, and subscriptions.
+
+## Orders
+
+**Priority: High**
+
+Endpoints:
+
+- `GET /shop/orders` - Get orders (Purpose: Retrieve user's order history)
+- `POST /shop/create-order` - Create order (Purpose: Place new orders)
+- `PUT /shop/update-status/{order_id}` - Update order status (Purpose: Modify order status)
+- `POST /shop/save-payment-detail` - Save payment (Purpose: Store payment information)
+- `GET /shop/orders/{orderId}/address` - Get order address (Purpose: Retrieve shipping address for order)
+- `POST /shop/orders/{orderId}/address` - Add order address (Purpose: Add/update shipping address)
+
+## Payments
+
+**Priority: High**
+
+Endpoints:
+
+- `GET /shop/get-payments` - Get payments (Purpose: Retrieve payment history)
+- `POST /shop/add-payments` - Add payment (Purpose: Process new payments)
+- `GET /shop/get-order-payments/{orderId}` - Get order payments (Purpose: Get payments for specific order)
+- `POST /shop/create-razorpay-order` - Create Razorpay order (Purpose: Initialize Razorpay payment)
+- `POST /shop/verify-razorpay-payment` - Verify Razorpay payment (Purpose: Confirm payment completion)
+
+## Blog & Content
+
+**Priority: Medium**
+
+Endpoints:
+
+- `GET /blog/get-posts` - Get blog posts (Purpose: Retrieve blog articles)
+- `GET /blog/get-categoy` - Get blog categories (Purpose: Get blog category list)
+- `GET /blog/get-authors` - Get blog authors (Purpose: Retrieve author information)
+- `POST /blog/comments` - Add comment (Purpose: Submit comments on blog posts)
+- `GET /cms/content-blocks` - Get content blocks (Purpose: Retrieve CMS content)
+- `GET /cms/pages` - Get pages (Purpose: Get static pages content)
+
+## Reviews & Ratings
+
+**Priority: Medium**
+
+Endpoints:
+
+- `POST /shop/reviews` - Add review (Purpose: Submit product reviews)
+- `GET /products/{productId}/reviews` - Get product reviews (Purpose: Retrieve reviews for a product)
+- `GET /products/{productId}/average-rating` - Get average rating (Purpose: Get product's average rating)
+
+## Shipping & Tracking
+
+**Priority: High**
+
+Endpoints:
+
+- `GET /orders/{order}/shipments` - Track shipment (Purpose: Get shipment details)
+- `GET /shipping/track/{orderNumber}` - Track order (Purpose: Track order by number)
+- `POST /shipping/rates` - Get shipping rates (Purpose: Calculate shipping costs)
+- `GET /shipping/providers` - Get shipping providers (Purpose: List available shipping providers)
+
+## Refunds & Support
+
+**Priority: Medium**
+
+Endpoints:
+
+- `GET /shop/{id}/refund` - Get refund details (Purpose: Retrieve refund information)
+- `POST /shop/{id}/refund` - Process refund (Purpose: Initiate refund process)
+- `POST /sitesetting/contact-queries` - Submit contact query (Purpose: Handle customer support queries)
+
+## Subscriptions
+
+**Priority: Low**
+
+Endpoints:
+
+- `POST /sitesetting/subscribe` - Subscribe to newsletter (Purpose: Newsletter subscription)
+- `POST /sitesetting/unsubscribe` - Unsubscribe from newsletter (Purpose: Newsletter unsubscription)
+- `GET /sitesetting/subscriptions` - Get subscriptions (Purpose: Retrieve subscription list)
+- `GET /sitesetting/subscription/{email}` - Get subscription by email (Purpose: Check subscription status)

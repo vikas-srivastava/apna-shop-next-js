@@ -6,7 +6,7 @@ This is a modern, full-featured eCommerce frontend application built with Next.j
 
 ## Purpose
 
-The primary goal of this project is to provide a scalable, themeable eCommerce frontend that can be easily customized and deployed for different clients while maintaining consistent functionality and API integration.
+The primary goal of this project is to provide a scalable, themeable eCommerce frontend that can be easily customized and deployed for different clients while maintaining consistent functionality and API integration. The vision for theme scalability is to allow rapid development of new themes by focusing solely on presentation, leveraging a robust core application.
 
 ## Key Features
 
@@ -17,16 +17,7 @@ The primary goal of this project is to provide a scalable, themeable eCommerce f
 - **Performance Optimized**: Server-side rendering, caching, and optimized loading states
 - **Security Hardened**: Input validation, rate limiting, and secure API handling
 
-## Theme Architecture
-
-Themes are implemented through:
-
-- **CSS Variables**: Dynamic color schemes and design tokens
-- **YAML Configuration**: Theme definitions in `public/theme.yml`
-- **Runtime Switching**: Theme selection via UI components and URL parameters
-- **Fallback System**: Graceful degradation and mock data support
-
-## Quick Start
+## Basic Setup Instructions
 
 ### Prerequisites
 
@@ -42,9 +33,9 @@ cd <project-directory>
 npm install
 ```
 
-### Environment Setup
+### Environment Variable Requirements
 
-Create a `.env.local` file:
+Create a `.env.local` file in the project root with the following variables:
 
 ```env
 NEXT_PUBLIC_USE_MOCK=false
@@ -52,6 +43,12 @@ NEXT_PUBLIC_API_BASE_URL=https://your-api-domain.com/api
 NEXT_PUBLIC_TENANT_ID=your-tenant-id
 NEXT_PUBLIC_TOKEN=your-api-token
 ```
+*   `NEXT_PUBLIC_USE_MOCK`: Set to `true` to use mock data for development, `false` for live API.
+*   `NEXT_PUBLIC_API_BASE_URL`: The base URL for your backend API.
+*   `NEXT_PUBLIC_TENANT_ID`: Identifier for multi-tenancy.
+*   `NEXT_PUBLIC_TOKEN`: Authentication token for API access.
+
+## Quick Start for Running and Previewing Different Themes
 
 ### Development
 
@@ -65,9 +62,9 @@ Visit `http://localhost:3000` to see the application.
 
 Themes can be switched via:
 
-- Theme switcher component in the UI
-- URL parameters: `?theme=classic-light`
-- Environment variables for default theme
+-   **Theme switcher component in the UI**: Look for a theme selection dropdown or button in the application's header or settings.
+-   **URL parameters**: Append `?theme=<theme-name>` to the URL (e.g., `http://localhost:3000?theme=classic-light`).
+-   **Environment variables for default theme**: Set `NEXT_PUBLIC_DEFAULT_THEME=<theme-name>` in your `.env.local` file.
 
 ## Available Themes
 
