@@ -20,7 +20,7 @@ function PayPalPaymentForm({ amount, currency = 'USD', onSuccess, onError, onCan
     const maxRetries = 3
 
     const paypalOptions = {
-        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'mock_paypal_client_id',
+        clientId: process.env.NEXT_PRIVATE__PAYPAL_CLIENT_ID || 'mock_paypal_client_id',
         currency: currency.toUpperCase(),
         'enable-funding': 'venmo',
         'disable-funding': 'paylater,card',
@@ -194,7 +194,7 @@ function PayPalPaymentForm({ amount, currency = 'USD', onSuccess, onError, onCan
 export function PayPalPayment(props: PayPalPaymentProps) {
     return (
         <PayPalScriptProvider options={{
-            clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'mock_paypal_client_id',
+            clientId: process.env.NEXT_PRIVATE__PAYPAL_CLIENT_ID || 'mock_paypal_client_id',
             currency: props.currency || 'USD'
         }}>
             <PayPalPaymentForm {...props} />

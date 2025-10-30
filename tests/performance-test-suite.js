@@ -19,13 +19,13 @@ const { execSync } = require('child_process');
 
 // Test configuration
 const TEST_CONFIG = {
-    baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-    apiBaseUrl: process.env.NEXT_PRIVATE_API_BASE_URL || 'http://localhost:3000/api',
+    baseUrl: process.env.BASE_URL || 'http://localhost:3000',
+    apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3000/api',
     testDuration: 60, // seconds
     maxUsers: 100,
     rampUpTime: 30, // seconds
     outputDir: './performance-results',
-    enableMockData: process.env.NEXT_PUBLIC_USE_MOCK !== 'false'
+    enableMockData: process.env.USE_MOCK !== 'false'
 };
 
 // Create output directory
@@ -644,9 +644,9 @@ Options:
   --help              Show this help message
 
 Environment Variables:
-  NEXT_PUBLIC_BASE_URL        Base URL for testing (default: http://localhost:3000)
-  NEXT_PUBLIC_API_BASE_URL    API base URL for testing (default: http://localhost:3000/api)
-  NEXT_PUBLIC_USE_MOCK        Enable/disable mock data (default: true)
+  BASE_URL        Base URL for testing (default: http://localhost:3000)
+  API_BASE_URL    API base URL for testing (default: http://localhost:3000/api)
+  USE_MOCK        Enable/disable mock data (default: true)
     `);
         return;
     }

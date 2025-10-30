@@ -9,12 +9,12 @@ import { mockApiProducts, mockCategories, mockCart } from './mock-data'
 
 // Environment configuration
 const API_CONFIG = {
-  useMock: process.env.NEXT_PUBLIC_USE_MOCK === 'true',
-  cacheEnabled: process.env.NEXT_PUBLIC_CACHE_ENABLED !== 'false',
-  cacheTTL: parseInt(process.env.NEXT_PUBLIC_CACHE_TTL || '300000'), // 5 minutes default
-  maxRetries: parseInt(process.env.NEXT_PUBLIC_MAX_RETRIES || '3'),
-  enableLogging: process.env.NEXT_PUBLIC_API_LOGGING !== 'false',
-  enablePerformanceMonitoring: process.env.NEXT_PUBLIC_PERFORMANCE_MONITORING !== 'false',
+  useMock: process.env.USE_MOCK === 'true',
+  cacheEnabled: process.env.CACHE_ENABLED !== 'false',
+  cacheTTL: parseInt(process.env.CACHE_TTL || '300000'), // 5 minutes default
+  maxRetries: parseInt(process.env.MAX_RETRIES || '3'),
+  enableLogging: process.env.API_LOGGING !== 'false',
+  enablePerformanceMonitoring: process.env.PERFORMANCE_MONITORING !== 'false',
 }
 
 // Mock data for fallback - using the comprehensive mock data

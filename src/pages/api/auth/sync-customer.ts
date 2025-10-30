@@ -6,7 +6,7 @@ type Data =
     | { success: false; error: string };
 
 function devEnabled() {
-    return process.env.DEV_AUTH === "true" || process.env.NEXT_PUBLIC_DEV_AUTH === "true";
+    return process.env.DEV_AUTH === "true" || process.env.DEV_AUTH === "true";
 }
 
 function isLocalRequest(req: NextApiRequest) {
@@ -38,8 +38,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         return res.status(405).json({ success: false, error: "Method not allowed" });
     }
 
-    const baseUrl = process.env.THIRD_PARTY_API_URL;
-    const tenantId = (process.env.NEXT_PRIVATE_TENANT_ID as string) || (req.headers["x-tenant"] as string) || "";
+    const baseUrl = process.env.NEXT_PRIVATE_API_BASE_URL;
+    const tenantId = (process.env.NEXT_PRIVATE_API_TENANT_ID as string) || (req.headers["x-tenant"] as string) || "";
 
     // If tenant is missing and dev is enabled, mint a deterministic dev customer id
     if (!tenantId && devEnabled()) {
@@ -86,7 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }, {
                 headers: {
                     'X-Tenant': tenantId,
-                    ...(process.env.NEXT_PUBLIC_TOKEN ? { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_TOKEN}` } : {})
+                    ...(process.env.NEXT_PRIVATE_API_TOKEN ? { 'Authorization': `Bearer ${process.env.NEXT_PRIVATE_API_TOKEN}` } : {})
                 }
             });
 
@@ -126,7 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             }, {
                 headers: {
                     'X-Tenant': tenantId,
-                    ...(process.env.NEXT_PUBLIC_TOKEN ? { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_TOKEN}` } : {})
+                    ...(process.env.NEXT_PRIVATE_API_TOKEN ? { 'Authorization': `Bearer ${process.env.NEXT_PRIVATE_API_TOKEN}` } : {})
                 }
             });
 

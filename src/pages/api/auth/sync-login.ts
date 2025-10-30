@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { email } = req.body;
 
         const response = await axios.post(
-            `${process.env.THIRD_PARTY_API_URL}/user/login`,
+            `${process.env.NEXT_PRIVATE_API_BASE_URL}/user/login`,
             {
                 email,
                 password: "passwordless-dummy"

@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
                 }, { status: 422 })
             }
 
-            const razorpaySecret = process.env.RAZORPAY_SECRET_KEY
+            const razorpaySecret = process.env.NEXT_PRIVATE_RAZORPAY_SECRET_KEY
             if (!razorpaySecret) {
                 return NextResponse.json({
                     success: false,

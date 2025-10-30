@@ -108,7 +108,7 @@ const PRODUCT_VALIDATION_SCHEMA = {
 
 // Logger utility
 class ProductsLogger {
-  private static enabled = process.env.NEXT_PUBLIC_PRODUCT_LOGGING !== 'false'
+  private static enabled = process.env.PRODUCT_LOGGING !== 'false'
 
   static info(message: string, data?: unknown, enableLogging = true) {
     if (!this.enabled || !enableLogging) return

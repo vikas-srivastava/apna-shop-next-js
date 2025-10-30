@@ -80,10 +80,10 @@ function testEnvironmentConfig() {
         const envLines = envContent.split('\n').filter(line => line.trim() && !line.startsWith('#'));
 
         const requiredVars = [
-            'NEXT_PUBLIC_TENANT_ID',
-            'NEXT_PUBLIC_TOKEN',
-            'NEXT_PUBLIC_API_BASE_URL',
-            'NEXT_PUBLIC_USE_MOCK'
+            'TENANT_ID',
+            'TOKEN',
+            'API_BASE_URL',
+            'USE_MOCK'
         ];
 
         let allVarsPresent = true;
@@ -98,7 +98,7 @@ function testEnvironmentConfig() {
         }
 
         // Check mock mode
-        const mockMode = envLines.find(line => line.startsWith('NEXT_PUBLIC_USE_MOCK='))?.split('=')[1];
+        const mockMode = envLines.find(line => line.startsWith('USE_MOCK='))?.split('=')[1];
         log(`Mock mode: ${mockMode}`);
 
         recordTest('Environment Configuration', allVarsPresent);

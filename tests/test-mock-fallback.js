@@ -4,8 +4,8 @@
  */
 
 // Simulate environment variables
-process.env.NEXT_PUBLIC_USE_MOCK = 'true'
-process.env.NEXT_PUBLIC_API_LOGGING = 'true'
+process.env.USE_MOCK = 'true'
+process.env.API_LOGGING = 'true'
 
 // Mock the API modules (simplified for testing)
 const mockData = {
@@ -61,7 +61,7 @@ const mockThirdPartyApi = {
 
 // Simplified version of the withFallback function
 async function withFallback(operation, fallbackGenerator, endpoint) {
-  const useMock = process.env.NEXT_PUBLIC_USE_MOCK === 'true'
+  const useMock = process.env.USE_MOCK === 'true'
 
   if (useMock) {
     console.log(`[TEST] Using mock data for ${endpoint} (mock mode enabled)`)
@@ -151,8 +151,8 @@ async function testMockModeDisabled() {
   console.log('\n=== Testing with Mock Mode Disabled ===')
 
   // Temporarily disable mock mode
-  const originalMock = process.env.NEXT_PUBLIC_USE_MOCK
-  process.env.NEXT_PUBLIC_USE_MOCK = 'false'
+  const originalMock = process.env.USE_MOCK
+  process.env.USE_MOCK = 'false'
 
   try {
     // Test 1: API fails, mock mode disabled
@@ -175,7 +175,7 @@ async function testMockModeDisabled() {
 
   } finally {
     // Restore original setting
-    process.env.NEXT_PUBLIC_USE_MOCK = originalMock
+    process.env.USE_MOCK = originalMock
   }
 
   return true

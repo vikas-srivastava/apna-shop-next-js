@@ -11,13 +11,13 @@ async function testAPIs() {
     console.log('🚀 Testing APIs with mock mode...');
 
     // Set environment variable for mock mode
-    process.env.NEXT_PUBLIC_USE_MOCK = 'true';
+    process.env.USE_MOCK = 'true';
 
     try {
         // Start the dev server with mock mode
         const server = spawn('npm', ['run', 'dev'], {
             stdio: 'inherit',
-            env: { ...process.env, NEXT_PUBLIC_USE_MOCK: 'true' }
+            env: { ...process.env, USE_MOCK: 'true' }
         });
 
         // Wait for server to start
@@ -25,9 +25,7 @@ async function testAPIs() {
 
         // Run API performance test
         console.log('📊 Running API performance test...');
-        const testProcess = spawn('node', ['api-performance-tester.js'], {
-            stdio: 'inherit',
-            env: { ...process.env, NEXT_PUBLIC_USE_MOCK: 'true' }
+env: { ...process.env, USE_MOCK: 'true' }
         });
 
         testProcess.on('close', (code) => {

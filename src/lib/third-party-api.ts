@@ -196,11 +196,10 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
         const response = await fetch(url, {
             headers: {
                 'Content-Type': 'application/json',
-                'X-Tenant': process.env.NEXT_PRIVATE_TENANT_ID || '',
+                'X-Tenant': process.env.NEXT_PRIVATE_API_TENANT_ID || '',
                 'X-Requested-With': 'XMLHttpRequest', // For CSRF protection
-                ...(process.env.NEXT_PUBLIC_TOKEN ? {
-                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_TOKEN}`
-                } : {}),
+                ...(process.env.NEXT_PRIVATE_API_TOKEN ? {
+                'Authorization': `Bearer ${process.env.NEXT_PRIVATE_API_TOKEN}`                } : {}),
                 ...options.headers,
             },
             ...options,

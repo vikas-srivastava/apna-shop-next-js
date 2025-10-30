@@ -257,7 +257,7 @@ export class CircuitBreakerMiddleware {
 
     constructor() {
         // Make circuit breaker switchable via .env
-        this.isEnabled = process.env.NEXT_PUBLIC_CIRCUIT_BREAKER_ENABLED !== 'false';
+        this.isEnabled = process.env.CIRCUIT_BREAKER_ENABLED !== 'false';
     }
 
     /**

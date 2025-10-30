@@ -7,7 +7,7 @@ import { Button } from '@/components/atoms/Button'
 import { Typography } from '@/components/atoms/Typography'
 
 // Initialize Stripe with mock publishable key for testing
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_mock_key')
+const stripePromise = loadStripe(process.env.NEXT_PRIVATE__STRIPE_PUBLISHABLE_KEY || 'pk_test_mock_key')
 
 interface StripePaymentProps {
     amount: number

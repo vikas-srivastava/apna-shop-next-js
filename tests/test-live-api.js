@@ -9,9 +9,9 @@ const axios = require('axios');
 
 // Environment configuration
 const config = {
-    tenantId: process.env.NEXT_PRIVATE_TENANT_ID || '01998023-8f44-7206-900c-89915f5d2ed7',
-    token: process.env.NEXT_PUBLIC_TOKEN || '2|gO8L1F5lCJgwSCdkFXFU0UXJQoiOQcCHG0qvzmLYd93fa1a3',
-    apiBaseUrl: process.env.NEXT_PRIVATE_API_BASE_URL || 'http://localhost/api',
+    tenantId: process.env.TENANT_ID || '01998023-8f44-7206-900c-89915f5d2ed7',
+    token: process.env.TOKEN || '2|gO8L1F5lCJgwSCdkFXFU0UXJQoiOQcCHG0qvzmLYd93fa1a3',
+    apiBaseUrl: process.env.API_BASE_URL || 'http://localhost/api',
 };
 
 // Test results tracking

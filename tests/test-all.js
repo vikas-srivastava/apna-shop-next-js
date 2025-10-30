@@ -38,8 +38,8 @@ class TestRunner {
     // Enable mock mode for testing
     enableMockMode() {
         this.log('Enabling mock mode for testing...');
-        process.env.NEXT_PUBLIC_USE_MOCK = 'true';
-        this.writeEnvFile('.env.test', 'NEXT_PUBLIC_USE_MOCK=true\n');
+        process.env.USE_MOCK = 'true';
+        this.writeEnvFile('.env.test', 'USE_MOCK=true\n');
     }
 
     // Restore original environment
