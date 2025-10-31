@@ -294,7 +294,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
                 const apiResponse = await getWishlist()
                 if (apiResponse.success && apiResponse.data) {
                     // Parse the API response (assuming it's a JSON string)
-                    const apiWishlistItems = JSON.parse(apiResponse.data)
+                    const apiWishlistItems = apiResponse.data
 
                     // Convert API format to our WishlistItem format
                     const apiItems: WishlistItem[] = apiWishlistItems.map((item: any) => ({

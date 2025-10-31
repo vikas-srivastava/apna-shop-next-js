@@ -3,7 +3,7 @@
  * Includes caching, deduplication, retry logic, and monitoring
  */
 
-import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User, Order } from './types'
+import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User, Order, WishlistItem } from './types'
 import * as thirdPartyApi from './third-party-api'
 import { mockApiProducts, mockCategories, mockCart } from './mock-data'
 
@@ -681,11 +681,11 @@ export class ApiService {
   }
 
   // Wishlist methods
-  static async getWishlist(): Promise<ApiResponse<string>> {
+  static async getWishlist(): Promise<ApiResponse<WishlistItem[]>> {
     return await this.executeWithMonitoring(
       () => this.withFallback(
         () => thirdPartyApi.getWishlist(),
-        '[]' // Empty wishlist as fallback
+        [] // Empty wishlist as fallback
       ),
       'POST',
       '/shop/wishlist'

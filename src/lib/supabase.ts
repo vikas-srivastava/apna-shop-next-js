@@ -5,7 +5,6 @@ let supabaseClient: ReturnType<typeof createClient> | null = null
 
 // Mock Supabase client for development/testing when NEXT_PUBLIC_USE_MOCK is true
 const createMockSupabaseClient = () => {
-  console.warn('Using MOCK Supabase client. No real database operations will be performed.')
 
   const mockAuth = {
     signInWithPassword: async ({ email, password }: any) => {

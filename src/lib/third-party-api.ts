@@ -3,7 +3,7 @@
  * Connects to the Apna Shop eCommerce backend
  */
 
-import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User, ApiProduct } from './types'
+import { Product, Category, ProductFilter, PaginatedResponse, ApiResponse, User, ApiProduct, WishlistItem } from './types'
 import { mockApiGenerators, mockApiDelay } from './mock-data'
 
 // Helper function to get mock response based on endpoint
@@ -488,8 +488,8 @@ export async function removeFromWishlist(productId: string): Promise<ApiResponse
 /**
  * Get wishlist
  */
-export async function getWishlist(): Promise<ApiResponse<string>> {
-    return apiRequest<string>('/shop/wishlist', { method: 'POST' })
+export async function getWishlist(): Promise<ApiResponse<WishlistItem[]>> {
+    return apiRequest<WishlistItem[]>('/shop/wishlist', { method: 'POST' })
 }
 
 /**
