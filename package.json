@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "generate-themes": "ts-node --esm scripts/generate-themes-css.ts",
+    "generate-themes": "tsc -p scripts/tsconfig.script.json && node dist/generate-themes-css.js",
     "build": "npm run generate-themes && next build",
     "start": "next start",
     "lint": "next lint"

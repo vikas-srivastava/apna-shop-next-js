@@ -1,0 +1,24 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "nodenext",
+    "outDir": "../dist",
+    "noEmit": false,
+    "allowJs": true,
+    "checkJs": false,
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "generate-themes-css.ts"
+  ],
+  "exclude": [
+    "../node_modules",
+    "../.next",
+    "../**/*.test.ts",
+    "../**/*.spec.ts"
+  ]
+}
