@@ -867,6 +867,25 @@ export function mockApiDelay(minMs = 200, maxMs = 800): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, delay))
 }
 
+export const mockWishlist: WishlistItem[] = [
+  {
+    id: 'wish-1',
+    product_id: 1,
+    product_name: 'Wireless Bluetooth Headphones',
+    product_price: '299.99',
+    product_image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
+    added_at: new Date().toISOString(),
+  },
+  {
+    id: 'wish-2',
+    product_id: 3,
+    product_name: 'Cotton T-Shirt',
+    product_price: '24.99',
+    product_image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop',
+    added_at: new Date().toISOString(),
+  },
+];
+
 // Mock API response generators
 export const mockApiGenerators = {
   getCategories: () => createMockApiResponse(mockCategories),
@@ -980,6 +999,7 @@ export const mockApiGenerators = {
   getUserProfile: () => createMockApiResponse(mockAuthResponses.profile),
   getCart: () => createMockApiResponse(mockCart),
   getCartTotal: () => createMockApiResponse({ total: mockCart.total }),
+  getWishlist: () => createMockApiResponse(mockWishlist),
   addToCart: () => createMockApiResponse('Product added to cart successfully'),
   updateCartItem: () => createMockApiResponse('Cart item updated successfully'),
   removeCartItem: () => createMockApiResponse(null),

@@ -180,7 +180,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
     const isMockMode = process.env.NEXT_PUBLIC_USE_MOCK === 'true'
 
     if (isMockMode) {
-        console.log(`[MOCK MODE] Returning mock data for endpoint: ${endpoint}`)
+
         const mockResponse = await getMockResponse(endpoint)
         if (mockResponse) {
             return mockResponse as ApiResponse<T>
@@ -189,7 +189,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
         console.warn(`[MOCK MODE] No mock data found for ${endpoint}, falling back to real API`)
     }
 
-    const baseUrl = process.env.NEXT_PRIVATE_API_BASE_URL;
+    const baseUrl = process.env.NEXT_PRIVATE_API_BASE_URL || '';
     const url = `${baseUrl}${endpoint}`;
 
     try {

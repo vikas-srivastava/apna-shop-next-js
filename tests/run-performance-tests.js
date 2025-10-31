@@ -38,18 +38,18 @@ class PerformanceTestRunner {
      * Run all performance tests
      */
     async runAllTests() {
-        console.log('🚀 Starting Comprehensive Performance Test Suite...\n');
+        
 
         const testStart = Date.now();
 
         try {
             // 1. API Performance Tests
-            console.log('📡 Running API Performance Tests...');
+            
             await this.runApiTests();
 
             // 2. Bundle Analysis
             if (this.enableBundleAnalysis) {
-                console.log('\n📦 Running Bundle Analysis...');
+                
                 await this.runBundleAnalysis();
             }
 

@@ -94,7 +94,7 @@ async function main() {
       fs.mkdirSync(outputDir, { recursive: true });
     }
     fs.writeFileSync(outputPath, cssContent, 'utf8');
-    console.log(`Generated theme CSS to ${outputPath}`);
+
   } catch (error) {
     console.error('Error generating theme CSS:', error);
     process.exit(1);

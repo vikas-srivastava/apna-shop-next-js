@@ -194,7 +194,7 @@ export class AuditUtils {
         };
 
         // In production, send to logging service
-        console.log(`[SECURITY-${level.toUpperCase()}]`, JSON.stringify(logEntry));
+        
     }
 
     /**

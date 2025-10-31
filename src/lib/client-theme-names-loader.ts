@@ -18,7 +18,7 @@ export async function loadThemeNames(): Promise<string[]> {
 
     if (themeConfig && themeConfig.themes) {
       const themeNames = Object.keys(themeConfig.themes);
-      console.log("Extracted Theme Names:", themeNames);
+      
       return themeNames;
     }
     return [];

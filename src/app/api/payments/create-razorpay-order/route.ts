@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
     try {
-        console.log('Razorpay order creation request received');
+
         const body = await request.json()
         const { order_id, amount, currency = 'INR' } = body
 

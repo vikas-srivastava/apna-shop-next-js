@@ -9,45 +9,37 @@ const createMockSupabaseClient = () => {
 
   const mockAuth = {
     signInWithPassword: async ({ email, password }: any) => {
-      console.log('MOCK: signInWithPassword', { email, password })
       if (email === 'test@example.com' && password === 'password') {
         return { data: { session: { access_token: 'mock_access_token', user: { id: 'mock_user_id', email } } }, error: null }
       }
       return { data: { session: null }, error: { message: 'Invalid mock credentials' } }
     },
     signUp: async ({ email, password }: any) => {
-      console.log('MOCK: signUp', { email, password })
       if (email && password) {
         return { data: { session: { access_token: 'mock_access_token', user: { id: 'mock_user_id', email } } }, error: null }
       }
       return { data: { session: null }, error: { message: 'Mock signup failed' } }
     },
     signOut: async () => {
-      console.log('MOCK: signOut')
       return { error: null }
     },
     resetPasswordForEmail: async (email: string, options: any) => {
-      console.log('MOCK: resetPasswordForEmail', { email, options })
       return { data: null, error: null }
     },
     updateUser: async (updates: any) => {
-      console.log('MOCK: updateUser', updates)
       return { data: { user: { id: 'mock_user_id', ...updates } }, error: null }
     },
     getSession: async () => {
-      console.log('MOCK: getSession')
       // Simulate a logged-in session if needed for testing
       return { data: { session: { access_token: 'mock_access_token', user: { id: 'mock_user_id', email: 'test@example.com' } } }, error: null }
     },
     onAuthStateChange: (callback: any) => {
-      console.log('MOCK: onAuthStateChange')
       // Immediately call callback with a mock session for testing purposes
       // In a real scenario, this would be triggered by auth events
       // callback('SIGNED_IN', { access_token: 'mock_access_token', user: { id: 'mock_user_id', email: 'test@example.com' } });
-      return { data: { subscription: { unsubscribe: () => console.log('MOCK: unsubscribe') } } }
+      return { data: { subscription: { unsubscribe: () => {} } } }
     },
     setSession: async (session: any) => {
-      console.log('MOCK: setSession', session)
       return { data: { session }, error: null }
     }
   }
@@ -56,7 +48,6 @@ const createMockSupabaseClient = () => {
     auth: mockAuth,
     // Add other mock client properties/methods if needed by the application
     from: (tableName: string) => {
-      console.log(`MOCK: Accessing table "${tableName}"`);
       return {
         select: async () => ({ data: [], error: null }),
         insert: async (data: any) => ({ data: data, error: null }),

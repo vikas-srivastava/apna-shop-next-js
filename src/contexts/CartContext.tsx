@@ -106,6 +106,9 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 // Logger utility for cart operations
 class CartLogger {
   private static log(level: 'info' | 'warn' | 'error', message: string, data?: any) {
+    if (process.env.NODE_ENV === 'production') { // Disable all logs in production
+      return;
+    }
     const timestamp = new Date().toISOString()
     const logMessage = `[Cart ${timestamp}] ${message}`
 

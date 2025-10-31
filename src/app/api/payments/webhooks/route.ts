@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         const { event, data } = body
 
         // Log webhook event (in production, you'd validate signatures)
-        console.log('Payment webhook received:', { event, data })
+
 
         switch (event) {
             case 'payment.succeeded':
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
                 await handlePaymentRefunded(data)
                 break
             default:
-                console.log('Unhandled webhook event:', event)
+        
         }
 
         return NextResponse.json({

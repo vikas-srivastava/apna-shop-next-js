@@ -171,7 +171,7 @@ export class CircuitBreaker {
      * Log circuit breaker events
      */
     private log(message: string): void {
-        console.log(`[CIRCUIT_BREAKER:${this.name}] ${message}`);
+        
     }
 }
 

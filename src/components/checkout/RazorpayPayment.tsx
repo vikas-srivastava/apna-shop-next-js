@@ -47,12 +47,11 @@ export function RazorpayPayment({
     // Check if SDK is loaded
     const checkSdkLoaded = () => {
         if (window.Razorpay) {
-            console.log('[Razorpay Debug] Razorpay SDK detected on window')
+
             setIsSdkLoaded(true)
             return true
         }
-        console.log('[Razorpay Debug] Razorpay SDK not yet loaded')
-        return false
+                return false
     }
 
     // Check periodically until loaded
@@ -152,14 +151,14 @@ export function RazorpayPayment({
     }
 
     const handlePayment = async () => {
-        console.log('[Razorpay Debug] Handle payment called, isSdkLoaded:', isSdkLoaded, 'openInProgress:', window.razorpayOpenInProgress)
+
         if (!isSdkLoaded) {
             onError('Razorpay SDK not loaded. Please refresh the page and try again.')
             return
         }
 
         if (window.razorpayOpenInProgress) {
-            console.log('[Razorpay Debug] Payment already in progress, ignoring duplicate call')
+
             return
         }
 
@@ -179,22 +178,22 @@ export function RazorpayPayment({
                 description: 'Test Payment',
                 method: method || 'card',
                 handler: function (response: any) {
-                    console.log('[Razorpay Debug] Handler called with response:', response)
+
                     // Reset flag on success
                     window.razorpayOpenInProgress = false
                     // Call onSuccess immediately for synchronous response to Razorpay
-                    console.log('[Razorpay Debug] Calling onSuccess immediately')
+
                     onSuccess(response.razorpay_payment_id, response.razorpay_order_id)
                     setRetryCount(0) // Reset retry count on success
 
                     // Verify payment asynchronously in background
-                    console.log('[Razorpay Debug] Starting background payment verification')
+
                     verifyPayment(
                         response.razorpay_payment_id,
                         response.razorpay_order_id,
                         response.razorpay_signature
                     ).then(() => {
-                        console.log('[Razorpay Debug] Background payment verification successful')
+
                     }).catch((verifyError) => {
                         console.error('[Razorpay Debug] Background verification error:', verifyError)
                         const errorMsg = verifyError instanceof Error ? verifyError.message : 'Payment verification failed'
@@ -216,11 +215,11 @@ export function RazorpayPayment({
                 },
                 modal: {
                     ondismiss: function () {
-                        console.log('[Razorpay Debug] Modal dismissed, calling onCancel if available')
+    
                         window.razorpayOpenInProgress = false
                         if (onCancel) onCancel()
                         // Cleanup instance on dismiss
-                        console.log('[Razorpay Debug] Cleaning up instance on modal dismiss')
+
                         setRazorpayInstance(null)
                     },
                     confirm_close: true,
@@ -231,7 +230,7 @@ export function RazorpayPayment({
             const rzp = new window.Razorpay(options)
             try {
                 rzp.open()
-                console.log('[Razorpay Debug] Razorpay modal opened successfully')
+
             } catch (openError) {
                 console.error('[Razorpay Debug] Error opening Razorpay modal:', openError)
                 throw new Error('Failed to open payment modal')
@@ -259,10 +258,7 @@ export function RazorpayPayment({
                 id="razorpay-checkout-js"
                 src="https://checkout.razorpay.com/v1/checkout.js"
                 strategy="afterInteractive"
-                onLoad={() => {
-                    console.log('[Razorpay Debug] Script loaded via Next.js Script component')
-                    setIsSdkLoaded(true)
-                }}
+
                 onError={(e) => {
                     console.error('[Razorpay Debug] Script load error:', e)
                     setLastError('Failed to load Razorpay SDK')
